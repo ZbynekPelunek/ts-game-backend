@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 
 import { NotFoundError } from './errors/not-found-error';
 import { errorHandler } from './middleware/errorHandler';
@@ -10,6 +11,17 @@ import { resultsRouter } from './routes/results.router';
 
 const app = express();
 const PORT: Number = 3000;
+
+const uri = 'mongodb+srv://zbynek:12345159357@cluster0.n3nt6.mongodb.net/?retryWrites=true&w=majority';
+
+async function connect() {
+  try {
+    await mongoose.connect(uri);
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 app.use(express.json());
 
@@ -32,6 +44,7 @@ app.all('*', async (req, _res) => {
 
 app.use(errorHandler);
 
+connect();
 app.listen(PORT, () => {
   console.log('The application is listening on port http://localhost:' + PORT);
 })
