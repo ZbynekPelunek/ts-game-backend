@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 
 import { NotFoundError } from './errors/not-found-error';
 import { errorHandler } from './middleware/errorHandler';
+import { accountsRouter } from './routes/accounts.router';
 import { adventuresRouter } from './routes/adventures.router';
 import { charactersRouter } from './routes/characters.router';
 import { resultsRouter } from './routes/results.router';
@@ -33,7 +34,7 @@ app.use((_req, res, next) => {
   next();
 });
 
-// app.use('/api/v1/fortune', fortuneRouter);
+app.use('/api/v1/accounts', accountsRouter);
 app.use('/api/v1/characters', charactersRouter);
 app.use('/api/v1/adventures', adventuresRouter);
 app.use('/api/v1/results', resultsRouter);
