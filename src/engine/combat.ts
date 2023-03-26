@@ -1,4 +1,4 @@
-import { AttackerTarget } from 'interface/combat.interface';
+import { AttackerTarget } from '../interface/combat.interface';
 
 export class Combat {
   round: number = 0;

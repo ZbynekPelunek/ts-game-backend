@@ -1,24 +1,44 @@
 import express, { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 
-import { AccountModel } from '../schema/account';
+import { Request_Account_POST, Response_Account_POST } from '../../../shared/src';
+import { NotFoundError } from '../errors/not-found-error';
+import { AccountModel } from '../schema/account.schema';
 
 export const accountsRouter = express.Router();
 
-accountsRouter.post('', async (req: Request, res: Response) => {
+accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST>, res: Response<Response_Account_POST>) => {
   const accountBody = req.body;
+
   const account = new AccountModel({
-    _id: uuidv4(),
     email: accountBody.email,
     password: accountBody.password,
-    username: accountBody.username,
-    characters: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    level: 0
+    username: accountBody.username
   });
+
   await account.save();
-  return res.status(200).json(
-    account
+
+  return res.status(201).json(
+    { accountId: account._id }
+  );
+});
+
+accountsRouter.post('/:accountId/characters', async (req: Request, res: Response) => {
+  const accountId = req.params.accountId;
+  const characterId = req.body.characterId;
+
+  const account = await AccountModel.findById(accountId);
+
+  if (!account) {
+    throw new NotFoundError(`Account witd id '${accountId}' not found`);
+  }
+
+  account.characters.push({ _id: characterId })
+  account.save();
+
+  return res.status(201).json(
+    {
+      success: true,
+      account
+    }
   );
 })

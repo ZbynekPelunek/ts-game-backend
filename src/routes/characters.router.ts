@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { randomUUID } from 'crypto';
 import express, { Request, Response } from 'express';
 import * as _ from 'lodash';
 
@@ -15,12 +17,42 @@ import {
   POST_characterActions,
   PUT_characterByID,
 } from '../../../shared/src';
+import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
+import { defaultInventory } from '../defaultCharacterData/inventory';
+import { defaultStats } from '../defaultCharacterData/stats';
 import { BadRequestError } from '../errors/bad-request-error';
 import { NotFoundError } from '../errors/not-found-error';
 import { ServerError } from '../errors/server-error';
+import { CharacterModel } from '../schema/character.schema';
+import { characterAvailableAdventures } from '../test/testAdventures';
 import { testCharacter } from '../test/testCharacter';
 
 export const charactersRouter = express.Router();
+
+interface Request_Character_POST {
+  accountId: string;
+  name: string;
+}
+
+charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, res: Response) => {
+  const characterBody = req.body;
+
+  const character = new CharacterModel({
+    accountId: characterBody.accountId,
+    name: characterBody.name
+  });
+  //character.stats = defaultStats;
+  //character.adventures = characterAvailableAdventures;
+
+  await character.save();
+
+  await axios.post(`http://localhost:3000/api/v1/accounts/${characterBody.accountId}/characters`, { characterId: character._id });
+  //console.log('axios response: ', response);
+
+  return res.status(201).json(
+    { characterId: character._id }
+  );
+})
 
 charactersRouter.get('/:characterId', (req: Request, res: Response<GET_characterByID>) => {
   const characterId = req.params.characterId;
@@ -163,7 +195,7 @@ charactersRouter.post('/:characterId/actions/:actionId', async (req: Request, re
         }
         character.inventory = inventory;
       }
-      character.updateCurrencies({ gold: item.sellValue, cheating_currency: '0' });
+      //character.updateCurrencies({ gold: item.sellValue, cheating_currency: '0' });
 
       return res.status(201).json({ character });
     default:

@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import {
   CharacterStats,
   Currencies,
+  Currency,
   EquipmentSlotsArr,
   IAdventure,
   ICharacter,
@@ -10,7 +11,7 @@ import {
   InventoryItem,
   ItemStat,
 } from '../../../shared/src';
-import { defaultCharacterCurrencies } from '../defaultCharacterData/currencies';
+import { defaultCharacterCurrencies2 } from '../defaultCharacterData/currencies';
 import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
 import { defaultStats } from '../defaultCharacterData/stats';
 import { characterAvailableAdventures } from '../test/testAdventures';
@@ -18,7 +19,7 @@ import { characterAvailableAdventures } from '../test/testAdventures';
 export class Character implements ICharacter {
   constructor(
     public accountId: string,
-    public characterId: string,
+    public _id: string,
     public name: string,
     public stats: CharacterStats = defaultStats,
     public level: number = 1,
@@ -26,9 +27,11 @@ export class Character implements ICharacter {
     public maxExperience: number = 200,
     public equipmentSlots: EquipmentSlotsArr = defaultEquipmentSlots,
     public inventory: Inventory[] = [],
-    public maxInventorySlots: number = 16,
-    public currencies: Currencies = defaultCharacterCurrencies,
-    public adventures: IAdventure[] = characterAvailableAdventures) {
+    public maxInventorySlots: number = 8,
+    public currencies: Currency[] = defaultCharacterCurrencies2,
+    public adventures: IAdventure[] = characterAvailableAdventures,
+    public createdAt: string = new Date().toISOString(),
+    public updatedAt: string = new Date().toISOString()) {
     this.generateInventory();
     this.checkCharacterEquipmentSlots();
     this.updateStatsTotalValue();
@@ -91,24 +94,24 @@ export class Character implements ICharacter {
     this.calculateStatsValue();
   }
 
-  public updateCurrencies(amountToAdd: Currencies | undefined = undefined, amountToRemove: Currencies | undefined = undefined): void {
-    const characterCurrencies = { ...this.currencies };
-    if (amountToAdd) {
-      console.log('Increasing currencies: ', amountToAdd);
-      characterCurrencies.gold = (+characterCurrencies.gold + +amountToAdd.gold).toString();
-      characterCurrencies.cheating_currency = (+characterCurrencies.cheating_currency + +amountToAdd.cheating_currency).toString();
-      console.log('...currencies increased.');
-    }
+  // public updateCurrencies(amountToAdd: Currencies | undefined = undefined, amountToRemove: Currencies | undefined = undefined): void {
+  //   const characterCurrencies = { ...this.currencies };
+  //   if (amountToAdd) {
+  //     console.log('Increasing currencies: ', amountToAdd);
+  //     characterCurrencies.gold = (+characterCurrencies.gold + +amountToAdd.gold).toString();
+  //     characterCurrencies.cheating_currency = (+characterCurrencies.cheating_currency + +amountToAdd.cheating_currency).toString();
+  //     console.log('...currencies increased.');
+  //   }
 
-    if (amountToRemove) {
-      console.log('Decreasing currencies: ', amountToRemove);
-      characterCurrencies.gold = (+characterCurrencies.gold - +amountToRemove.gold).toString();
-      characterCurrencies.cheating_currency = (+characterCurrencies.cheating_currency - +amountToRemove.cheating_currency).toString();;
-      console.log('...currencies decreased.', amountToRemove);
-    }
+  //   if (amountToRemove) {
+  //     console.log('Decreasing currencies: ', amountToRemove);
+  //     characterCurrencies.gold = (+characterCurrencies.gold - +amountToRemove.gold).toString();
+  //     characterCurrencies.cheating_currency = (+characterCurrencies.cheating_currency - +amountToRemove.cheating_currency).toString();;
+  //     console.log('...currencies decreased.', amountToRemove);
+  //   }
 
-    this.currencies = { ...characterCurrencies };
-  }
+  //   this.currencies = { ...characterCurrencies };
+  // }
 
   public addItemToInventory(item: InventoryItem, positionIndex: number | undefined = -1): void {
     console.log('adding item to inventory...', item);

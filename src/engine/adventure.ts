@@ -35,7 +35,7 @@ export async function startAdventure(adventure: IAdventure, character: ICharacte
   const resultId = new Date().getTime().toString();
 
   const result: AdventureResult = {
-    characterId: character.characterId,
+    characterId: character._id as string,
     resultId,
     adventureId: adventure.adventureId,
     playerWon: combat.playerWon,

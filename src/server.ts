@@ -8,8 +8,6 @@ import { adventuresRouter } from './routes/adventures.router';
 import { charactersRouter } from './routes/characters.router';
 import { resultsRouter } from './routes/results.router';
 
-// import { fortuneRouter } from './routes/fortune.router';
-
 const app = express();
 const PORT: Number = 3000;
 
