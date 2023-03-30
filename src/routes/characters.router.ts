@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { randomUUID } from 'crypto';
 import express, { Request, Response } from 'express';
 import * as _ from 'lodash';
 
@@ -16,10 +15,8 @@ import {
   ItemType,
   POST_characterActions,
   PUT_characterByID,
+  Response_Inventory_POST,
 } from '../../../shared/src';
-import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
-import { defaultInventory } from '../defaultCharacterData/inventory';
-import { defaultStats } from '../defaultCharacterData/stats';
 import { BadRequestError } from '../errors/bad-request-error';
 import { NotFoundError } from '../errors/not-found-error';
 import { ServerError } from '../errors/server-error';
@@ -43,6 +40,8 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   });
   //character.stats = defaultStats;
   //character.adventures = characterAvailableAdventures;
+  const inventoryResponse = await axios.post<Response_Inventory_POST>('http://localhost:3000/api/v1/inventories');
+  character.inventoryId = inventoryResponse.data.inventory.inventoryId;
 
   await character.save();
 
@@ -54,17 +53,23 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   );
 })
 
-charactersRouter.get('/:characterId', (req: Request, res: Response<GET_characterByID>) => {
-  const characterId = req.params.characterId;
-  if (characterId !== '1') {
-    throw new NotFoundError(`Character with id ${characterId} not found`);
-  }
-  const character = testCharacter;
+charactersRouter.get('/:characterId', async (req: Request, res: Response) => {
+  const { characterId } = req.params;
+  console.log('getting character by id: ', characterId);
 
-  return res.status(200).json({ character });
+  if (!characterId) {
+    return res.status(400).json({ success: false, error: 'Must provide character ID' });
+  }
+
+  const character = await CharacterModel.findOne({ _id: characterId });
+  if (!character) {
+    return res.status(404).json({ success: false, error: `Character with id '${characterId}' not found` });
+  }
+
+  return res.status(200).json({ success: true, character });
 })
 
-charactersRouter.put('/:characterId', (req: Request, res: Response<PUT_characterByID>) => {
+charactersRouter.put('/:characterId', (req: Request, res: Response) => {
   const characterId = req.params.characterId;
   if (characterId !== '1') {
     throw new NotFoundError(`Character with id ${characterId} not found`);
@@ -73,9 +78,8 @@ charactersRouter.put('/:characterId', (req: Request, res: Response<PUT_character
   // character = {
   //   ...charBody
   // }
-  const character = testCharacter;
 
-  return res.status(200).json({ character });
+  return res.status(200).json({});
 })
 
 // ADVENTURES
@@ -99,200 +103,200 @@ charactersRouter.get('/:characterId/equipment', (req: Request, res: Response<GET
   return res.status(200).json({ equipmentSlots: character.equipmentSlots });
 })
 
-charactersRouter.post('/:characterId/actions/:actionId', async (req: Request, res: Response<POST_characterActions>) => {
-  const { characterId } = req.params;
-  const actionId = req.params.actionId as CharacterActions;
-  const item: InventoryItem = req.body.item;
+// charactersRouter.post('/:characterId/actions/:actionId', async (req: Request, res: Response<POST_characterActions>) => {
+//   const { characterId } = req.params;
+//   const actionId = req.params.actionId as CharacterActions;
+//   const item: InventoryItem = req.body.item;
 
-  if (characterId !== '1') {
-    throw new NotFoundError(`Character with id ${characterId} not found`);
-  }
-  if (!item || item === null) {
-    throw new BadRequestError('Item body is empty');
-  }
+//   if (characterId !== '1') {
+//     throw new NotFoundError(`Character with id ${characterId} not found`);
+//   }
+//   if (!item || item === null) {
+//     throw new BadRequestError('Item body is empty');
+//   }
 
-  let character = testCharacter;
-  let inventory: Inventory[] = [];
-  let equipmentSlots: EquipmentSlotsArr;
-  switch (actionId) {
-    case CharacterActions.EQUIP_ITEM:
-      if (item.itemType !== ItemType.EQUIPMENT) {
-        throw new BadRequestError('Item is not equipment');
-      }
-      inventory = [...character.inventory];
-      equipmentSlots = [...character.equipmentSlots];
-      try {
-        const checkInventoryResponse = await checkItemInInventory(item, character);
-        if (!checkInventoryResponse) {
-          throw new NotFoundError(`Equipment ${item.name} not found in inventory`);
-        }
-        const equipItemResponse = await equipItem(item, { ...character });
-        if (!equipItemResponse.succes) {
-          equipmentSlots = equipmentSlots;
-          throw new ServerError('Something went wrong while updating equipment slots');
-        }
-        const inventoryResponse = await updateInventoryEquipItem(item, [...inventory], equipItemResponse.previousEquipment);
-        if (!inventoryResponse.succes) {
-          equipmentSlots = equipmentSlots;
-          inventory = inventory;
-          throw new ServerError('Something went wrong while updating inventory');
-        } else {
-          character.inventory = inventoryResponse.inventory;
-          character.equipmentSlots = equipItemResponse.equipmentSlots;
-          return res.status(201).json({ character });
-        }
+//   let character = testCharacter;
+//   let inventory: Inventory[] = [];
+//   let equipmentSlots: EquipmentSlotsArr;
+//   switch (actionId) {
+//     case CharacterActions.EQUIP_ITEM:
+//       if (item.itemType !== ItemType.EQUIPMENT) {
+//         throw new BadRequestError('Item is not equipment');
+//       }
+//       inventory = [...character.inventory];
+//       equipmentSlots = [...character.equipmentSlots];
+//       try {
+//         const checkInventoryResponse = await checkItemInInventory(item, character);
+//         if (!checkInventoryResponse) {
+//           throw new NotFoundError(`Equipment ${item.name} not found in inventory`);
+//         }
+//         const equipItemResponse = await equipItem(item, { ...character });
+//         if (!equipItemResponse.succes) {
+//           equipmentSlots = equipmentSlots;
+//           throw new ServerError('Something went wrong while updating equipment slots');
+//         }
+//         const inventoryResponse = await updateInventoryEquipItem(item, [...inventory], equipItemResponse.previousEquipment);
+//         if (!inventoryResponse.succes) {
+//           equipmentSlots = equipmentSlots;
+//           inventory = inventory;
+//           throw new ServerError('Something went wrong while updating inventory');
+//         } else {
+//           character.inventory = inventoryResponse.inventory;
+//           character.equipmentSlots = equipItemResponse.equipmentSlots;
+//           return res.status(201).json({ character });
+//         }
 
-      } catch (error) {
-        console.error(error);
-        throw new ServerError('Something went wrong while equiping item');
-      }
-      break;
-    case CharacterActions.UNEQUIP_ITEM:
-      if (item.itemType !== ItemType.EQUIPMENT) {
-        throw new BadRequestError('Item is not equipment');
-      }
-      inventory = [...character.inventory];
-      equipmentSlots = [...character.equipmentSlots];
-      try {
-        const itemsArr = inventory.map(items => items.item).filter(items => items !== null);
-        if (itemsArr.length >= inventory.length) {
-          throw new ServerError('Full Inventory');
-        }
-        console.log('equipment sent to unequipItem(): ', item);
-        const unequipResponse = await unequipItem(item, [...equipmentSlots]);
-        if (!unequipResponse.succes) {
-          equipmentSlots = equipmentSlots;
-          throw new ServerError('Something went wrong while updating equipment slots');
-        }
-        const inventoryResponse = await updateInventoryUnequipItem(item, [...inventory]);
-        if (!inventoryResponse.succes) {
-          equipmentSlots = equipmentSlots;
-          inventory = inventory;
-          throw new ServerError('Something went wrong while updating inventory');
-        } else {
-          character.inventory = inventoryResponse.inventory;
-          character.equipmentSlots = unequipResponse.equipmentSlots;
-          return res.status(201).json({ character });
-        }
+//       } catch (error) {
+//         console.error(error);
+//         throw new ServerError('Something went wrong while equiping item');
+//       }
+//       break;
+//     case CharacterActions.UNEQUIP_ITEM:
+//       if (item.itemType !== ItemType.EQUIPMENT) {
+//         throw new BadRequestError('Item is not equipment');
+//       }
+//       inventory = [...character.inventory];
+//       equipmentSlots = [...character.equipmentSlots];
+//       try {
+//         const itemsArr = inventory.map(items => items.item).filter(items => items !== null);
+//         if (itemsArr.length >= inventory.length) {
+//           throw new ServerError('Full Inventory');
+//         }
+//         console.log('equipment sent to unequipItem(): ', item);
+//         const unequipResponse = await unequipItem(item, [...equipmentSlots]);
+//         if (!unequipResponse.succes) {
+//           equipmentSlots = equipmentSlots;
+//           throw new ServerError('Something went wrong while updating equipment slots');
+//         }
+//         const inventoryResponse = await updateInventoryUnequipItem(item, [...inventory]);
+//         if (!inventoryResponse.succes) {
+//           equipmentSlots = equipmentSlots;
+//           inventory = inventory;
+//           throw new ServerError('Something went wrong while updating inventory');
+//         } else {
+//           character.inventory = inventoryResponse.inventory;
+//           character.equipmentSlots = unequipResponse.equipmentSlots;
+//           return res.status(201).json({ character });
+//         }
 
-      } catch (error) {
-        console.error(error);
-        throw new ServerError('Something went wrong while unequiping item');
-      }
-    case CharacterActions.SELL:
-      if (item.equipped) {
-        equipmentSlots = [...character.equipmentSlots];
-        const sellEquipResponse = await sellEquipment(<EquipableItem>item, equipmentSlots);
-        if (!sellEquipResponse) {
-          throw new ServerError(`Something went wrong while selling equipment from equipment slots`);
-        }
-        character.equipmentSlots = equipmentSlots;
-      } else {
-        inventory = [...character.inventory];
-        const sellItemResponse = await sellItem(item, inventory);
-        if (!sellItemResponse) {
-          throw new ServerError(`Something went wrong while selling item from inventory`);
-        }
-        character.inventory = inventory;
-      }
-      //character.updateCurrencies({ gold: item.sellValue, cheating_currency: '0' });
+//       } catch (error) {
+//         console.error(error);
+//         throw new ServerError('Something went wrong while unequiping item');
+//       }
+//     case CharacterActions.SELL:
+//       if (item.equipped) {
+//         equipmentSlots = [...character.equipmentSlots];
+//         const sellEquipResponse = await sellEquipment(<EquipableItem>item, equipmentSlots);
+//         if (!sellEquipResponse) {
+//           throw new ServerError(`Something went wrong while selling equipment from equipment slots`);
+//         }
+//         character.equipmentSlots = equipmentSlots;
+//       } else {
+//         inventory = [...character.inventory];
+//         const sellItemResponse = await sellItem(item, inventory);
+//         if (!sellItemResponse) {
+//           throw new ServerError(`Something went wrong while selling item from inventory`);
+//         }
+//         character.inventory = inventory;
+//       }
+//       //character.updateCurrencies({ gold: item.sellValue, cheating_currency: '0' });
 
-      return res.status(201).json({ character });
-    default:
-      throw new NotFoundError(`Action with id ${actionId} not found`);
-  }
-})
+//       return res.status(201).json({ character });
+//     default:
+//       throw new NotFoundError(`Action with id ${actionId} not found`);
+//   }
+// })
 
-const checkItemInInventory = async (equipment: EquipableItem, character: ICharacter): Promise<boolean> => {
-  if (equipment.positionIndex! >= 0 && _.isEqual(character.inventory[equipment.positionIndex!].item, equipment)) {
-    return true;
-  } else {
-    console.log('item not found in inventory');
-    return false;
-  }
+// const checkItemInInventory = async (equipment: EquipableItem, character: ICharacter): Promise<boolean> => {
+//   if (equipment.positionIndex! >= 0 && _.isEqual(character.inventory[equipment.positionIndex!].item, equipment)) {
+//     return true;
+//   } else {
+//     console.log('item not found in inventory');
+//     return false;
+//   }
 
-}
+// }
 
-const equipItem = async (equipment: EquipableItem, character: ICharacter): Promise<{ succes: boolean; equipmentSlots: EquipmentSlotsArr, previousEquipment: EquipableItem | null }> => {
-  const equipSlotIndex = character.equipmentSlots.findIndex(es => es.slot === equipment.slot);
-  if (equipSlotIndex < 0) {
-    return { succes: false, equipmentSlots: character.equipmentSlots, previousEquipment: null }
-  }
+// const equipItem = async (equipment: EquipableItem, character: ICharacter): Promise<{ succes: boolean; equipmentSlots: EquipmentSlotsArr, previousEquipment: EquipableItem | null }> => {
+//   const equipSlotIndex = character.equipmentSlots.findIndex(es => es.slot === equipment.slot);
+//   if (equipSlotIndex < 0) {
+//     return { succes: false, equipmentSlots: character.equipmentSlots, previousEquipment: null }
+//   }
 
-  const previousEquipment: EquipableItem | null = character.equipmentSlots[equipSlotIndex].equipment;
+//   const previousEquipment: EquipableItem | null = character.equipmentSlots[equipSlotIndex].equipment;
 
-  character.equipmentSlots[equipSlotIndex].equipment = {
-    ...equipment,
-    positionIndex: equipSlotIndex,
-    equipped: true
-  };
-  if (previousEquipment !== null) {
-    testCharacter.updateStats(equipment.statsEffects.default, previousEquipment.statsEffects.default);
-    testCharacter.updateStats(equipment.statsEffects.rolledAffixes, previousEquipment.statsEffects.rolledAffixes);
-  } else {
-    testCharacter.updateStats(equipment.statsEffects.default);
-    testCharacter.updateStats(equipment.statsEffects.rolledAffixes);
-  }
+//   character.equipmentSlots[equipSlotIndex].equipment = {
+//     ...equipment,
+//     positionIndex: equipSlotIndex,
+//     equipped: true
+//   };
+//   if (previousEquipment !== null) {
+//     testCharacter.updateStats(equipment.statsEffects.default, previousEquipment.statsEffects.default);
+//     testCharacter.updateStats(equipment.statsEffects.rolledAffixes, previousEquipment.statsEffects.rolledAffixes);
+//   } else {
+//     testCharacter.updateStats(equipment.statsEffects.default);
+//     testCharacter.updateStats(equipment.statsEffects.rolledAffixes);
+//   }
 
-  return { succes: true, equipmentSlots: character.equipmentSlots, previousEquipment };
+//   return { succes: true, equipmentSlots: character.equipmentSlots, previousEquipment };
 
-}
+// }
 
-const unequipItem = async (equipment: EquipableItem, equipmentSlots: EquipmentSlotsArr): Promise<{ succes: boolean; equipmentSlots: EquipmentSlotsArr }> => {
-  console.log('unequipItem() equipment: ', equipment);
-  const equipSlotIndex = equipment.positionIndex;
-  console.log('equipSlotIndex: ', equipSlotIndex);
-  if (equipSlotIndex! < 0) {
-    return { succes: false, equipmentSlots }
-  }
+// const unequipItem = async (equipment: EquipableItem, equipmentSlots: EquipmentSlotsArr): Promise<{ succes: boolean; equipmentSlots: EquipmentSlotsArr }> => {
+//   console.log('unequipItem() equipment: ', equipment);
+//   const equipSlotIndex = equipment.positionIndex;
+//   console.log('equipSlotIndex: ', equipSlotIndex);
+//   if (equipSlotIndex! < 0) {
+//     return { succes: false, equipmentSlots }
+//   }
 
-  equipmentSlots[equipSlotIndex!].equipment = null;
+//   equipmentSlots[equipSlotIndex!].equipment = null;
 
-  testCharacter.updateStats(undefined, equipment.statsEffects.default);
-  testCharacter.updateStats(undefined, equipment.statsEffects.rolledAffixes);
+//   testCharacter.updateStats(undefined, equipment.statsEffects.default);
+//   testCharacter.updateStats(undefined, equipment.statsEffects.rolledAffixes);
 
-  return { succes: true, equipmentSlots };
+//   return { succes: true, equipmentSlots };
 
-}
+// }
 
-const updateInventoryEquipItem = async (equipment: EquipableItem, inventory: Inventory[], previousEquipment: EquipableItem | null): Promise<{ succes: boolean; inventory: Inventory[] }> => {
-  const inventorySlotIndex = equipment.positionIndex;
-  if (inventorySlotIndex! < 0) {
-    return { succes: false, inventory }
-  }
+// const updateInventoryEquipItem = async (equipment: EquipableItem, inventory: Inventory[], previousEquipment: EquipableItem | null): Promise<{ succes: boolean; inventory: Inventory[] }> => {
+//   const inventorySlotIndex = equipment.positionIndex;
+//   if (inventorySlotIndex! < 0) {
+//     return { succes: false, inventory }
+//   }
 
-  inventory[inventorySlotIndex!].item = previousEquipment === null ? null : { ...previousEquipment, positionIndex: inventorySlotIndex, equipped: false }
+//   inventory[inventorySlotIndex!].item = previousEquipment === null ? null : { ...previousEquipment, positionIndex: inventorySlotIndex, equipped: false }
 
-  return { succes: true, inventory };
-}
+//   return { succes: true, inventory };
+// }
 
-const updateInventoryUnequipItem = async (equipment: EquipableItem, inventory: Inventory[]): Promise<{ succes: boolean; inventory: Inventory[] }> => {
-  const freeSpotIndex = inventory.findIndex(inv => inv.item === null);
+// const updateInventoryUnequipItem = async (equipment: EquipableItem, inventory: Inventory[]): Promise<{ succes: boolean; inventory: Inventory[] }> => {
+//   const freeSpotIndex = inventory.findIndex(inv => inv.item === null);
 
-  inventory[freeSpotIndex].item = { ...equipment, positionIndex: freeSpotIndex, equipped: false };
+//   inventory[freeSpotIndex].item = { ...equipment, positionIndex: freeSpotIndex, equipped: false };
 
-  return { succes: true, inventory };
-}
+//   return { succes: true, inventory };
+// }
 
-const sellEquipment = async (equipment: EquipableItem, equipmentSlots: EquipmentSlotsArr): Promise<boolean> => {
-  const equipSlotIndex = equipment.positionIndex;
-  if (equipSlotIndex! < 0) {
-    return false;
-  }
-  equipmentSlots[equipSlotIndex!].equipment = null;
+// const sellEquipment = async (equipment: EquipableItem, equipmentSlots: EquipmentSlotsArr): Promise<boolean> => {
+//   const equipSlotIndex = equipment.positionIndex;
+//   if (equipSlotIndex! < 0) {
+//     return false;
+//   }
+//   equipmentSlots[equipSlotIndex!].equipment = null;
 
-  return true;
-}
+//   return true;
+// }
 
-const sellItem = async (item: InventoryItem, inventory: Inventory[]): Promise<boolean> => {
-  const inventoryIndex = item.positionIndex;
-  if (inventoryIndex! < 0) {
-    return false;
-  }
-  inventory[inventoryIndex!].item = null;
+// const sellItem = async (item: InventoryItem, inventory: Inventory[]): Promise<boolean> => {
+//   const inventoryIndex = item.positionIndex;
+//   if (inventoryIndex! < 0) {
+//     return false;
+//   }
+//   inventory[inventoryIndex!].item = null;
 
-  return true;
-}
+//   return true;
+// }
 
 // charactersRouter.put('/:characterId/equipment', (req: Request, res: Response) => {
 //   const { characterId } = req.params;

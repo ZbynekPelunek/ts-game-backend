@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node ./build/backend/src/server.js",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "seedAttributes": "npm run build && node ./build/backend/seeder/seedAttributes.js"
   },
   "keywords": [],
   "author": "",

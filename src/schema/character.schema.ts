@@ -2,9 +2,10 @@ import { randomUUID } from 'crypto';
 import mongoose, { Schema } from 'mongoose';
 
 import { ICharacter } from '../../../shared/src';
-import { defaultCharacterCurrencies2 } from '../defaultCharacterData/currencies';
+import { defaultChracterAttributes } from '../defaultCharacterData/attributes';
+import { defaultCharacterCurrencies } from '../defaultCharacterData/currencies';
 import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
-import { defaultInventory, defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
+import { defaultInventorySlots, defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 
 const characterSchema = new Schema<ICharacter>({
   _id: {
@@ -19,10 +20,12 @@ const characterSchema = new Schema<ICharacter>({
     type: String,
     default: () => randomUUID()
   },
-  adventures: [String],
+  adventures: {
+    type: [{ adventureId: Number }]
+  },
   currencies: {
     type: [{ currencyId: Number, name: String, label: String, amount: Number, cap: Number }],
-    default: defaultCharacterCurrencies2
+    default: defaultCharacterCurrencies
   },
   currentExperience: {
     type: Number,
@@ -40,15 +43,13 @@ const characterSchema = new Schema<ICharacter>({
     type: Number,
     default: 1
   },
-  maxInventorySlots: {
-    type: Number,
-    default: defaultMaxInventorySlots
+  inventoryId: {
+    type: Schema.Types.UUID
   },
-  inventory: {
-    type: [{ item: Schema.Types.String }],
-    default: defaultInventory
-  },
-  stats: [String]
+  attributes: {
+    type: [{ attributeId: String, 'base-value': Number, 'added-value': Number }],
+    default: defaultChracterAttributes
+  }
 }, { timestamps: true });
 
 export const CharacterModel = mongoose.model('Character', characterSchema);

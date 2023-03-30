@@ -5,7 +5,9 @@ import { NotFoundError } from './errors/not-found-error';
 import { errorHandler } from './middleware/errorHandler';
 import { accountsRouter } from './routes/accounts.router';
 import { adventuresRouter } from './routes/adventures.router';
+import { attributesRouter } from './routes/attributes.router';
 import { charactersRouter } from './routes/characters.router';
+import { inventoriesRouter } from './routes/inventory.router';
 import { resultsRouter } from './routes/results.router';
 
 const app = express();
@@ -19,6 +21,7 @@ async function connect() {
     console.log('Connected to MongoDB');
   } catch (error) {
     console.error(error);
+    process.exit(1);
   }
 }
 
@@ -36,6 +39,8 @@ app.use('/api/v1/accounts', accountsRouter);
 app.use('/api/v1/characters', charactersRouter);
 app.use('/api/v1/adventures', adventuresRouter);
 app.use('/api/v1/results', resultsRouter);
+app.use('/api/v1/inventories', inventoriesRouter);
+app.use('/api/v1/attributes', attributesRouter);
 
 app.all('*', async (req, _res) => {
   throw new NotFoundError(`Route ${req.url} does not exist.`);

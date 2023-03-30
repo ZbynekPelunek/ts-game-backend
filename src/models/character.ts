@@ -1,41 +1,30 @@
 import * as _ from 'lodash';
 
-import {
-  CharacterStats,
-  Currencies,
-  Currency,
-  EquipmentSlotsArr,
-  IAdventure,
-  ICharacter,
-  Inventory,
-  InventoryItem,
-  ItemStat,
-} from '../../../shared/src';
-import { defaultCharacterCurrencies2 } from '../defaultCharacterData/currencies';
+import { Currency, EquipmentSlotsArr, IAdventure, Inventory, ItemStat } from '../../../shared/src';
+import { defaultCharacterCurrencies } from '../defaultCharacterData/currencies';
 import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
-import { defaultStats } from '../defaultCharacterData/stats';
 import { characterAvailableAdventures } from '../test/testAdventures';
 
-export class Character implements ICharacter {
+export class Character {
   constructor(
     public accountId: string,
     public _id: string,
     public name: string,
-    public stats: CharacterStats = defaultStats,
+    public stats = [],
     public level: number = 1,
     public currentExperience: number = 0,
     public maxExperience: number = 200,
     public equipmentSlots: EquipmentSlotsArr = defaultEquipmentSlots,
     public inventory: Inventory[] = [],
     public maxInventorySlots: number = 8,
-    public currencies: Currency[] = defaultCharacterCurrencies2,
+    public currencies: Currency[] = defaultCharacterCurrencies,
     public adventures: IAdventure[] = characterAvailableAdventures,
     public createdAt: string = new Date().toISOString(),
     public updatedAt: string = new Date().toISOString()) {
-    this.generateInventory();
-    this.checkCharacterEquipmentSlots();
-    this.updateStatsTotalValue();
-    this.calculateStatsValue();
+    //this.generateInventory();
+    //this.checkCharacterEquipmentSlots();
+    //this.updateStatsTotalValue();
+    //this.calculateStatsValue();
   }
 
   public addExperience(experience: number) {
@@ -43,56 +32,56 @@ export class Character implements ICharacter {
     this.checkLevelUp();
   }
 
-  public updateStatsTotalValue(): void {
-    console.log('Updating total values...');
-    const characterStats = { ...this.stats }
-    for (const value of Object.values(characterStats)) {
-      value.totalValue = value.basicValue + value.addedValue;
-    }
-    this.stats = { ...characterStats };
-    console.log('...total values updated.');
-  }
+  // public updateStatsTotalValue(): void {
+  //   console.log('Updating total values...');
+  //   const characterStats = { ...this.stats }
+  //   for (const value of Object.values(characterStats)) {
+  //     value.totalValue = value.basicValue + value.addedValue;
+  //   }
+  //   this.stats = { ...characterStats };
+  //   console.log('...total values updated.');
+  // }
 
-  public calculateStatsValue(): void {
-    console.log('Calculating stats value...');
-    const characterStats = { ...this.stats };
-    characterStats.Health.totalValue += characterStats.Stamina.totalValue;
-    characterStats.Power.totalValue += characterStats.Intellect.totalValue;
-    characterStats.Crit_Chance.totalValue = _.round(characterStats.Crit_Chance.totalValue, 2) + _.round((characterStats.Crit_Rating.totalValue / 10), 2);
-    characterStats.Min_Damage.totalValue *= (characterStats.Percent_Damage_Increase.totalValue / 100) + 1;
-    characterStats.Max_Damage.totalValue *= (characterStats.Percent_Damage_Increase.totalValue / 100) + 1;
-    this.stats = { ...characterStats };
-    console.log('...calculating stats finished.');
-  }
+  // public calculateStatsValue(): void {
+  //   console.log('Calculating stats value...');
+  //   const characterStats = { ...this.stats };
+  //   characterStats.Health.totalValue += characterStats.Stamina.totalValue;
+  //   characterStats.Power.totalValue += characterStats.Intellect.totalValue;
+  //   characterStats.Crit_Chance.totalValue = _.round(characterStats.Crit_Chance.totalValue, 2) + _.round((characterStats.Crit_Rating.totalValue / 10), 2);
+  //   characterStats.Min_Damage.totalValue *= (characterStats.Percent_Damage_Increase.totalValue / 100) + 1;
+  //   characterStats.Max_Damage.totalValue *= (characterStats.Percent_Damage_Increase.totalValue / 100) + 1;
+  //   this.stats = { ...characterStats };
+  //   console.log('...calculating stats finished.');
+  // }
 
-  public updateStats(statsToAdd: ItemStat[] = [], statsToRemove: ItemStat[] = []): void {
-    const characterStats = { ...this.stats };
-    if (statsToAdd.length > 0) {
-      console.log('adding stats: ', statsToAdd);
-      for (const statParams of Object.values(characterStats)) {
-        statsToAdd.forEach(stat => {
-          if (stat.statName === statParams.internalName) {
-            statParams.addedValue += stat.statValue;
-          }
-        })
-      }
-    }
+  // public updateStats(statsToAdd: ItemStat[] = [], statsToRemove: ItemStat[] = []): void {
+  //   const characterStats = { ...this.stats };
+  //   if (statsToAdd.length > 0) {
+  //     console.log('adding stats: ', statsToAdd);
+  //     for (const statParams of Object.values(characterStats)) {
+  //       statsToAdd.forEach(stat => {
+  //         if (stat.statName === statParams.internalName) {
+  //           statParams.addedValue += stat.statValue;
+  //         }
+  //       })
+  //     }
+  //   }
 
-    if (statsToRemove.length > 0) {
-      console.log('removing stats: ', statsToRemove);
-      for (const statParams of Object.values(characterStats)) {
-        statsToRemove.forEach(stat => {
-          if (stat.statName === statParams.internalName) {
-            statParams.addedValue -= stat.statValue;
-          }
-        })
-      }
-    }
+  //   if (statsToRemove.length > 0) {
+  //     console.log('removing stats: ', statsToRemove);
+  //     for (const statParams of Object.values(characterStats)) {
+  //       statsToRemove.forEach(stat => {
+  //         if (stat.statName === statParams.internalName) {
+  //           statParams.addedValue -= stat.statValue;
+  //         }
+  //       })
+  //     }
+  //   }
 
-    this.stats = { ...characterStats };
-    this.updateStatsTotalValue();
-    this.calculateStatsValue();
-  }
+  //   this.stats = { ...characterStats };
+  //   this.updateStatsTotalValue();
+  //   this.calculateStatsValue();
+  // }
 
   // public updateCurrencies(amountToAdd: Currencies | undefined = undefined, amountToRemove: Currencies | undefined = undefined): void {
   //   const characterCurrencies = { ...this.currencies };
@@ -113,28 +102,28 @@ export class Character implements ICharacter {
   //   this.currencies = { ...characterCurrencies };
   // }
 
-  public addItemToInventory(item: InventoryItem, positionIndex: number | undefined = -1): void {
-    console.log('adding item to inventory...', item);
-    if (this.isInventoryFull()) {
-      console.log('inventory is full');
-      return;
-    }
+  // public addItemToInventory(item: InventoryItem, positionIndex: number | undefined = -1): void {
+  //   console.log('adding item to inventory...', item);
+  //   if (this.isInventoryFull()) {
+  //     console.log('inventory is full');
+  //     return;
+  //   }
 
-    if (positionIndex > 0) {
-      this.inventory[positionIndex].item = { ...item, positionIndex, equipped: false };
-      console.log(`...item added to positionindex ${positionIndex}`);
-    } else {
-      const freeSpotIndex = this.inventory.findIndex(i => i.item === null);
-      this.inventory[freeSpotIndex].item = { ...item, positionIndex: freeSpotIndex, equipped: false };
-      console.log(`...item added to positionindex ${freeSpotIndex}`);
-    }
-  }
+  //   if (positionIndex > 0) {
+  //     this.inventory[positionIndex].item = { ...item, positionIndex, equipped: false };
+  //     console.log(`...item added to positionindex ${positionIndex}`);
+  //   } else {
+  //     const freeSpotIndex = this.inventory.findIndex(i => i.item === null);
+  //     this.inventory[freeSpotIndex].item = { ...item, positionIndex: freeSpotIndex, equipped: false };
+  //     console.log(`...item added to positionindex ${freeSpotIndex}`);
+  //   }
+  // }
 
-  public isInventoryFull(): boolean {
-    const itemsArr = this.inventory.map(items => items.item).filter(items => items !== null);
-    return itemsArr.length >= this.maxInventorySlots ? true : false
+  // public isInventoryFull(): boolean {
+  //   const itemsArr = this.inventory.map(items => items.item).filter(items => items !== null);
+  //   return itemsArr.length >= this.maxInventorySlots ? true : false
 
-  }
+  // }
 
   private checkLevelUp(): void {
     if (this.currentExperience >= this.maxExperience) {
@@ -149,26 +138,26 @@ export class Character implements ICharacter {
     }
   }
 
-  private generateInventory(): void {
-    console.log('Generating character inventory...')
-    for (let i = 0; i < this.maxInventorySlots; i++) {
-      this.inventory.push({ item: null });
-    }
-    console.log(`...inventory generated with ${this.maxInventorySlots} slots.`)
-  }
+  // private generateInventory(): void {
+  //   console.log('Generating character inventory...')
+  //   for (let i = 0; i < this.maxInventorySlots; i++) {
+  //     this.inventory.push({ item: null });
+  //   }
+  //   console.log(`...inventory generated with ${this.maxInventorySlots} slots.`)
+  // }
 
-  private checkCharacterEquipmentSlots() {
-    console.log('Checking character equipment slots...')
-    this.equipmentSlots.forEach(es => {
-      if (es.equipment !== null) {
-        console.log('...equipment found, updating character stats...')
-        this.updateStats(es.equipment.statsEffects.default);
-        this.updateStats(es.equipment.statsEffects.rolledAffixes);
-        es.equipment.positionIndex = this.equipmentSlots.findIndex((eqs) => eqs.equipment?.slot === eqs.slot);
-      }
-    })
-    console.log('...character equipment slots checked.')
-  }
+  // private checkCharacterEquipmentSlots() {
+  //   console.log('Checking character equipment slots...')
+  //   this.equipmentSlots.forEach(es => {
+  //     if (es.equipment !== null) {
+  //       console.log('...equipment found, updating character stats...')
+  //       this.updateStats(es.equipment.statsEffects.default);
+  //       this.updateStats(es.equipment.statsEffects.rolledAffixes);
+  //       es.equipment.positionIndex = this.equipmentSlots.findIndex((eqs) => eqs.equipment?.slot === eqs.slot);
+  //     }
+  //   })
+  //   console.log('...character equipment slots checked.')
+  // }
 
   // public equipItem(equipment: IArmor | IWeapon): boolean {
   //   if (Object.is(this.inventory[equipment.positionIndex!].item, equipment)) {
