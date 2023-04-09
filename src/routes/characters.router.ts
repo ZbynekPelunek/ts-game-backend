@@ -1,14 +1,16 @@
 import axios from 'axios';
 import express, { Request, Response } from 'express';
 import * as _ from 'lodash';
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 import {
   CharacterFrontend,
   GET_characterAdventuresAll,
   GET_characterEquipSlots,
+  Request_Characters_GET_one_params,
   Response_Characters_GET_one,
-  Response_Inventory_POST,
+  Response_Characters_POST,
+  Response_Inventories_POST,
 } from '../../../shared/src';
 import { NotFoundError } from '../errors/not-found-error';
 import { CharacterModel } from '../schema/character.schema';
@@ -21,7 +23,7 @@ interface Request_Character_POST {
   name: string;
 }
 
-charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, res: Response) => {
+charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, res: Response<Response_Characters_POST>) => {
   const characterBody = req.body;
 
   const character = new CharacterModel({
@@ -29,8 +31,13 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
     name: characterBody.name
   });
 
-  const inventoryResponse = await axios.post<Response_Inventory_POST>('http://localhost:3000/api/v1/inventories', { characterId: character._id });
-  character.inventoryId = inventoryResponse.data.inventory.inventoryId;
+  const inventoryResponse = await axios.post<Response_Inventories_POST>('http://localhost:3000/api/v1/inventories', { characterId: character._id });
+  if (!inventoryResponse.data.success) {
+    return res.status(500).json({ success: false, error: 'Inventory creation failed' });
+  }
+
+  const convertInventoryId = new mongoose.Types.ObjectId(inventoryResponse.data.inventory.inventoryId);
+  character.inventoryId = convertInventoryId;
 
   // if (!character.populated('inventoryId')) {
   //   console.log('character inventoryId empty: ', character);
@@ -52,11 +59,14 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   //console.log('axios response: ', response);
 
   return res.status(201).json(
-    { characterId: character._id.toString() }
+    {
+      success: true,
+      character: { characterId: character._id.toString() }
+    }
   );
 })
 
-charactersRouter.get('/:characterId', async (req: Request<{ characterId: Types.ObjectId }>, res: Response<Response_Characters_GET_one>) => {
+charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params>, res: Response<Response_Characters_GET_one>) => {
   const { characterId } = req.params;
   console.log('getting character by id: ', characterId);
 
@@ -374,15 +384,15 @@ charactersRouter.get('/:characterId/equipment', (req: Request, res: Response<GET
 // })
 
 // INVENTORY
-charactersRouter.get('/:id/inventory', (req: Request, res: Response) => {
-  const characterId = req.params.id;
-  if (characterId !== '1') {
-    return res.status(404).json({
-      error: 'Not Found',
-      message: `Character with id ${characterId} not found`
-    })
-  }
-  const character = testCharacter;
+// charactersRouter.get('/:id/inventory', (req: Request, res: Response) => {
+//   const characterId = req.params.id;
+//   if (characterId !== '1') {
+//     return res.status(404).json({
+//       error: 'Not Found',
+//       message: `Character with id ${characterId} not found`
+//     })
+//   }
+//   const character = testCharacter;
 
-  return res.status(200).json({ inventory: character.inventory });
-})
+//   return res.status(200).json({ inventory: character.inventory });
+// })

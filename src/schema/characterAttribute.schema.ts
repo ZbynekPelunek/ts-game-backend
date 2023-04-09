@@ -1,29 +1,35 @@
 import mongoose, { Schema } from 'mongoose';
 
-import { CharacterAttribute } from '../../../shared/src';
+import { CharacterAttributeBackend } from '../../../shared/src';
 
-const characterAttributeSchema = new Schema<CharacterAttribute>({
+const characterAttributeSchema = new Schema<CharacterAttributeBackend>({
   characterId: {
-    type: Schema.Types.ObjectId
+    type: Schema.Types.ObjectId,
+    required: true
   },
   attributeId: {
-    type: String
+    type: String,
+    required: true
   },
   'base-value': {
     type: Number,
-    default: 0
+    default: 0,
+    required: true
   },
   'added-value': {
     type: Number,
-    default: 0
+    default: 0,
+    required: true
   },
-  'stats-value': {
+  'stats-added-value': {
     type: Number,
-    default: 0
+    default: 0,
+    required: true
   },
   'total-value': {
     type: Number,
-    default: 0
+    default: 0,
+    required: true
   }
 }, { timestamps: true });
 

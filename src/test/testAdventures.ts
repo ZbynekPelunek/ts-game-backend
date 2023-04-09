@@ -10,11 +10,7 @@ export const allAdventures: IAdventure[] = [
     timeInSeconds: 5,
     reward: {
       experience: 100,
-      items: [testEquipmentArr[4]],
-      currencies: {
-        gold: '1',
-        cheating_currency: '1'
-      }
+      items: [testEquipmentArr[4]]
     },
     adventureState: AdventureState.IDLE
   }),
@@ -25,11 +21,7 @@ export const allAdventures: IAdventure[] = [
     timeInSeconds: 4,
     reward: {
       experience: 250,
-      items: [testEquipmentArr[1], testEquipmentArr[2]],
-      currencies: {
-        gold: '2',
-        cheating_currency: '2'
-      }
+      items: [testEquipmentArr[1], testEquipmentArr[2]]
     },
     adventureState: AdventureState.IDLE
   }),

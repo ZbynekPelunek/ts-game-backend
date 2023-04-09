@@ -11,8 +11,7 @@ export class Adventure {
       adventureState: adventure.adventureState || AdventureState.IDLE,
       reward: {
         experience: adventure.reward?.experience || 0,
-        items: adventure.reward?.items || [],
-        currencies: adventure.reward?.currencies
+        items: adventure.reward?.items || []
       }
     }
   }

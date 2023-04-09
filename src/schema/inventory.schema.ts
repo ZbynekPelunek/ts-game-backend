@@ -1,19 +1,22 @@
 import mongoose, { Schema } from 'mongoose';
 
-import { Inventory } from '../../../shared/src';
+import { InventoryBackend } from '../../../shared/src/interface/character/inventory.interface';
 import { defaultInventorySlots, defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 
-const inventorySchema = new Schema<Inventory>({
+const inventorySchema = new Schema<InventoryBackend>({
   characterId: {
-    type: Schema.Types.ObjectId
+    type: Schema.Types.ObjectId,
+    required: true
   },
   'max-character-slot': {
     type: Number,
-    default: defaultMaxInventorySlots
+    default: defaultMaxInventorySlots,
+    required: true
   },
   slots: {
     type: [{ slot: Number, itemId: Number, amount: Number }],
-    default: defaultInventorySlots
+    default: defaultInventorySlots,
+    required: true
   }
 }, { timestamps: true });
 

@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 
-import { Currency, EquipmentSlotsArr, IAdventure, Inventory, ItemStat } from '../../../shared/src';
+import { Currency, EquipmentSlotsArr, IAdventure } from '../../../shared/src';
 import { defaultCharacterCurrencies } from '../defaultCharacterData/currencies';
 import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
 import { characterAvailableAdventures } from '../test/testAdventures';
@@ -15,7 +15,6 @@ export class Character {
     public currentExperience: number = 0,
     public maxExperience: number = 200,
     public equipmentSlots: EquipmentSlotsArr = defaultEquipmentSlots,
-    public inventory: Inventory[] = [],
     public maxInventorySlots: number = 8,
     public currencies: Currency[] = defaultCharacterCurrencies,
     public adventures: IAdventure[] = characterAvailableAdventures,

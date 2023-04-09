@@ -1,4 +1,4 @@
-import { CharacterAttribute, PrimaryAttributeId, SecondaryAttributeId } from '../../../shared/src';
+import { PrimaryAttributeId, SecondaryAttributeId } from '../../../shared/src';
 
 export function calculateAttributes(attributes: Partial<CharacterAttribute>[]) {
   //console.log('attributes to calculate: ', attributes);

@@ -1,9 +1,9 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
-import { BasicAttribute } from '../../../shared/src';
+import { BasicAttributeBackend } from '../../../shared/src';
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-class Attributes implements BasicAttribute {
+class Attributes implements BasicAttributeBackend {
   @prop({ required: true })
   public attributeId!: string;
 

@@ -1,67 +1,62 @@
-import { CharacterAttribute, MiscAttributeId, PrimaryAttributeId, SecondaryAttributeId } from '../../../shared/src';
+import {
+  CommonCharacterAttributeParams,
+  MainAttributeId,
+  MiscAttributeId,
+  PrimaryAttributeId,
+  SecondaryAttributeId,
+} from '../../../shared/src';
 
-export const defaultCharacterAttributes: Partial<CharacterAttribute>[] = [
+export const defaultCharacterAttributes: Partial<CommonCharacterAttributeParams>[] = [
+  // MAIN
   {
-    "stats-value": 0,
     "base-value": 10,
-    attributeId: PrimaryAttributeId.HEALTH
+    attributeId: MainAttributeId.HEALTH
   },
   {
-    "added-value": 0,
+    "base-value": 10,
+    attributeId: MainAttributeId.ARMOR
+  },
+  {
+    "base-value": 1,
+    attributeId: MainAttributeId.MIN_DAMAGE
+  },
+  {
+    "base-value": 2,
+    attributeId: MainAttributeId.MAX_DAMAGE
+  },
+  {
+    "base-value": 10,
+    attributeId: MainAttributeId.POWER
+  },
+
+  // PRIMARY
+  {
     "base-value": 1,
     attributeId: PrimaryAttributeId.AGILITY
   },
   {
-    "added-value": 30,
     "base-value": 15,
     attributeId: PrimaryAttributeId.STAMINA
   },
   {
-    "added-value": 0,
     "base-value": 1,
     attributeId: PrimaryAttributeId.STRENGTH
   },
   {
-    "added-value": 0,
-    "stats-value": 0,
-    "base-value": 10,
-    attributeId: PrimaryAttributeId.ARMOR
-  },
-  {
-    "added-value": 0,
     "base-value": 1,
     attributeId: PrimaryAttributeId.INTELLECT
   },
+
+  // SECONDARY
   {
-    "added-value": 0,
-    "base-value": 1,
-    attributeId: PrimaryAttributeId.MIN_DAMAGE
-  },
-  {
-    "added-value": 0,
-    "base-value": 2,
-    attributeId: PrimaryAttributeId.MAX_DAMAGE
-  },
-  {
-    "added-value": 0,
-    "stats-value": 0,
-    "base-value": 10,
-    attributeId: PrimaryAttributeId.POWER
-  },
-  {
-    "added-value": 0,
-    "stats-value": 0,
     "base-value": 1,
     attributeId: SecondaryAttributeId.CRIT_CHANCE_PERCENT
   },
   {
-    "added-value": 0,
     "base-value": 0,
     attributeId: SecondaryAttributeId.CRIT_CHANCE_RATING
   },
   {
-    "added-value": 0,
-    "stats-value": 0,
     "base-value": 50,
     attributeId: SecondaryAttributeId.CRIT_DAMAGE_PERCENT
   },
@@ -69,6 +64,8 @@ export const defaultCharacterAttributes: Partial<CharacterAttribute>[] = [
     "base-value": 0,
     attributeId: SecondaryAttributeId.CRIT_DAMAGE_RATING
   },
+
+  // MISC
   {
     "base-value": 0,
     attributeId: MiscAttributeId.BONUS_DAMAGE_PERCENT

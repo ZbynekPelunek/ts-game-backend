@@ -1,7 +1,13 @@
 import express, { Request, Response } from 'express';
-import { Types } from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
-import { Request_Account_POST, Response_Account_POST } from '../../../shared/src';
+import {
+  Request_Account_POST,
+  Request_Account_POST_Characters_body,
+  Request_Account_POST_Characters_params,
+  Response_Account_POST,
+  Response_Account_POST_Characters,
+} from '../../../shared/src';
 import { NotFoundError } from '../errors/not-found-error';
 import { AccountModel } from '../schema/account.schema';
 
@@ -19,11 +25,14 @@ accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST>, res: 
   await account.save();
 
   return res.status(201).json(
-    { accountId: account._id }
+    {
+      success: true,
+      account: { accountId: account._id.toString() }
+    }
   );
 });
 
-accountsRouter.post('/:accountId/characters', async (req: Request<{ accountId: Types.ObjectId }, {}, { characterId: Types.ObjectId }>, res: Response) => {
+accountsRouter.post('/:accountId/characters', async (req: Request<Request_Account_POST_Characters_params, {}, Request_Account_POST_Characters_body>, res: Response<Response_Account_POST_Characters>) => {
   const accountId = req.params.accountId;
   const characterId = req.body.characterId;
 
@@ -33,13 +42,15 @@ accountsRouter.post('/:accountId/characters', async (req: Request<{ accountId: T
     throw new NotFoundError(`Account witd id '${accountId}' not found`);
   }
 
-  account.characters.push({ _id: characterId })
-  account.save();
+  const convertCharacterId = new mongoose.Types.ObjectId(characterId);
+
+  account.characters.push({ _id: convertCharacterId });
+  await account.save();
 
   return res.status(201).json(
     {
       success: true,
-      account
+      account: { accountId: account._id.toString() }
     }
   );
 })

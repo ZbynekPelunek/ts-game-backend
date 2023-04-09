@@ -1,29 +1,45 @@
 import express, { Request, Response } from 'express';
-import { Types } from 'mongoose';
 
-import { CharacterAttribute } from '../../../shared/src';
+import {
+  CharacterAttributeBackend,
+  CharacterAttributeFrontend,
+  Request_CharacterAttributes_GET_all_query,
+  Request_CharacterAttributes_POST_body,
+  Response_CharacterAttributes_GET_all,
+  Response_CharacterAttributes_POST,
+} from '../../../shared/src';
 import { defaultCharacterAttributes } from '../defaultCharacterData/attributes';
-import { calculateAttributes } from '../engine/attributes';
 import { CharacterAttributeModel } from '../schema/characterAttribute.schema';
 
 export const characterAttributesRouter = express.Router();
 
-characterAttributesRouter.get('', async (req: Request<{}, {}, {}, { characterId: Types.ObjectId }>, res: Response) => {
+characterAttributesRouter.get('', async (req: Request<{}, {}, {}, Request_CharacterAttributes_GET_all_query>, res: Response<Response_CharacterAttributes_GET_all>) => {
   const { characterId } = req.query;
-  console.log('GET characterAttributesRouter query characterId: ', characterId);
 
-  const characterAttributes: CharacterAttribute[] = await CharacterAttributeModel.find({ characterId: characterId });
+  const characterAttributes: CharacterAttributeBackend[] = await CharacterAttributeModel.find({ characterId: characterId });
 
-  return res.status(200).json({ success: true, characterAttributes });
+  const responseCharacterAttributes: CharacterAttributeFrontend[] = characterAttributes.map(ca => {
+    return {
+      characterAttributeId: ca._id.toString(),
+      characterId: characterId.toString(),
+      "added-value": ca['added-value'],
+      "base-value": ca['base-value'],
+      "stats-added-value": ca['stats-added-value'],
+      "total-value": ca['total-value'],
+      attributeId: ca.attributeId
+    }
+  });
+
+  return res.status(200).json({ success: true, characterAttributes: responseCharacterAttributes });
 })
 
-characterAttributesRouter.post('', async (req: Request<{}, {}, { characterId: Types.ObjectId; }>, res: Response) => {
+characterAttributesRouter.post('', async (req: Request<{}, {}, Request_CharacterAttributes_POST_body>, res: Response<Response_CharacterAttributes_POST>) => {
   const { characterId } = req.body;
   console.log('creating character attributes for character: ', characterId);
 
-  const calculatedStats = calculateAttributes(defaultCharacterAttributes);
+  //const calculatedStats = calculateAttributes(defaultCharacterAttributes);
 
-  const defaultStats = calculatedStats.map(ca => {
+  const defaultStats = defaultCharacterAttributes.map(ca => {
     return { ...ca, characterId }
   })
 

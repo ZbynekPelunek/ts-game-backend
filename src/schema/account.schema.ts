@@ -1,11 +1,20 @@
 import mongoose, { Schema } from 'mongoose';
 
-import { Account } from '../../../shared/src/interface/account.interface';
+import { AccountBackend } from '../../../shared/src';
 
-const accountSchema = new Schema<Account>({
-  username: String,
-  email: String,
-  password: String,
+const accountSchema = new Schema<AccountBackend>({
+  username: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
   characters: [{
     _id: {
       type: Schema.Types.ObjectId,
@@ -13,12 +22,11 @@ const accountSchema = new Schema<Account>({
       alias: 'characterId'
     }
   }],
-  level: Number,
-  adventureResults: [{
-    _id: {
-      type: Schema.Types.ObjectId
-    }
-  }]
+  level: {
+    type: Number,
+    default: 0,
+    required: true
+  },
 }, { timestamps: true });
 
 export const AccountModel = mongoose.model('Account', accountSchema);
