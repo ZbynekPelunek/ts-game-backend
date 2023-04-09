@@ -1,9 +1,18 @@
-import { Attribute, AttributeType, MiscAttributeId, PrimaryAttributeId, SecondaryAttributeId } from '../../shared/src';
+import {
+  AttributeType,
+  BasicAttribute,
+  MiscAttribute,
+  MiscAttributeId,
+  PrimaryAttribute,
+  PrimaryAttributeId,
+  SecondaryAttribute,
+  SecondaryAttributeId,
+} from '../../shared/src';
 
-export const generateAttributes = (): Attribute[] => {
-  let primary: Attribute[] = [];
-  let secondary: Attribute[] = [];
-  let misc: Attribute[] = [];
+export const generateAttributes = (): BasicAttribute[] => {
+  let primary: BasicAttribute[] = [];
+  let secondary: BasicAttribute[] = [];
+  let misc: BasicAttribute[] = [];
 
   for (const attributeType in AttributeType) {
     switch (attributeType) {
@@ -24,8 +33,8 @@ export const generateAttributes = (): Attribute[] => {
   return primary.concat(secondary, misc);
 }
 
-const generatePrimaryAttributes = (): Attribute[] => {
-  const allPrimaryAttributes: Attribute[] = [];
+const generatePrimaryAttributes = (): PrimaryAttribute[] => {
+  const allPrimaryAttributes: PrimaryAttribute[] = [];
 
   for (const attributeId in PrimaryAttributeId) {
     switch (attributeId) {
@@ -33,72 +42,63 @@ const generatePrimaryAttributes = (): Attribute[] => {
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Agility',
-          desc: ''
+          label: 'Agility'
         });
         break;
       case PrimaryAttributeId.ARMOR:
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Armor',
-          desc: ''
+          label: 'Armor'
         });
         break;
       case PrimaryAttributeId.HEALTH:
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Health',
-          desc: ''
+          label: 'Health'
         });
         break;
       case PrimaryAttributeId.INTELLECT:
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Intellect',
-          desc: ''
+          label: 'Intellect'
         });
         break;
       case PrimaryAttributeId.MAX_DAMAGE:
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Maximal Damage',
-          desc: ''
+          label: 'Maximal Damage'
         });
         break;
       case PrimaryAttributeId.MIN_DAMAGE:
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Minimal Damage',
-          desc: ''
+          label: 'Minimal Damage'
         });
         break;
       case PrimaryAttributeId.POWER:
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Power',
-          desc: ''
+          label: 'Power'
         });
         break;
       case PrimaryAttributeId.STAMINA:
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Stamina',
-          desc: ''
+          label: 'Stamina'
         });
         break;
       case PrimaryAttributeId.STRENGTH:
         allPrimaryAttributes.push({
           attributeId,
           type: AttributeType.PRIMARY,
-          label: 'Strength',
-          desc: ''
+          label: 'Strength'
         });
         break;
       default:
@@ -108,8 +108,8 @@ const generatePrimaryAttributes = (): Attribute[] => {
   return allPrimaryAttributes;
 }
 
-const generateSecondaryAttributes = (): Attribute[] => {
-  const allSecondaryAttributes: Attribute[] = [];
+const generateSecondaryAttributes = (): SecondaryAttribute[] => {
+  const allSecondaryAttributes: SecondaryAttribute[] = [];
 
   for (const attributeId in SecondaryAttributeId) {
     switch (attributeId) {
@@ -118,7 +118,6 @@ const generateSecondaryAttributes = (): Attribute[] => {
           attributeId,
           type: AttributeType.SECONDARY,
           label: 'Critical Strike Chance',
-          desc: '',
           percent: true
         });
         break;
@@ -126,8 +125,7 @@ const generateSecondaryAttributes = (): Attribute[] => {
         allSecondaryAttributes.push({
           attributeId,
           type: AttributeType.SECONDARY,
-          label: 'Critical Strike Rating',
-          desc: ''
+          label: 'Critical Strike Rating'
         });
         break;
       case SecondaryAttributeId.CRIT_DAMAGE_PERCENT:
@@ -135,7 +133,6 @@ const generateSecondaryAttributes = (): Attribute[] => {
           attributeId,
           type: AttributeType.SECONDARY,
           label: 'Critical Damage',
-          desc: '',
           percent: true
         });
         break;
@@ -143,16 +140,14 @@ const generateSecondaryAttributes = (): Attribute[] => {
         allSecondaryAttributes.push({
           attributeId,
           type: AttributeType.SECONDARY,
-          label: 'Critical Damage Rating',
-          desc: ''
+          label: 'Critical Damage Rating'
         });
         break;
       case SecondaryAttributeId.MULTISTRIKE_RATING:
         allSecondaryAttributes.push({
           attributeId,
           type: AttributeType.SECONDARY,
-          label: 'Multistrike Rating',
-          desc: ''
+          label: 'Multistrike Rating'
         });
         break;
       case SecondaryAttributeId.MULTRISTRIKE_CHANCE:
@@ -160,7 +155,6 @@ const generateSecondaryAttributes = (): Attribute[] => {
           attributeId,
           type: AttributeType.SECONDARY,
           label: 'Multistrike Chance',
-          desc: '',
           percent: true
         });
         break;
@@ -172,8 +166,8 @@ const generateSecondaryAttributes = (): Attribute[] => {
   return allSecondaryAttributes;
 }
 
-const generateMiscAttributes = (): Attribute[] => {
-  const allMiscAttributes: Attribute[] = [];
+const generateMiscAttributes = (): MiscAttribute[] => {
+  const allMiscAttributes: MiscAttribute[] = [];
 
   for (const attributeId in MiscAttributeId) {
     switch (attributeId) {

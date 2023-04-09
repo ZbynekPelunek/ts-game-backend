@@ -1,20 +1,14 @@
 import { randomUUID } from 'crypto';
 import mongoose, { Schema } from 'mongoose';
 
-import { ICharacter } from '../../../shared/src';
-import { defaultChracterAttributes } from '../defaultCharacterData/attributes';
+import { CharacterBackend } from '../../../shared/src';
 import { defaultCharacterCurrencies } from '../defaultCharacterData/currencies';
 import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
-import { defaultInventorySlots, defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 
-const characterSchema = new Schema<ICharacter>({
-  _id: {
-    type: Schema.Types.UUID,
-    default: () => randomUUID(),
-    alias: 'characterId'
-  },
+const characterSchema = new Schema<CharacterBackend>({
   accountId: {
-    type: Schema.Types.UUID,
+    type: Schema.Types.ObjectId,
+    ref: 'Account'
   },
   name: {
     type: String,
@@ -44,12 +38,15 @@ const characterSchema = new Schema<ICharacter>({
     default: 1
   },
   inventoryId: {
-    type: Schema.Types.UUID
+    type: Schema.Types.ObjectId,
+    ref: 'Inventory'
   },
-  attributes: {
-    type: [{ attributeId: String, 'base-value': Number, 'added-value': Number }],
-    default: defaultChracterAttributes
-  }
+  characterAttributes: [{
+    _id: {
+      type: Schema.Types.ObjectId,
+      ref: 'CharacterAttributes'
+    }
+  }]
 }, { timestamps: true });
 
 export const CharacterModel = mongoose.model('Character', characterSchema);

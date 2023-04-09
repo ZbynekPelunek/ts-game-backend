@@ -1,9 +1,9 @@
 import { CharacterAttribute, MiscAttributeId, PrimaryAttributeId, SecondaryAttributeId } from '../../../shared/src';
 
-export const defaultChracterAttributes: CharacterAttribute[] = [
+export const defaultCharacterAttributes: Partial<CharacterAttribute>[] = [
   {
-    "added-value": 0,
-    "base-value": 100,
+    "stats-value": 0,
+    "base-value": 10,
     attributeId: PrimaryAttributeId.HEALTH
   },
   {
@@ -12,8 +12,8 @@ export const defaultChracterAttributes: CharacterAttribute[] = [
     attributeId: PrimaryAttributeId.AGILITY
   },
   {
-    "added-value": 0,
-    "base-value": 1,
+    "added-value": 30,
+    "base-value": 15,
     attributeId: PrimaryAttributeId.STAMINA
   },
   {
@@ -23,6 +23,7 @@ export const defaultChracterAttributes: CharacterAttribute[] = [
   },
   {
     "added-value": 0,
+    "stats-value": 0,
     "base-value": 10,
     attributeId: PrimaryAttributeId.ARMOR
   },
@@ -43,11 +44,13 @@ export const defaultChracterAttributes: CharacterAttribute[] = [
   },
   {
     "added-value": 0,
+    "stats-value": 0,
     "base-value": 10,
     attributeId: PrimaryAttributeId.POWER
   },
   {
     "added-value": 0,
+    "stats-value": 0,
     "base-value": 1,
     attributeId: SecondaryAttributeId.CRIT_CHANCE_PERCENT
   },
@@ -58,31 +61,27 @@ export const defaultChracterAttributes: CharacterAttribute[] = [
   },
   {
     "added-value": 0,
+    "stats-value": 0,
     "base-value": 50,
     attributeId: SecondaryAttributeId.CRIT_DAMAGE_PERCENT
   },
   {
-    "added-value": 0,
     "base-value": 0,
     attributeId: SecondaryAttributeId.CRIT_DAMAGE_RATING
   },
   {
-    "added-value": 0,
     "base-value": 0,
     attributeId: MiscAttributeId.BONUS_DAMAGE_PERCENT
   },
   {
-    "added-value": 0,
     "base-value": 0,
     attributeId: MiscAttributeId.BONUS_EXPERIENCE_PERCENT
   },
   {
-    "added-value": 0,
     "base-value": 0,
     attributeId: MiscAttributeId.BONUS_EXPERIENCE_STATIC
   },
   {
-    "added-value": 0,
     "base-value": 0,
     attributeId: MiscAttributeId.BONUS_HEALTH_PERCENT
   },

@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { Types } from 'mongoose';
 
 import { Request_Account_POST, Response_Account_POST } from '../../../shared/src';
 import { NotFoundError } from '../errors/not-found-error';
@@ -22,7 +23,7 @@ accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST>, res: 
   );
 });
 
-accountsRouter.post('/:accountId/characters', async (req: Request, res: Response) => {
+accountsRouter.post('/:accountId/characters', async (req: Request<{ accountId: Types.ObjectId }, {}, { characterId: Types.ObjectId }>, res: Response) => {
   const accountId = req.params.accountId;
   const characterId = req.body.characterId;
 

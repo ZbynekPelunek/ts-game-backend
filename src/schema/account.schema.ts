@@ -1,20 +1,14 @@
-import { randomUUID } from 'crypto';
 import mongoose, { Schema } from 'mongoose';
 
 import { Account } from '../../../shared/src/interface/account.interface';
 
 const accountSchema = new Schema<Account>({
-  _id: {
-    type: Schema.Types.UUID,
-    default: () => randomUUID(),
-    alias: 'accountId'
-  },
   username: String,
   email: String,
   password: String,
   characters: [{
     _id: {
-      type: Schema.Types.UUID,
+      type: Schema.Types.ObjectId,
       ref: 'Character',
       alias: 'characterId'
     }
@@ -22,7 +16,7 @@ const accountSchema = new Schema<Account>({
   level: Number,
   adventureResults: [{
     _id: {
-      type: Schema.Types.UUID
+      type: Schema.Types.ObjectId
     }
   }]
 }, { timestamps: true });

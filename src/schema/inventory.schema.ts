@@ -1,14 +1,11 @@
-import { randomUUID } from 'crypto';
 import mongoose, { Schema } from 'mongoose';
 
 import { Inventory } from '../../../shared/src';
 import { defaultInventorySlots, defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 
 const inventorySchema = new Schema<Inventory>({
-  _id: {
-    type: Schema.Types.UUID,
-    default: () => randomUUID(),
-    alias: 'inventoryId'
+  characterId: {
+    type: Schema.Types.ObjectId
   },
   'max-character-slot': {
     type: Number,

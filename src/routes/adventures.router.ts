@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 
-import { AdventureActions, AdventureState, Error, IAdventure } from '../../../shared/src';
+import { AdventureActions, AdventureState, API_Response_Error, IAdventure } from '../../../shared/src';
 import { NotFoundError } from '../errors/not-found-error';
 import { allAdventures } from '../test/testAdventures';
 import { testCharacter } from '../test/testCharacter';
@@ -12,7 +12,7 @@ adventuresRouter.get('', (_req, res: Response): Response<IAdventure[]> => {
   return res.status(200).json(allAdventures);
 })
 
-adventuresRouter.get('/:id', (req: Request, res: Response): Response<IAdventure | Error> => {
+adventuresRouter.get('/:id', (req: Request, res: Response): Response<IAdventure | API_Response_Error> => {
   const adventureId: string = req.params.id;
 
   const adventure = allAdventures[allAdventures.findIndex((a) => a.adventureId === adventureId)];

@@ -1,27 +1,17 @@
 import axios from 'axios';
 import express, { Request, Response } from 'express';
 import * as _ from 'lodash';
+import { Types } from 'mongoose';
 
 import {
-  CharacterActions,
-  EquipableItem,
-  EquipmentSlotsArr,
+  CharacterFrontend,
   GET_characterAdventuresAll,
-  GET_characterByID,
   GET_characterEquipSlots,
-  ICharacter,
-  Inventory,
-  InventoryItem,
-  ItemType,
-  POST_characterActions,
-  PUT_characterByID,
+  Response_Characters_GET_one,
   Response_Inventory_POST,
 } from '../../../shared/src';
-import { BadRequestError } from '../errors/bad-request-error';
 import { NotFoundError } from '../errors/not-found-error';
-import { ServerError } from '../errors/server-error';
 import { CharacterModel } from '../schema/character.schema';
-import { characterAvailableAdventures } from '../test/testAdventures';
 import { testCharacter } from '../test/testCharacter';
 
 export const charactersRouter = express.Router();
@@ -38,10 +28,23 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
     accountId: characterBody.accountId,
     name: characterBody.name
   });
-  //character.stats = defaultStats;
-  //character.adventures = characterAvailableAdventures;
-  const inventoryResponse = await axios.post<Response_Inventory_POST>('http://localhost:3000/api/v1/inventories');
+
+  const inventoryResponse = await axios.post<Response_Inventory_POST>('http://localhost:3000/api/v1/inventories', { characterId: character._id });
   character.inventoryId = inventoryResponse.data.inventory.inventoryId;
+
+  // if (!character.populated('inventoryId')) {
+  //   console.log('character inventoryId empty: ', character);
+  //   return res.status(500).json({ succes: false, error: 'inventoryId is empty' });
+  // }
+
+  const characterAttributesResponse = await axios.post('http://localhost:3000/api/v1/character-attributes', { characterId: character._id });
+  //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
+  character.characterAttributes = characterAttributesResponse.data.characterAttributes;
+  // if (!character.populated('characterAttributes')) {
+  //   return res.status(500).json({ succes: false, error: 'characterAttributes is empty' });
+  // }
+
+  //console.log('saving character: ', character);
 
   await character.save();
 
@@ -49,11 +52,11 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   //console.log('axios response: ', response);
 
   return res.status(201).json(
-    { characterId: character._id }
+    { characterId: character._id.toString() }
   );
 })
 
-charactersRouter.get('/:characterId', async (req: Request, res: Response) => {
+charactersRouter.get('/:characterId', async (req: Request<{ characterId: Types.ObjectId }>, res: Response<Response_Characters_GET_one>) => {
   const { characterId } = req.params;
   console.log('getting character by id: ', characterId);
 
@@ -65,8 +68,24 @@ charactersRouter.get('/:characterId', async (req: Request, res: Response) => {
   if (!character) {
     return res.status(404).json({ success: false, error: `Character with id '${characterId}' not found` });
   }
+  //console.log('character: ', character);
 
-  return res.status(200).json({ success: true, character });
+  const responseCharacter: CharacterFrontend = {
+    characterId: character._id.toString(),
+    accountId: character.accountId.toString(),
+    adventures: character.adventures,
+    characterAttributes: character.characterAttributes.map(ca => ca._id.toString()),
+    currencies: character.currencies,
+    currentExperience: character.currentExperience,
+    equipmentSlots: character.equipmentSlots,
+    inventoryId: character.inventoryId.toString(),
+    level: character.level,
+    maxExperience: character.maxExperience,
+    name: character.name
+  };
+  //console.log('responseCharacter: ', responseCharacter);
+
+  return res.status(200).json({ success: true, character: responseCharacter });
 })
 
 charactersRouter.put('/:characterId', (req: Request, res: Response) => {

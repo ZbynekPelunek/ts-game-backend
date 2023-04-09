@@ -1,6 +1,13 @@
 import * as _ from 'lodash';
 
-import { AdventureResult, AdventureState, AdventureTimer, IAdventure, ICharacter, StatName } from '../../../shared/src';
+import {
+  AdventureResult,
+  AdventureState,
+  AdventureTimer,
+  CharacterBackend,
+  IAdventure,
+  StatName,
+} from '../../../shared/src';
 import { AttackerTarget } from '../interface/combat.interface';
 import { adventureResults } from '../routes/results.router';
 import { Combat } from './combat';

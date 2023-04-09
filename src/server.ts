@@ -6,9 +6,14 @@ import { errorHandler } from './middleware/errorHandler';
 import { accountsRouter } from './routes/accounts.router';
 import { adventuresRouter } from './routes/adventures.router';
 import { attributesRouter } from './routes/attributes.router';
+import { characterAttributesRouter } from './routes/characterAttributes';
 import { charactersRouter } from './routes/characters.router';
 import { inventoriesRouter } from './routes/inventory.router';
 import { resultsRouter } from './routes/results.router';
+import { AccountModel } from './schema/account.schema';
+import { CharacterModel } from './schema/character.schema';
+import { CharacterAttributeModel } from './schema/characterAttribute.schema';
+import { InventoryModel } from './schema/inventory.schema';
 
 const app = express();
 const PORT: Number = 3000;
@@ -19,6 +24,22 @@ async function connect() {
   try {
     await mongoose.connect(uri);
     console.log('Connected to MongoDB');
+
+    console.log('cleaning accounts...');
+    await AccountModel.deleteMany({});
+    console.log('...accounts cleaned.');
+
+    console.log('cleaning characters...');
+    await CharacterModel.deleteMany({});
+    console.log('...characters cleaned.');
+
+    console.log('cleaning inventories...');
+    await InventoryModel.deleteMany({});
+    console.log('...inventories cleaned.');
+
+    console.log('cleaning character attributes...');
+    await CharacterAttributeModel.deleteMany({});
+    console.log('...character attributes cleaned.');
   } catch (error) {
     console.error(error);
     process.exit(1);
@@ -41,6 +62,7 @@ app.use('/api/v1/adventures', adventuresRouter);
 app.use('/api/v1/results', resultsRouter);
 app.use('/api/v1/inventories', inventoriesRouter);
 app.use('/api/v1/attributes', attributesRouter);
+app.use('/api/v1/character-attributes', characterAttributesRouter);
 
 app.all('*', async (req, _res) => {
   throw new NotFoundError(`Route ${req.url} does not exist.`);

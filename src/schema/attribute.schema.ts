@@ -1,23 +1,23 @@
-import mongoose, { Schema } from 'mongoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
-import { Attribute } from '../../../shared/src';
+import { BasicAttribute } from '../../../shared/src';
 
-const attributeSchema = new Schema<Attribute>({
-  attributeId: {
-    type: String
-  },
-  label: String,
-  desc: {
-    type: String,
-    default: ''
-  },
-  type: {
-    type: String
-  },
-  percent: {
-    type: Boolean,
-    default: false
-  }
-}, { timestamps: true });
+@modelOptions({ schemaOptions: { timestamps: true } })
+class Attributes implements BasicAttribute {
+  @prop({ required: true })
+  public attributeId!: string;
 
-export const AttributeModel = mongoose.model('Attribute', attributeSchema);
+  @prop({ required: true })
+  public label!: string;
+
+  @prop()
+  public desc?: string;
+
+  @prop({ required: true })
+  public type!: string;
+
+  @prop({ default: false })
+  public percent?: boolean;
+}
+
+export const AttributeModel = getModelForClass(Attributes);

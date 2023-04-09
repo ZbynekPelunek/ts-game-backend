@@ -14,6 +14,7 @@ async function connect() {
 
     await AttributeModel.deleteMany({});
     await AttributeModel.insertMany(attributesData);
+    console.log('seeding done');
 
     await mongoose.connection.close();
   } catch (error) {
