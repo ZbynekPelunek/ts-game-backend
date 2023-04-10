@@ -51,12 +51,10 @@ const characterSchema = new Schema<CharacterBackend>({
     ref: 'Inventory',
     required: true
   },
-  characterAttributes: [{
-    _id: {
-      type: Schema.Types.ObjectId,
-      ref: 'CharacterAttributes'
-    }
-  }]
+  characterAttributes: {
+    type: [Schema.Types.ObjectId],
+    ref: 'CharacterAttribute'
+  }
 }, { timestamps: true });
 
 export const CharacterModel = mongoose.model('Character', characterSchema);

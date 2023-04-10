@@ -4,14 +4,17 @@ import * as _ from 'lodash';
 import mongoose, { Types } from 'mongoose';
 
 import {
+  CharacterAttributeBackend,
   CharacterFrontend,
   GET_characterAdventuresAll,
   GET_characterEquipSlots,
   Request_Characters_GET_one_params,
+  Request_Characters_GET_one_query,
   Response_Characters_GET_one,
   Response_Characters_POST,
   Response_Inventories_POST,
 } from '../../../shared/src';
+import { InventoryBackend } from '../../../shared/src/interface/character/inventory.interface';
 import { NotFoundError } from '../errors/not-found-error';
 import { CharacterModel } from '../schema/character.schema';
 import { testCharacter } from '../test/testCharacter';
@@ -66,9 +69,9 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   );
 })
 
-charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params>, res: Response<Response_Characters_GET_one>) => {
+charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response<Response_Characters_GET_one>) => {
   const { characterId } = req.params;
-  console.log('getting character by id: ', characterId);
+  const { populateInventory } = req.query;
 
   if (!characterId) {
     return res.status(400).json({ success: false, error: 'Must provide character ID' });
@@ -78,7 +81,7 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
   if (!character) {
     return res.status(404).json({ success: false, error: `Character with id '${characterId}' not found` });
   }
-  //console.log('character: ', character);
+  //console.log('GET character db response: ', character);
 
   const responseCharacter: CharacterFrontend = {
     characterId: character._id.toString(),
@@ -93,7 +96,18 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
     maxExperience: character.maxExperience,
     name: character.name
   };
-  //console.log('responseCharacter: ', responseCharacter);
+
+  let populatedResponse;
+  if (populateInventory) {
+    populatedResponse = await CharacterModel.populate<{ inventoryId: InventoryBackend }>(character, { path: 'inventoryId', select: '-createdAt -updatedAt -__v' });
+
+    responseCharacter.inventoryId = {
+      inventoryId: populatedResponse.inventoryId._id.toString(),
+      slots: populatedResponse.inventoryId.slots
+    };
+
+    //console.log('populatedResponse: ', populatedResponse);
+  }
 
   return res.status(200).json({ success: true, character: responseCharacter });
 })

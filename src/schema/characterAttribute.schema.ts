@@ -8,8 +8,9 @@ const characterAttributeSchema = new Schema<CharacterAttributeBackend>({
     required: true
   },
   attributeId: {
-    type: String,
-    required: true
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'AttributeDetail'
   },
   'base-value': {
     type: Number,

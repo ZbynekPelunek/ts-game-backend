@@ -1,85 +1,78 @@
+import mongoose from 'mongoose';
+
 import {
-  CommonCharacterAttributeParams,
-  MainAttributeId,
-  MiscAttributeId,
-  PrimaryAttributeId,
-  SecondaryAttributeId,
+  BasicAttributeFrontend,
+  CharacterAttributeBackend,
+  CharacterAttributeFrontendPopulated,
+  MainAttributeNames,
+  PrimaryAttributeNames,
+  SecondaryAttributeNames,
 } from '../../../shared/src';
+import { calculateAttributes } from '../engine/attributes';
 
-export const defaultCharacterAttributes: Partial<CommonCharacterAttributeParams>[] = [
-  // MAIN
-  {
-    "base-value": 10,
-    attributeId: MainAttributeId.HEALTH
-  },
-  {
-    "base-value": 10,
-    attributeId: MainAttributeId.ARMOR
-  },
-  {
-    "base-value": 1,
-    attributeId: MainAttributeId.MIN_DAMAGE
-  },
-  {
-    "base-value": 2,
-    attributeId: MainAttributeId.MAX_DAMAGE
-  },
-  {
-    "base-value": 10,
-    attributeId: MainAttributeId.POWER
-  },
+const commonCharAttributesValues = {
+  "base-value": 0,
+  "added-value": 0,
+  "stats-added-value": 0,
+  "total-value": 0
+}
 
-  // PRIMARY
-  {
-    "base-value": 1,
-    attributeId: PrimaryAttributeId.AGILITY
-  },
-  {
-    "base-value": 15,
-    attributeId: PrimaryAttributeId.STAMINA
-  },
-  {
-    "base-value": 1,
-    attributeId: PrimaryAttributeId.STRENGTH
-  },
-  {
-    "base-value": 1,
-    attributeId: PrimaryAttributeId.INTELLECT
-  },
+export function generateDefaultCharacterAttributes(allAttributes: BasicAttributeFrontend[], characterId: string): CharacterAttributeBackend[] {
+  const defaultAttributes: CharacterAttributeBackend[] = [];
 
-  // SECONDARY
-  {
-    "base-value": 1,
-    attributeId: SecondaryAttributeId.CRIT_CHANCE_PERCENT
-  },
-  {
-    "base-value": 0,
-    attributeId: SecondaryAttributeId.CRIT_CHANCE_RATING
-  },
-  {
-    "base-value": 50,
-    attributeId: SecondaryAttributeId.CRIT_DAMAGE_PERCENT
-  },
-  {
-    "base-value": 0,
-    attributeId: SecondaryAttributeId.CRIT_DAMAGE_RATING
-  },
+  const convertCharacterId = new mongoose.Types.ObjectId(characterId);
 
-  // MISC
-  {
-    "base-value": 0,
-    attributeId: MiscAttributeId.BONUS_DAMAGE_PERCENT
-  },
-  {
-    "base-value": 0,
-    attributeId: MiscAttributeId.BONUS_EXPERIENCE_PERCENT
-  },
-  {
-    "base-value": 0,
-    attributeId: MiscAttributeId.BONUS_EXPERIENCE_STATIC
-  },
-  {
-    "base-value": 0,
-    attributeId: MiscAttributeId.BONUS_HEALTH_PERCENT
-  },
-]
+  allAttributes.forEach(a => {
+    const attribute: CharacterAttributeBackend = {
+      ...commonCharAttributesValues,
+      characterId: convertCharacterId,
+      attributeId: new mongoose.Types.ObjectId(a.attributeId),
+      attribute: a
+    }
+    switch (a.attributeName) {
+      case MainAttributeNames.HEALTH:
+        attribute['base-value'] = 20;
+        break;
+      case MainAttributeNames.POWER:
+        attribute['base-value'] = 10;
+        break;
+      case MainAttributeNames.MIN_DAMAGE:
+        attribute['base-value'] = 1;
+        break;
+      case MainAttributeNames.MAX_DAMAGE:
+        attribute['base-value'] = 2;
+        break;
+      case MainAttributeNames.ARMOR:
+        attribute['base-value'] = 100;
+        break;
+      case PrimaryAttributeNames.AGILITY:
+        attribute['base-value'] = 3;
+        break;
+      case PrimaryAttributeNames.STRENGTH:
+        attribute['base-value'] = 4;
+        break;
+      case PrimaryAttributeNames.INTELLECT:
+        attribute['base-value'] = 5;
+        break;
+      case PrimaryAttributeNames.STAMINA:
+        attribute['base-value'] = 6;
+        break;
+      case SecondaryAttributeNames.CRIT_CHANCE_PERCENT:
+        attribute['base-value'] = 1;
+        break;
+      case SecondaryAttributeNames.CRIT_DAMAGE_PERCENT:
+        attribute['base-value'] = 50;
+        break;
+      case SecondaryAttributeNames.MULTRISTRIKE_CHANCE:
+        attribute['base-value'] = 0.01;
+        break;
+    }
+
+    attribute['total-value'] = attribute['base-value'];
+    defaultAttributes.push(attribute);
+  });
+
+  const calculatedAttributes = calculateAttributes(defaultAttributes);
+
+  return calculatedAttributes;
+}

@@ -1,213 +1,210 @@
 import {
-  AttributeType,
   BasicAttribute,
-  MiscAttribute,
-  MiscAttributeId,
-  PrimaryAttribute,
-  PrimaryAttributeId,
-  SecondaryAttribute,
-  SecondaryAttributeId,
+  MainAttributeNames,
+  MiscAttributeNames,
+  PrimaryAttributeNames,
+  SecondaryAttributeNames,
 } from '../../shared/src';
 
-export const generateAttributes = (): BasicAttribute[] => {
-  let primary: BasicAttribute[] = [];
-  let secondary: BasicAttribute[] = [];
-  let misc: BasicAttribute[] = [];
-
-  for (const attributeType in AttributeType) {
-    switch (attributeType) {
-      case AttributeType.PRIMARY:
-        primary = generatePrimaryAttributes();
-        break;
-      case AttributeType.SECONDARY:
-        secondary = generateSecondaryAttributes();
-        break;
-      case AttributeType.MISC:
-        misc = generateMiscAttributes();
-        break;
-      default:
-        throw new Error(`Missing generator for attribute type ${attributeType}`);
-    }
-  }
-
-  return primary.concat(secondary, misc);
+const commonAttributeParams = {
+  isPercent: false,
 }
 
-const generatePrimaryAttributes = (): PrimaryAttribute[] => {
-  const allPrimaryAttributes: PrimaryAttribute[] = [];
+export const generateAttributes = (): BasicAttribute[] => {
+  let allAttributes: BasicAttribute[] = [];
 
-  for (const attributeId in PrimaryAttributeId) {
-    switch (attributeId) {
-      case PrimaryAttributeId.AGILITY:
-        allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
-          label: 'Agility'
-        });
-        break;
-      case PrimaryAttributeId.ARMOR:
-        allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
+  allAttributes = allAttributes.concat(generateMainAttributes());
+
+  allAttributes = allAttributes.concat(generatePrimaryAttributes());
+
+  allAttributes = allAttributes.concat(generateSecondaryAttributes());
+
+  allAttributes = allAttributes.concat(generateMiscAttributes());
+
+  return allAttributes;
+}
+
+const generateMainAttributes = (): BasicAttribute[] => {
+  const allMainAttributes: BasicAttribute[] = [];
+
+  for (const attributeName in MainAttributeNames) {
+    switch (attributeName) {
+      case MainAttributeNames.ARMOR:
+        allMainAttributes.push({
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Armor'
         });
         break;
-      case PrimaryAttributeId.HEALTH:
-        allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
+      case MainAttributeNames.HEALTH:
+        allMainAttributes.push({
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Health'
         });
         break;
-      case PrimaryAttributeId.INTELLECT:
-        allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
-          label: 'Intellect'
-        });
-        break;
-      case PrimaryAttributeId.MAX_DAMAGE:
-        allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
+      case MainAttributeNames.MAX_DAMAGE:
+        allMainAttributes.push({
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Maximal Damage'
         });
         break;
-      case PrimaryAttributeId.MIN_DAMAGE:
-        allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
+      case MainAttributeNames.MIN_DAMAGE:
+        allMainAttributes.push({
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Minimal Damage'
         });
         break;
-      case PrimaryAttributeId.POWER:
-        allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
+      case MainAttributeNames.POWER:
+        allMainAttributes.push({
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Power'
         });
         break;
-      case PrimaryAttributeId.STAMINA:
+    }
+  }
+
+  return allMainAttributes;
+}
+
+const generatePrimaryAttributes = (): BasicAttribute[] => {
+  const allPrimaryAttributes: BasicAttribute[] = [];
+
+  for (const attributeName in PrimaryAttributeNames) {
+    switch (attributeName) {
+      case PrimaryAttributeNames.AGILITY:
         allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
+          ...commonAttributeParams,
+          attributeName: attributeName,
+          label: 'Agility'
+        });
+        break;
+      case PrimaryAttributeNames.INTELLECT:
+        allPrimaryAttributes.push({
+          ...commonAttributeParams,
+          attributeName: attributeName,
+          label: 'Intellect'
+        });
+        break;
+      case PrimaryAttributeNames.STAMINA:
+        allPrimaryAttributes.push({
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Stamina'
         });
         break;
-      case PrimaryAttributeId.STRENGTH:
+      case PrimaryAttributeNames.STRENGTH:
         allPrimaryAttributes.push({
-          attributeId,
-          type: AttributeType.PRIMARY,
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Strength'
         });
         break;
       default:
-        throw new Error(`Missing generator for attribute type ${attributeId}`);
+        throw new Error(`Missing generator for attribute type ${attributeName}`);
     }
   }
   return allPrimaryAttributes;
 }
 
-const generateSecondaryAttributes = (): SecondaryAttribute[] => {
-  const allSecondaryAttributes: SecondaryAttribute[] = [];
+const generateSecondaryAttributes = (): BasicAttribute[] => {
+  const allSecondaryAttributes: BasicAttribute[] = [];
 
-  for (const attributeId in SecondaryAttributeId) {
-    switch (attributeId) {
-      case SecondaryAttributeId.CRIT_CHANCE_PERCENT:
+  for (const attributeName in SecondaryAttributeNames) {
+    switch (attributeName) {
+      case SecondaryAttributeNames.CRIT_CHANCE_PERCENT:
         allSecondaryAttributes.push({
-          attributeId,
-          type: AttributeType.SECONDARY,
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Critical Strike Chance',
-          percent: true
+          isPercent: true
         });
         break;
-      case SecondaryAttributeId.CRIT_CHANCE_RATING:
+      case SecondaryAttributeNames.CRIT_CHANCE_RATING:
         allSecondaryAttributes.push({
-          attributeId,
-          type: AttributeType.SECONDARY,
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Critical Strike Rating'
         });
         break;
-      case SecondaryAttributeId.CRIT_DAMAGE_PERCENT:
+      case SecondaryAttributeNames.CRIT_DAMAGE_PERCENT:
         allSecondaryAttributes.push({
-          attributeId,
-          type: AttributeType.SECONDARY,
+          attributeName: attributeName,
           label: 'Critical Damage',
-          percent: true
+          isPercent: true
         });
         break;
-      case SecondaryAttributeId.CRIT_DAMAGE_RATING:
+      case SecondaryAttributeNames.CRIT_DAMAGE_RATING:
         allSecondaryAttributes.push({
-          attributeId,
-          type: AttributeType.SECONDARY,
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Critical Damage Rating'
         });
         break;
-      case SecondaryAttributeId.MULTISTRIKE_RATING:
+      case SecondaryAttributeNames.MULTISTRIKE_RATING:
         allSecondaryAttributes.push({
-          attributeId,
-          type: AttributeType.SECONDARY,
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Multistrike Rating'
         });
         break;
-      case SecondaryAttributeId.MULTRISTRIKE_CHANCE:
+      case SecondaryAttributeNames.MULTRISTRIKE_CHANCE:
         allSecondaryAttributes.push({
-          attributeId,
-          type: AttributeType.SECONDARY,
+          attributeName: attributeName,
           label: 'Multistrike Chance',
-          percent: true
+          isPercent: true
         });
         break;
       default:
-        throw new Error(`Missing generator for attribute type ${attributeId}`);
+        throw new Error(`Missing generator for attribute type ${attributeName}`);
     }
   }
 
   return allSecondaryAttributes;
 }
 
-const generateMiscAttributes = (): MiscAttribute[] => {
-  const allMiscAttributes: MiscAttribute[] = [];
+const generateMiscAttributes = (): BasicAttribute[] => {
+  const allMiscAttributes: BasicAttribute[] = [];
 
-  for (const attributeId in MiscAttributeId) {
-    switch (attributeId) {
-      case MiscAttributeId.BONUS_DAMAGE_PERCENT:
+  for (const attributeName in MiscAttributeNames) {
+    switch (attributeName) {
+      case MiscAttributeNames.BONUS_DAMAGE_PERCENT:
         allMiscAttributes.push({
-          attributeId,
-          type: AttributeType.MISC,
+          attributeName: attributeName,
           label: 'Bonus Damage (%)',
           desc: 'Increase your damage done by percent.',
-          percent: true
+          isPercent: true
         });
         break;
-      case MiscAttributeId.BONUS_EXPERIENCE_PERCENT:
+      case MiscAttributeNames.BONUS_EXPERIENCE_PERCENT:
         allMiscAttributes.push({
-          attributeId,
-          type: AttributeType.MISC,
+          attributeName: attributeName,
           label: 'Bonus Experience (%)',
           desc: 'Increase your experience gained by percent.',
-          percent: true
+          isPercent: true
         });
         break;
-      case MiscAttributeId.BONUS_EXPERIENCE_STATIC:
+      case MiscAttributeNames.BONUS_EXPERIENCE_STATIC:
         allMiscAttributes.push({
-          attributeId,
-          type: AttributeType.MISC,
+          ...commonAttributeParams,
+          attributeName: attributeName,
           label: 'Bonus Experience',
           desc: 'Increase your experience gained by static amount.'
         });
         break;
-      case MiscAttributeId.BONUS_HEALTH_PERCENT:
+      case MiscAttributeNames.BONUS_HEALTH_PERCENT:
         allMiscAttributes.push({
-          attributeId,
-          type: AttributeType.MISC,
+          attributeName: attributeName,
           label: 'Bonus Health (%)',
           desc: 'Increase your Health by percent.',
-          percent: true
+          isPercent: true
         });
         break;
       default:
-        throw new Error(`Missing generator for attribute type ${attributeId}`);
+        throw new Error(`Missing generator for attribute type ${attributeName}`);
     }
   }
 
