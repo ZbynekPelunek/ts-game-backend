@@ -1,4 +1,4 @@
-import { InventorySlot } from '../../../shared/src/interface/character/inventory.interface';
+import { InventorySlot } from '../../../shared/src/interface/character/inventories.interface';
 
 export const defaultMaxInventorySlots = 10;
 

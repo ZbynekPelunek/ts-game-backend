@@ -13,7 +13,6 @@ import { resultsRouter } from './routes/results.router';
 import { AccountModel } from './schema/account.schema';
 import { CharacterModel } from './schema/character.schema';
 import { CharacterAttributeModel } from './schema/characterAttribute.schema';
-import { InventoryModel } from './schema/inventory.schema';
 
 const app = express();
 const PORT: Number = 3000;
@@ -32,10 +31,6 @@ async function connect() {
     console.log('cleaning characters...');
     await CharacterModel.deleteMany({});
     console.log('...characters cleaned.');
-
-    console.log('cleaning inventories...');
-    await InventoryModel.deleteMany({});
-    console.log('...inventories cleaned.');
 
     console.log('cleaning character attributes...');
     await CharacterAttributeModel.deleteMany({});

@@ -1,20 +1,17 @@
 import axios from 'axios';
 import express, { Request, Response } from 'express';
 import * as _ from 'lodash';
-import mongoose, { Types } from 'mongoose';
 
 import {
-  CharacterAttributeBackend,
   CharacterFrontend,
   GET_characterAdventuresAll,
-  GET_characterEquipSlots,
   Request_Characters_GET_one_params,
   Request_Characters_GET_one_query,
   Response_Characters_GET_one,
   Response_Characters_POST,
   Response_Inventories_POST,
 } from '../../../shared/src';
-import { InventoryBackend } from '../../../shared/src/interface/character/inventory.interface';
+import { InventoryBackend } from '../../../shared/src/interface/character/inventories.interface';
 import { NotFoundError } from '../errors/not-found-error';
 import { CharacterModel } from '../schema/character.schema';
 import { testCharacter } from '../test/testCharacter';
@@ -34,13 +31,13 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
     name: characterBody.name
   });
 
-  const inventoryResponse = await axios.post<Response_Inventories_POST>('http://localhost:3000/api/v1/inventories', { characterId: character._id });
-  if (!inventoryResponse.data.success) {
-    return res.status(500).json({ success: false, error: 'Inventory creation failed' });
-  }
+  // const inventoryResponse = await axios.post<Response_Inventories_POST>('http://localhost:3000/api/v1/inventories', { characterId: character._id });
+  // if (!inventoryResponse.data.success) {
+  //   return res.status(500).json({ success: false, error: 'Inventory creation failed' });
+  // }
 
-  const convertInventoryId = new mongoose.Types.ObjectId(inventoryResponse.data.inventory.inventoryId);
-  character.inventoryId = convertInventoryId;
+  // const convertInventoryId = new mongoose.Types.ObjectId(inventoryResponse.data.inventory.inventoryId);
+  // character.inventoryId = convertInventoryId;
 
   // if (!character.populated('inventoryId')) {
   //   console.log('character inventoryId empty: ', character);
@@ -54,7 +51,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   //   return res.status(500).json({ succes: false, error: 'characterAttributes is empty' });
   // }
 
-  //console.log('saving character: ', character);
+  console.log('saving character: ', character);
 
   await character.save();
 
@@ -69,7 +66,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   );
 })
 
-charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response<Response_Characters_GET_one>) => {
+charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response) => {
   const { characterId } = req.params;
   const { populateInventory } = req.query;
 
@@ -86,28 +83,26 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
   const responseCharacter: CharacterFrontend = {
     characterId: character._id.toString(),
     accountId: character.accountId.toString(),
-    adventures: character.adventures,
-    characterAttributes: character.characterAttributes.map(ca => ca._id.toString()),
-    currencies: character.currencies,
+    adventures: character.adventures.length > 0 ? character.adventures.map(a => a.toString()) : [],
+    characterAttributes: character.characterAttributes.length > 0 ? character.characterAttributes.map(ca => ca.toString()) : [],
+    currencies: character.currencies.length > 0 ? character.currencies.map(c => c.toString()) : [],
     currentExperience: character.currentExperience,
-    equipmentSlots: character.equipmentSlots,
-    inventoryId: character.inventoryId.toString(),
+    equipment: character.equipment.length > 0 ? character.equipment.map(e => e.toString()) : [],
+    inventory: character.inventory.length > 0 ? character.inventory.map(i => i.toString()) : [],
     level: character.level,
     maxExperience: character.maxExperience,
-    name: character.name
+    name: character.name,
+    maxInventorySlot: character.maxInventorySlot
   };
 
-  let populatedResponse;
-  if (populateInventory) {
-    populatedResponse = await CharacterModel.populate<{ inventoryId: InventoryBackend }>(character, { path: 'inventoryId', select: '-createdAt -updatedAt -__v' });
+  // let populatedResponse;
+  // if (populateInventory) {
+  //   populatedResponse = await CharacterModel.populate<{ inventory: InventoryBackend }>(character, { path: 'inventory', select: '-createdAt -updatedAt -__v' });
 
-    responseCharacter.inventoryId = {
-      inventoryId: populatedResponse.inventoryId._id.toString(),
-      slots: populatedResponse.inventoryId.slots
-    };
+  //   responseCharacter.inventoryItems = [];
 
-    //console.log('populatedResponse: ', populatedResponse);
-  }
+  //   //console.log('populatedResponse: ', populatedResponse);
+  // }
 
   return res.status(200).json({ success: true, character: responseCharacter });
 })
@@ -137,14 +132,14 @@ charactersRouter.get('/:characterId/adventures', (req: Request, res: Response<GE
 })
 
 // EQUIPMENT
-charactersRouter.get('/:characterId/equipment', (req: Request, res: Response<GET_characterEquipSlots>) => {
-  const characterId = req.params.characterId;
-  if (characterId !== '1') {
-    throw new NotFoundError(`Character with id ${characterId} not found`);
-  }
-  const character = testCharacter;
-  return res.status(200).json({ equipmentSlots: character.equipmentSlots });
-})
+// charactersRouter.get('/:characterId/equipment', (req: Request, res: Response<GET_characterEquipSlots>) => {
+//   const characterId = req.params.characterId;
+//   if (characterId !== '1') {
+//     throw new NotFoundError(`Character with id ${characterId} not found`);
+//   }
+//   const character = testCharacter;
+//   return res.status(200).json({ equipmentSlots: character.equipmentSlots });
+// })
 
 // charactersRouter.post('/:characterId/actions/:actionId', async (req: Request, res: Response<POST_characterActions>) => {
 //   const { characterId } = req.params;

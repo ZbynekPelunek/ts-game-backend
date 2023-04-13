@@ -19,6 +19,7 @@ export const characterAttributesRouter = express.Router();
 characterAttributesRouter.get('', async (req: Request<{}, {}, {}, Request_CharacterAttributes_GET_all_query>, res: Response<Response_CharacterAttributes_GET_all>) => {
   const { characterId } = req.query;
   const { populateAttribute } = req.query;
+  console.log('GET characters with: ', characterId);
 
   let responseCharacterAttributes: CharacterAttributeFrontend[] = [];
   if (populateAttribute) {
@@ -70,7 +71,7 @@ characterAttributesRouter.post('', async (req: Request<{}, {}, Request_Character
 
   const characterAttributes = await CharacterAttributeModel.create(defaultCharacterAttributes);
 
-  // // console.log('characterAttributes after model create: ', characterAttributes);
+  console.log('characterAttributes after model create: ', characterAttributes);
   const responseArr = characterAttributes.map(ca => ca._id);
 
   return res.status(201).json({ success: true, characterAttributes: responseArr });

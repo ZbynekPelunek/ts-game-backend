@@ -1,23 +1,21 @@
-import mongoose, { Schema } from 'mongoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
 
-import { InventoryBackend } from '../../../shared/src/interface/character/inventory.interface';
-import { defaultInventorySlots, defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
+import { InventoryItemBackend } from '../../../shared/src';
 
-const inventorySchema = new Schema<InventoryBackend>({
-  characterId: {
-    type: Schema.Types.ObjectId,
-    required: true
-  },
-  'max-character-slot': {
-    type: Number,
-    default: defaultMaxInventorySlots,
-    required: true
-  },
-  slots: {
-    type: [{ slot: Number, itemId: Number, amount: Number }],
-    default: defaultInventorySlots,
-    required: true
-  }
-}, { timestamps: true });
+@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'inventory-items' } })
+export class InventoryItem implements InventoryItemBackend {
+  @prop({ required: true })
+  public characterId!: Types.ObjectId;
 
-export const InventoryModel = mongoose.model('Inventory', inventorySchema);
+  @prop({ required: true })
+  public itemId!: Types.ObjectId;
+
+  @prop({ required: true, default: 0 })
+  public amount!: number;
+
+  @prop({ required: true })
+  public slot!: number;
+}
+
+export const InventoryItemModel = getModelForClass(InventoryItem);

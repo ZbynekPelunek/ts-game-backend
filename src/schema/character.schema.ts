@@ -1,60 +1,47 @@
-import { randomUUID } from 'crypto';
-import mongoose, { Schema } from 'mongoose';
+import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
 
 import { CharacterBackend } from '../../../shared/src';
-import { defaultCharacterCurrencies } from '../defaultCharacterData/currencies';
-import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
+import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
+import { InventoryItem } from './inventory.schema';
 
-const characterSchema = new Schema<CharacterBackend>({
-  accountId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Account',
-    required: true
-  },
-  name: {
-    type: String,
-    default: () => randomUUID(),
-    required: true
-  },
-  adventures: {
-    type: [{ adventureId: Number }],
-    default: [],
-    required: true
-  },
-  currencies: {
-    type: [{ currencyId: Number, name: String, label: String, amount: Number, cap: Number }],
-    default: defaultCharacterCurrencies,
-    required: true
-  },
-  currentExperience: {
-    type: Number,
-    default: 0,
-    required: true
-  },
-  maxExperience: {
-    type: Number,
-    default: 200,
-    required: true
-  },
-  equipmentSlots: {
-    type: [{ slot: String, equipment: String }],
-    default: defaultEquipmentSlots,
-    required: true
-  },
-  level: {
-    type: Number,
-    default: 1,
-    required: true
-  },
-  inventoryId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Inventory',
-    required: true
-  },
-  characterAttributes: {
-    type: [Schema.Types.ObjectId],
-    ref: 'CharacterAttribute'
-  }
-}, { timestamps: true });
+@modelOptions({ schemaOptions: { timestamps: true } })
+class Character implements CharacterBackend {
+  @prop({ requied: true })
+  public accountId!: Types.ObjectId;
 
-export const CharacterModel = mongoose.model('Character', characterSchema);
+  @prop({ required: true })
+  public name!: string;
+
+  @prop({ required: true, default: [] })
+  public adventures!: Types.ObjectId[];
+
+  @prop({ required: true, default: [] })
+  public characterAttributes!: Types.ObjectId[];
+
+  @prop({ required: true, default: [] })
+  public currencies!: Types.ObjectId[];
+
+  @prop({ required: true, default: 0 })
+  public currentExperience!: number;
+
+  @prop({ required: true, default: [] })
+  public equipment!: Types.ObjectId[];
+
+  @prop({ required: true, default: [], ref: () => InventoryItem })
+  public inventory!: Types.ObjectId[];
+
+  @prop({ required: true, default: 1 })
+  public level!: number;
+
+  @prop({ required: true, default: defaultMaxInventorySlots })
+  public maxInventorySlot!: number;
+
+  @prop({ required: true, default: 200 })
+  public maxExperience!: number;
+
+  // @prop({ required: true, default: [], ref: () => InventoryItem })
+  // public inventoryItems?: Ref<InventoryItem>[];
+}
+
+export const CharacterModel = getModelForClass(Character);

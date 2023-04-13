@@ -1,6 +1,5 @@
 import { AdventureState, IAdventure } from '../../../shared/src/interface/adventures.interface';
 import { Adventure } from '../models/adventure';
-import { testEquipmentArr } from './testItems';
 
 export const allAdventures: IAdventure[] = [
   Adventure.create({
@@ -10,7 +9,7 @@ export const allAdventures: IAdventure[] = [
     timeInSeconds: 5,
     reward: {
       experience: 100,
-      items: [testEquipmentArr[4]]
+      items: []
     },
     adventureState: AdventureState.IDLE
   }),
@@ -21,7 +20,7 @@ export const allAdventures: IAdventure[] = [
     timeInSeconds: 4,
     reward: {
       experience: 250,
-      items: [testEquipmentArr[1], testEquipmentArr[2]]
+      items: []
     },
     adventureState: AdventureState.IDLE
   }),
