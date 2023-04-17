@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 
 import { Currency, IAdventure } from '../../../shared/src';
 import { defaultCharacterCurrencies } from '../defaultCharacterData/currencies';
-import { defaultEquipmentSlots } from '../defaultCharacterData/equipmentSlots';
 import { characterAvailableAdventures } from '../test/testAdventures';
 
 export class Character {

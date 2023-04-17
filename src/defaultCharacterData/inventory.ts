@@ -1,9 +1,9 @@
-import { InventorySlot } from '../../../shared/src/interface/character/inventories.interface';
+// import { InventorySlot } from '../../../shared/src/interface/character/inventories.interface';
 
 export const defaultMaxInventorySlots = 10;
 
-export const defaultInventorySlots: InventorySlot[] = [];
+// export const defaultInventorySlots: InventorySlot[] = [];
 
-for (let i = 0; i < defaultMaxInventorySlots; i++) {
-  defaultInventorySlots.push({ slot: i + 1, itemId: null });
-}
+// for (let i = 0; i < defaultMaxInventorySlots; i++) {
+//   defaultInventorySlots.push({ slot: i + 1, itemId: null });
+// }

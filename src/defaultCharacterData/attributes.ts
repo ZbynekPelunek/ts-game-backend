@@ -1,9 +1,8 @@
-import mongoose from 'mongoose';
+import { Types } from 'mongoose';
 
 import {
   BasicAttributeFrontend,
   CharacterAttributeBackend,
-  CharacterAttributeFrontendPopulated,
   MainAttributeNames,
   PrimaryAttributeNames,
   SecondaryAttributeNames,
@@ -11,64 +10,64 @@ import {
 import { calculateAttributes } from '../engine/attributes';
 
 const commonCharAttributesValues = {
-  "base-value": 0,
-  "added-value": 0,
-  "stats-added-value": 0,
-  "total-value": 0
+  baseValue: 0,
+  addedValue: 0,
+  statsAddedValue: 0,
+  totalValue: 0
 }
 
 export function generateDefaultCharacterAttributes(allAttributes: BasicAttributeFrontend[], characterId: string): CharacterAttributeBackend[] {
   const defaultAttributes: CharacterAttributeBackend[] = [];
 
-  const convertCharacterId = new mongoose.Types.ObjectId(characterId);
+  const convertCharacterId = new Types.ObjectId(characterId);
 
   allAttributes.forEach(a => {
     const attribute: CharacterAttributeBackend = {
       ...commonCharAttributesValues,
       characterId: convertCharacterId,
-      attributeId: new mongoose.Types.ObjectId(a.attributeId),
+      attributeId: new Types.ObjectId(a.attributeId),
       attribute: a
     }
     switch (a.attributeName) {
       case MainAttributeNames.HEALTH:
-        attribute['base-value'] = 20;
+        attribute.baseValue = 20;
         break;
       case MainAttributeNames.POWER:
-        attribute['base-value'] = 10;
+        attribute.baseValue = 10;
         break;
       case MainAttributeNames.MIN_DAMAGE:
-        attribute['base-value'] = 1;
+        attribute.baseValue = 1;
         break;
       case MainAttributeNames.MAX_DAMAGE:
-        attribute['base-value'] = 2;
+        attribute.baseValue = 2;
         break;
       case MainAttributeNames.ARMOR:
-        attribute['base-value'] = 100;
+        attribute.baseValue = 100;
         break;
       case PrimaryAttributeNames.AGILITY:
-        attribute['base-value'] = 3;
+        attribute.baseValue = 3;
         break;
       case PrimaryAttributeNames.STRENGTH:
-        attribute['base-value'] = 4;
+        attribute.baseValue = 4;
         break;
       case PrimaryAttributeNames.INTELLECT:
-        attribute['base-value'] = 5;
+        attribute.baseValue = 5;
         break;
       case PrimaryAttributeNames.STAMINA:
-        attribute['base-value'] = 6;
+        attribute.baseValue = 6;
         break;
       case SecondaryAttributeNames.CRIT_CHANCE_PERCENT:
-        attribute['base-value'] = 1;
+        attribute.baseValue = 1;
         break;
       case SecondaryAttributeNames.CRIT_DAMAGE_PERCENT:
-        attribute['base-value'] = 50;
+        attribute.baseValue = 50;
         break;
       case SecondaryAttributeNames.MULTRISTRIKE_CHANCE:
-        attribute['base-value'] = 0.01;
+        attribute.baseValue = 0.01;
         break;
     }
 
-    attribute['total-value'] = attribute['base-value'];
+    attribute.totalValue = attribute.baseValue;
     defaultAttributes.push(attribute);
   });
 

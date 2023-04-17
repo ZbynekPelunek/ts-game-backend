@@ -3,11 +3,13 @@ import { Types } from 'mongoose';
 
 import { CharacterBackend } from '../../../shared/src';
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
-import { InventoryItem } from './inventory.schema';
+import { AccountSchema } from './account.schema';
+import { CharacterAttributeSchema } from './characterAttribute.schema';
+import { InventoryItemSchema } from './inventoryItem.schema';
 
-@modelOptions({ schemaOptions: { timestamps: true } })
-class Character implements CharacterBackend {
-  @prop({ requied: true })
+@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'characters' } })
+export class CharacterSchema implements CharacterBackend {
+  @prop({ requied: true, ref: () => AccountSchema })
   public accountId!: Types.ObjectId;
 
   @prop({ required: true })
@@ -16,7 +18,7 @@ class Character implements CharacterBackend {
   @prop({ required: true, default: [] })
   public adventures!: Types.ObjectId[];
 
-  @prop({ required: true, default: [] })
+  @prop({ required: true, default: [], ref: () => CharacterAttributeSchema })
   public characterAttributes!: Types.ObjectId[];
 
   @prop({ required: true, default: [] })
@@ -28,7 +30,7 @@ class Character implements CharacterBackend {
   @prop({ required: true, default: [] })
   public equipment!: Types.ObjectId[];
 
-  @prop({ required: true, default: [], ref: () => InventoryItem })
+  @prop({ required: true, default: [], ref: () => InventoryItemSchema })
   public inventory!: Types.ObjectId[];
 
   @prop({ required: true, default: 1 })
@@ -44,4 +46,4 @@ class Character implements CharacterBackend {
   // public inventoryItems?: Ref<InventoryItem>[];
 }
 
-export const CharacterModel = getModelForClass(Character);
+export const CharacterModel = getModelForClass(CharacterSchema);

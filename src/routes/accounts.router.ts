@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import mongoose, { Types } from 'mongoose';
+import mongoose from 'mongoose';
 
 import {
   Request_Account_POST,
@@ -44,7 +44,7 @@ accountsRouter.post('/:accountId/characters', async (req: Request<Request_Accoun
 
   const convertCharacterId = new mongoose.Types.ObjectId(characterId);
 
-  account.characters.push({ _id: convertCharacterId });
+  account.characters.push(convertCharacterId);
   await account.save();
 
   return res.status(201).json(

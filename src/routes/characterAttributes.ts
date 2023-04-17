@@ -3,7 +3,6 @@ import express, { Request, Response } from 'express';
 
 import {
   BasicAttributeBackend,
-  CharacterAttributeBackend,
   CharacterAttributeFrontend,
   Request_CharacterAttributes_GET_all_query,
   Request_CharacterAttributes_POST_body,
@@ -29,10 +28,10 @@ characterAttributesRouter.get('', async (req: Request<{}, {}, {}, Request_Charac
       return {
         characterAttributeId: ca._id.toString(),
         characterId,
-        "added-value": ca['added-value'],
-        "base-value": ca['base-value'],
-        "stats-added-value": ca['stats-added-value'],
-        "total-value": ca['total-value'],
+        addedValue: ca.addedValue,
+        baseValue: ca.baseValue,
+        statsAddedValue: ca.statsAddedValue,
+        totalValue: ca.totalValue,
         attributeId: ca.attributeId._id.toString(),
         attribute: ca.attributeId
       }
@@ -44,10 +43,10 @@ characterAttributesRouter.get('', async (req: Request<{}, {}, {}, Request_Charac
       return {
         characterAttributeId: ca._id.toString(),
         characterId,
-        "added-value": ca['added-value'],
-        "base-value": ca['base-value'],
-        "stats-added-value": ca['stats-added-value'],
-        "total-value": ca['total-value'],
+        addedValue: ca.addedValue,
+        baseValue: ca.baseValue,
+        statsAddedValue: ca.statsAddedValue,
+        totalValue: ca.totalValue,
         attributeId: ca._id.toString()
       }
     });
@@ -71,7 +70,7 @@ characterAttributesRouter.post('', async (req: Request<{}, {}, Request_Character
 
   const characterAttributes = await CharacterAttributeModel.create(defaultCharacterAttributes);
 
-  console.log('characterAttributes after model create: ', characterAttributes);
+  //console.log('characterAttributes after model create: ', characterAttributes);
   const responseArr = characterAttributes.map(ca => ca._id);
 
   return res.status(201).json({ success: true, characterAttributes: responseArr });

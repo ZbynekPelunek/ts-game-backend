@@ -1,7 +1,6 @@
 import {
   CharacterAttributeBackend,
   CharacterAttributeFrontend,
-  CharacterAttributeFrontendPopulated,
   CommonCharacterAttributeParams,
   MainAttributeNames,
   PrimaryAttributeNames,
@@ -9,46 +8,46 @@ import {
 } from '../../../shared/src';
 
 export function calculateAttributes(attributes: CharacterAttributeBackend[]) {
-  // console.log('attributes to calculate: ', attributes);
+  console.log('calculating attributes...');
 
   attributes.forEach((att) => {
     if (!att.attribute) return;
     switch (att.attribute.attributeName) {
       case PrimaryAttributeNames.STAMINA:
-        att['total-value'] = updateAttributeTotal(att);
+        att.totalValue = updateAttributeTotal(att);
         const healthIndex = attributes.findIndex(ca => ca.attribute?.attributeName === MainAttributeNames.HEALTH);
-        attributes[healthIndex]['stats-added-value'] = att['total-value'];
-        attributes[healthIndex]['total-value'] = updateAttributeTotal(attributes[healthIndex]);
+        attributes[healthIndex].statsAddedValue = att.totalValue;
+        attributes[healthIndex].totalValue = updateAttributeTotal(attributes[healthIndex]);
         break;
 
       case PrimaryAttributeNames.INTELLECT:
-        att['total-value'] = updateAttributeTotal(att);
+        att.totalValue = updateAttributeTotal(att);
         const powerIndex = attributes.findIndex(ca => ca.attribute?.attributeName === MainAttributeNames.POWER);
-        attributes[powerIndex]['stats-added-value'] = att['total-value'];
-        attributes[powerIndex]['total-value'] = updateAttributeTotal(attributes[powerIndex]);
+        attributes[powerIndex].statsAddedValue = att.totalValue;
+        attributes[powerIndex].totalValue = updateAttributeTotal(attributes[powerIndex]);
         break;
 
       case PrimaryAttributeNames.STRENGTH:
-        att['total-value'] = updateAttributeTotal(att);
+        att.totalValue = updateAttributeTotal(att);
         const critDamagePercentIndex = attributes.findIndex(ca => ca.attribute?.attributeName === SecondaryAttributeNames.CRIT_DAMAGE_PERCENT);
-        attributes[critDamagePercentIndex]['stats-added-value'] = att['total-value'] / 100;
-        attributes[critDamagePercentIndex]['total-value'] = updateAttributeTotal(attributes[critDamagePercentIndex]);
+        attributes[critDamagePercentIndex].statsAddedValue = att.totalValue / 100;
+        attributes[critDamagePercentIndex].totalValue = updateAttributeTotal(attributes[critDamagePercentIndex]);
         break;
       case PrimaryAttributeNames.AGILITY:
-        att['total-value'] = updateAttributeTotal(att);
+        att.totalValue = updateAttributeTotal(att);
         const critChancePercentIndex = attributes.findIndex(ca => ca.attribute?.attributeName === SecondaryAttributeNames.CRIT_CHANCE_PERCENT);
-        attributes[critChancePercentIndex]['stats-added-value'] = att['total-value'] / 100;
-        attributes[critChancePercentIndex]['total-value'] = updateAttributeTotal(attributes[critChancePercentIndex]);
+        attributes[critChancePercentIndex].statsAddedValue = att.totalValue / 100;
+        attributes[critChancePercentIndex].totalValue = updateAttributeTotal(attributes[critChancePercentIndex]);
         break;
       default:
-        att['total-value'] = att['base-value'] + att['added-value'] + att['stats-added-value'];
+        att.totalValue = updateAttributeTotal(att);
     }
   });
 
-  //console.log('finished calculated attributes: ', attributes);
+  console.log('...finished calculating attributes');
   return attributes;
 }
 
 function updateAttributeTotal(charAttribute: CharacterAttributeFrontend | CommonCharacterAttributeParams): number {
-  return charAttribute['base-value'] + charAttribute['added-value'] + charAttribute['stats-added-value'];
+  return charAttribute.baseValue + charAttribute.addedValue + charAttribute.statsAddedValue;
 }

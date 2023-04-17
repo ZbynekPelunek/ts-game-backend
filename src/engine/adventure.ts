@@ -6,7 +6,6 @@ import {
   AdventureTimer,
   CharacterBackend,
   IAdventure,
-  StatName,
 } from '../../../shared/src';
 import { AttackerTarget } from '../interface/combat.interface';
 import { adventureResults } from '../routes/results.router';

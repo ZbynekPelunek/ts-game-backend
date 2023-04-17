@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import { InventoryItemBackend } from '../../../shared/src';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'inventory-items' } })
-export class InventoryItem implements InventoryItemBackend {
+export class InventoryItemSchema implements InventoryItemBackend {
   @prop({ required: true })
   public characterId!: Types.ObjectId;
 
@@ -18,4 +18,4 @@ export class InventoryItem implements InventoryItemBackend {
   public slot!: number;
 }
 
-export const InventoryItemModel = getModelForClass(InventoryItem);
+export const InventoryItemModel = getModelForClass(InventoryItemSchema);

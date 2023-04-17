@@ -4,7 +4,6 @@ import {
   Request_Inventories_GET_one_params,
   Request_Inventories_POST_body,
   Response_Inventories_GET_one,
-  Response_Inventories_POST,
 } from '../../../shared/src';
 
 

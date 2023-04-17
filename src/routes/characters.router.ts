@@ -5,13 +5,12 @@ import * as _ from 'lodash';
 import {
   CharacterFrontend,
   GET_characterAdventuresAll,
+  InventoryItemBackend,
+  InventoryItemFrontend,
   Request_Characters_GET_one_params,
   Request_Characters_GET_one_query,
-  Response_Characters_GET_one,
   Response_Characters_POST,
-  Response_Inventories_POST,
 } from '../../../shared/src';
-import { InventoryBackend } from '../../../shared/src/interface/character/inventories.interface';
 import { NotFoundError } from '../errors/not-found-error';
 import { CharacterModel } from '../schema/character.schema';
 import { testCharacter } from '../test/testCharacter';
@@ -51,7 +50,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   //   return res.status(500).json({ succes: false, error: 'characterAttributes is empty' });
   // }
 
-  console.log('saving character: ', character);
+  //console.log('saving character: ', character);
 
   await character.save();
 
@@ -80,6 +79,11 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
   }
   //console.log('GET character db response: ', character);
 
+  const emptyInventory = [];
+  for (let i = 0; i < character.maxInventorySlot; i++) {
+    emptyInventory.push(null);
+  }
+
   const responseCharacter: CharacterFrontend = {
     characterId: character._id.toString(),
     accountId: character.accountId.toString(),
@@ -88,21 +92,32 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
     currencies: character.currencies.length > 0 ? character.currencies.map(c => c.toString()) : [],
     currentExperience: character.currentExperience,
     equipment: character.equipment.length > 0 ? character.equipment.map(e => e.toString()) : [],
-    inventory: character.inventory.length > 0 ? character.inventory.map(i => i.toString()) : [],
+    inventory: character.inventory.length > 0 ? character.inventory.map(i => i.toString()) : emptyInventory,
     level: character.level,
     maxExperience: character.maxExperience,
-    name: character.name,
-    maxInventorySlot: character.maxInventorySlot
+    name: character.name
   };
 
   // let populatedResponse;
-  // if (populateInventory) {
-  //   populatedResponse = await CharacterModel.populate<{ inventory: InventoryBackend }>(character, { path: 'inventory', select: '-createdAt -updatedAt -__v' });
+  if (populateInventory) {
+    const populateResponse = await CharacterModel.populate<{ inventory: InventoryItemBackend[] }>(character, { path: 'inventory', select: '-createdAt -updatedAt -__v' });
 
-  //   responseCharacter.inventoryItems = [];
+    if (populateResponse.inventory.length > 0) {
+      const inventoryResult: unknown[] = [...emptyInventory];
+      populateResponse.inventory.forEach(inv => {
+        inventoryResult[inv.slot - 1] = {
+          amount: inv.amount,
+          characterId: inv.characterId.toString(),
+          itemId: inv.itemId.toString(),
+          slot: inv.slot
+        } as InventoryItemFrontend
+      });
 
-  //   //console.log('populatedResponse: ', populatedResponse);
-  // }
+      responseCharacter.inventoryItems = inventoryResult as InventoryItemFrontend[];
+    }
+
+    //console.log('populatedResponse: ', populatedResponse);
+  }
 
   return res.status(200).json({ success: true, character: responseCharacter });
 })
