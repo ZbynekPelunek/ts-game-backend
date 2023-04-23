@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 
-import { Currency, IAdventure } from '../../../shared/src';
-import { defaultCharacterCurrencies } from '../defaultCharacterData/currencies';
+import { IAdventure } from '../../../shared/src';
 import { characterAvailableAdventures } from '../test/testAdventures';
 
 export class Character {
@@ -14,7 +13,7 @@ export class Character {
     public currentExperience: number = 0,
     public maxExperience: number = 200,
     public maxInventorySlots: number = 8,
-    public currencies: Currency[] = defaultCharacterCurrencies,
+    public currencies = [],
     public adventures: IAdventure[] = characterAvailableAdventures,
     public createdAt: string = new Date().toISOString(),
     public updatedAt: string = new Date().toISOString()) {

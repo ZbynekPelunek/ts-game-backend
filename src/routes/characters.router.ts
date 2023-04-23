@@ -30,25 +30,15 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
     name: characterBody.name
   });
 
-  // const inventoryResponse = await axios.post<Response_Inventories_POST>('http://localhost:3000/api/v1/inventories', { characterId: character._id });
-  // if (!inventoryResponse.data.success) {
-  //   return res.status(500).json({ success: false, error: 'Inventory creation failed' });
-  // }
-
-  // const convertInventoryId = new mongoose.Types.ObjectId(inventoryResponse.data.inventory.inventoryId);
-  // character.inventoryId = convertInventoryId;
-
-  // if (!character.populated('inventoryId')) {
-  //   console.log('character inventoryId empty: ', character);
-  //   return res.status(500).json({ succes: false, error: 'inventoryId is empty' });
-  // }
-
   const characterAttributesResponse = await axios.post('http://localhost:3000/api/v1/character-attributes', { characterId: character._id });
   //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
   character.characterAttributes = characterAttributesResponse.data.characterAttributes;
   // if (!character.populated('characterAttributes')) {
   //   return res.status(500).json({ succes: false, error: 'characterAttributes is empty' });
   // }
+  const characterCurrenciesResponse = await axios.post('http://localhost:3000/api/v1/character-currencies', { characterId: character._id });
+  //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
+  character.currencyIds = characterCurrenciesResponse.data.characterCurrencies;
 
   //console.log('saving character: ', character);
 
@@ -68,8 +58,10 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
 charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response) => {
   const { characterId } = req.params;
   const { populateInventory } = req.query;
+  console.log('GET Character, characterId:', characterId);
+  console.log('characterId type: ', typeof characterId);
 
-  if (!characterId) {
+  if (!characterId || characterId === 'undefined') {
     return res.status(400).json({ success: false, error: 'Must provide character ID' });
   }
 
@@ -89,7 +81,7 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
     accountId: character.accountId.toString(),
     adventures: character.adventures.length > 0 ? character.adventures.map(a => a.toString()) : [],
     characterAttributes: character.characterAttributes.length > 0 ? character.characterAttributes.map(ca => ca.toString()) : [],
-    currencies: character.currencies.length > 0 ? character.currencies.map(c => c.toString()) : [],
+    currencyIds: character.currencyIds.length > 0 ? character.currencyIds.map(c => c.toString()) : [],
     currentExperience: character.currentExperience,
     equipment: character.equipment.length > 0 ? character.equipment.map(e => e.toString()) : [],
     inventory: character.inventory.length > 0 ? character.inventory.map(i => i.toString()) : emptyInventory,

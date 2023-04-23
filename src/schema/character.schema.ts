@@ -1,10 +1,11 @@
-import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
 import { CharacterBackend } from '../../../shared/src';
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 import { AccountSchema } from './account.schema';
 import { CharacterAttributeSchema } from './characterAttribute.schema';
+import { CharacterCurrencySchema } from './characterCurrency.schema';
 import { InventoryItemSchema } from './inventoryItem.schema';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'characters' } })
@@ -21,8 +22,8 @@ export class CharacterSchema implements CharacterBackend {
   @prop({ required: true, default: [], ref: () => CharacterAttributeSchema })
   public characterAttributes!: Types.ObjectId[];
 
-  @prop({ required: true, default: [] })
-  public currencies!: Types.ObjectId[];
+  @prop({ required: true, default: [], ref: () => CharacterCurrencySchema })
+  public currencyIds!: Types.ObjectId[];
 
   @prop({ required: true, default: 0 })
   public currentExperience!: number;
@@ -41,9 +42,6 @@ export class CharacterSchema implements CharacterBackend {
 
   @prop({ required: true, default: 200 })
   public maxExperience!: number;
-
-  // @prop({ required: true, default: [], ref: () => InventoryItem })
-  // public inventoryItems?: Ref<InventoryItem>[];
 }
 
 export const CharacterModel = getModelForClass(CharacterSchema);

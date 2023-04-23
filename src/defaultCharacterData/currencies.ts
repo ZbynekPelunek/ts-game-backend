@@ -1,18 +1,18 @@
-import { Currency, CurrencyId } from '../../../shared/src';
+import { Types } from 'mongoose';
 
-export const defaultCharacterCurrencies: Currency[] = [
-  {
-    currencyId: CurrencyId.GOLD,
-    name: 'gold',
-    label: 'Gold',
-    amount: 1000,
-    cap: 100000
-  },
-  {
-    currencyId: CurrencyId.CHEATING_CURRENCY,
-    name: 'cc',
-    label: 'Cheating Currency',
-    amount: 1000,
-    cap: 1000000
-  }
-]
+import { CharacterCurrencyBackend, CurrencyId } from '../../../shared/src';
+
+export function generateCharacterCurrencies(characterId: Types.ObjectId): CharacterCurrencyBackend[] {
+  return [
+    {
+      amount: 100,
+      currencyId: CurrencyId.CHEATING_CURRENCY,
+      characterId
+    },
+    {
+      amount: 10,
+      currencyId: CurrencyId.GOLD,
+      characterId
+    }
+  ]
+}
