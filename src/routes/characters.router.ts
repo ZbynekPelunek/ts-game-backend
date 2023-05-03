@@ -4,16 +4,16 @@ import * as _ from 'lodash';
 
 import {
   CharacterFrontend,
-  GET_characterAdventuresAll,
+  EquipmentItemFrontend,
+  EquipmentSlot,
   InventoryItemBackend,
   InventoryItemFrontend,
   Request_Characters_GET_one_params,
   Request_Characters_GET_one_query,
   Response_Characters_POST,
+  UiPostition,
 } from '../../../shared/src';
-import { NotFoundError } from '../errors/not-found-error';
 import { CharacterModel } from '../schema/character.schema';
-import { testCharacter } from '../test/testCharacter';
 
 export const charactersRouter = express.Router();
 
@@ -77,7 +77,7 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
   }
 
   const responseCharacter: CharacterFrontend = {
-    characterId: character._id.toString(),
+    characterId: character.id,
     accountId: character.accountId.toString(),
     adventures: character.adventures.length > 0 ? character.adventures.map(a => a.toString()) : [],
     characterAttributes: character.characterAttributes.length > 0 ? character.characterAttributes.map(ca => ca.toString()) : [],
@@ -114,29 +114,83 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
   return res.status(200).json({ success: true, character: responseCharacter });
 })
 
-charactersRouter.put('/:characterId', (req: Request, res: Response) => {
-  const characterId = req.params.characterId;
-  if (characterId !== '1') {
-    throw new NotFoundError(`Character with id ${characterId} not found`);
-  }
-  // const charBody: Character = req.body.character;
-  // character = {
-  //   ...charBody
-  // }
+interface CharacterEquipmentResponse {
+  characterId: string;
+  equipment: EquipmentItemFrontend[];
+}
 
-  return res.status(200).json({});
+charactersRouter.get('/:characterId/equipment', async (req: Request, res: Response<{ success: boolean; character?: CharacterEquipmentResponse; error?: string; }>) => {
+  const { characterId } = req.params;
+
+  const character = await CharacterModel.findById(characterId, 'equipment');
+  if (!character) {
+    return res.status(404).json({ success: false, error: `Character with id '${characterId}' not found` });
+  }
+
+  if (character.equipment.length > 0) {
+    const populateEquipmentResponse = await character.populate({ path: 'equipment', select: '-createdAt -updatedAt -__v' });
+
+    console.log('populateEquipmentResponse: ', populateEquipmentResponse);
+  }
+
+  const equipmentArr = [];
+  for (const e in EquipmentSlot) {
+    const equipmentObj: EquipmentItemFrontend = {
+      equipmentItemId: e as EquipmentSlot,
+      characterId: character.id,
+      itemId: null,
+      uiPosition: setUiPosition(e as EquipmentSlot)
+    }
+    equipmentArr.push(equipmentObj);
+  }
+
+  return res.status(200).json({ success: true, character: { characterId, equipment: equipmentArr } })
 })
 
-// ADVENTURES
-charactersRouter.get('/:characterId/adventures', (req: Request, res: Response<GET_characterAdventuresAll>) => {
-  const characterId = req.params.characterId;
-  if (characterId !== '1') {
-    throw new NotFoundError(`Character with id ${characterId} not found`);
-  }
-  const character = testCharacter;
+function setUiPosition(equipSlot: EquipmentSlot): UiPostition {
+  switch (equipSlot) {
+    case EquipmentSlot.CHEST:
+    case EquipmentSlot.HEAD:
+      return 'left';
 
-  return res.status(200).json({ character: { characterId, level: character.level }, adventures: character.adventures });
-})
+    case EquipmentSlot.HANDS:
+    case EquipmentSlot.LEGS:
+    case EquipmentSlot.SHOULDER:
+      return 'right';
+
+    case EquipmentSlot.MAIN_HAND:
+    case EquipmentSlot.OFF_HAND:
+      return 'bottom';
+    default:
+      return 'left';
+  }
+}
+
+// OLD CODE
+
+// charactersRouter.put('/:characterId', (req: Request, res: Response) => {
+//   const characterId = req.params.characterId;
+//   if (characterId !== '1') {
+//     throw new NotFoundError(`Character with id ${characterId} not found`);
+//   }
+//   // const charBody: Character = req.body.character;
+//   // character = {
+//   //   ...charBody
+//   // }
+
+//   return res.status(200).json({});
+// })
+
+// // ADVENTURES
+// charactersRouter.get('/:characterId/adventures', (req: Request, res: Response<GET_characterAdventuresAll>) => {
+//   const characterId = req.params.characterId;
+//   if (characterId !== '1') {
+//     throw new NotFoundError(`Character with id ${characterId} not found`);
+//   }
+//   const character = testCharacter;
+
+//   return res.status(200).json({ character: { characterId, level: character.level }, adventures: character.adventures });
+// })
 
 // EQUIPMENT
 // charactersRouter.get('/:characterId/equipment', (req: Request, res: Response<GET_characterEquipSlots>) => {

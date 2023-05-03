@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import mongoose from 'mongoose';
+import { Types } from 'mongoose';
 
 import {
   Request_Account_POST,
@@ -27,7 +27,7 @@ accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST>, res: 
   return res.status(201).json(
     {
       success: true,
-      account: { accountId: account._id.toString() }
+      account: { accountId: account.id }
     }
   );
 });
@@ -42,7 +42,7 @@ accountsRouter.post('/:accountId/characters', async (req: Request<Request_Accoun
     throw new NotFoundError(`Account witd id '${accountId}' not found`);
   }
 
-  const convertCharacterId = new mongoose.Types.ObjectId(characterId);
+  const convertCharacterId = new Types.ObjectId(characterId);
 
   account.characters.push(convertCharacterId);
   await account.save();
@@ -50,7 +50,7 @@ accountsRouter.post('/:accountId/characters', async (req: Request<Request_Accoun
   return res.status(201).json(
     {
       success: true,
-      account: { accountId: account._id.toString() }
+      account: { accountId: account.id }
     }
   );
 })

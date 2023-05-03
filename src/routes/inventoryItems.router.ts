@@ -11,14 +11,3 @@ inventoryItemsRouter.get('', async (req: Request<{}, {}, {}, { characterId: stri
 
   return res.status(200).json({ success: true, inventoryItems });
 })
-
-// inventoriesRouter.post('', async (req: Request<{}, {}, Request_Inventories_POST_body>, res: Response<Response_Inventories_POST>) => {
-//   const { characterId } = req.body;
-
-//   const inventory = new InventoryModel();
-//   inventory.characterId = characterId;
-
-//   await inventory.save();
-
-//   return res.status(201).json({ success: true, inventory: { inventoryId: inventory._id.toString() } });
-// });
