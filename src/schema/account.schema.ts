@@ -15,7 +15,7 @@ export class AccountSchema implements AccountBackend {
   @prop({ required: true })
   public password!: string;
 
-  @prop({ required: true, default: [] })
+  @prop({ required: true, default: [], ref: () => CharacterSchema })
   public characters!: Types.ObjectId[];
 
   @prop({ required: true, default: 0 })

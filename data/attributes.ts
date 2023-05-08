@@ -1,9 +1,9 @@
 import {
   BasicAttribute,
   MainAttributeNames,
-  MiscAttributeNames,
-  PrimaryAttributeNames,
-  SecondaryAttributeNames,
+  MiscAttributeName,
+  PrimaryAttributeName,
+  SecondaryAttributeName,
 } from '../../shared/src';
 
 const commonAttributeParams = {
@@ -73,30 +73,30 @@ const generateMainAttributes = (): BasicAttribute[] => {
 const generatePrimaryAttributes = (): BasicAttribute[] => {
   const allPrimaryAttributes: BasicAttribute[] = [];
 
-  for (const attributeName in PrimaryAttributeNames) {
+  for (const attributeName in PrimaryAttributeName) {
     switch (attributeName) {
-      case PrimaryAttributeNames.AGILITY:
+      case PrimaryAttributeName.AGILITY:
         allPrimaryAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
           label: 'Agility'
         });
         break;
-      case PrimaryAttributeNames.INTELLECT:
+      case PrimaryAttributeName.INTELLECT:
         allPrimaryAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
           label: 'Intellect'
         });
         break;
-      case PrimaryAttributeNames.STAMINA:
+      case PrimaryAttributeName.STAMINA:
         allPrimaryAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
           label: 'Stamina'
         });
         break;
-      case PrimaryAttributeNames.STRENGTH:
+      case PrimaryAttributeName.STRENGTH:
         allPrimaryAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
@@ -113,9 +113,9 @@ const generatePrimaryAttributes = (): BasicAttribute[] => {
 const generateSecondaryAttributes = (): BasicAttribute[] => {
   const allSecondaryAttributes: BasicAttribute[] = [];
 
-  for (const attributeName in SecondaryAttributeNames) {
+  for (const attributeName in SecondaryAttributeName) {
     switch (attributeName) {
-      case SecondaryAttributeNames.CRIT_CHANCE_PERCENT:
+      case SecondaryAttributeName.CRIT_CHANCE_PERCENT:
         allSecondaryAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
@@ -123,35 +123,35 @@ const generateSecondaryAttributes = (): BasicAttribute[] => {
           isPercent: true
         });
         break;
-      case SecondaryAttributeNames.CRIT_CHANCE_RATING:
+      case SecondaryAttributeName.CRIT_CHANCE_RATING:
         allSecondaryAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
           label: 'Critical Strike Rating'
         });
         break;
-      case SecondaryAttributeNames.CRIT_DAMAGE_PERCENT:
+      case SecondaryAttributeName.CRIT_DAMAGE_PERCENT:
         allSecondaryAttributes.push({
           attributeName: attributeName,
           label: 'Critical Damage',
           isPercent: true
         });
         break;
-      case SecondaryAttributeNames.CRIT_DAMAGE_RATING:
+      case SecondaryAttributeName.CRIT_DAMAGE_RATING:
         allSecondaryAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
           label: 'Critical Damage Rating'
         });
         break;
-      case SecondaryAttributeNames.MULTISTRIKE_RATING:
+      case SecondaryAttributeName.MULTISTRIKE_RATING:
         allSecondaryAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
           label: 'Multistrike Rating'
         });
         break;
-      case SecondaryAttributeNames.MULTRISTRIKE_CHANCE:
+      case SecondaryAttributeName.MULTRISTRIKE_CHANCE:
         allSecondaryAttributes.push({
           attributeName: attributeName,
           label: 'Multistrike Chance',
@@ -169,9 +169,9 @@ const generateSecondaryAttributes = (): BasicAttribute[] => {
 const generateMiscAttributes = (): BasicAttribute[] => {
   const allMiscAttributes: BasicAttribute[] = [];
 
-  for (const attributeName in MiscAttributeNames) {
+  for (const attributeName in MiscAttributeName) {
     switch (attributeName) {
-      case MiscAttributeNames.BONUS_DAMAGE_PERCENT:
+      case MiscAttributeName.BONUS_DAMAGE_PERCENT:
         allMiscAttributes.push({
           attributeName: attributeName,
           label: 'Bonus Damage (%)',
@@ -179,7 +179,7 @@ const generateMiscAttributes = (): BasicAttribute[] => {
           isPercent: true
         });
         break;
-      case MiscAttributeNames.BONUS_EXPERIENCE_PERCENT:
+      case MiscAttributeName.BONUS_EXPERIENCE_PERCENT:
         allMiscAttributes.push({
           attributeName: attributeName,
           label: 'Bonus Experience (%)',
@@ -187,7 +187,7 @@ const generateMiscAttributes = (): BasicAttribute[] => {
           isPercent: true
         });
         break;
-      case MiscAttributeNames.BONUS_EXPERIENCE_STATIC:
+      case MiscAttributeName.BONUS_EXPERIENCE_STATIC:
         allMiscAttributes.push({
           ...commonAttributeParams,
           attributeName: attributeName,
@@ -195,7 +195,7 @@ const generateMiscAttributes = (): BasicAttribute[] => {
           desc: 'Increase your experience gained by static amount.'
         });
         break;
-      case MiscAttributeNames.BONUS_HEALTH_PERCENT:
+      case MiscAttributeName.BONUS_HEALTH_PERCENT:
         allMiscAttributes.push({
           attributeName: attributeName,
           label: 'Bonus Health (%)',

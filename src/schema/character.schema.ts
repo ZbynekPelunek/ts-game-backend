@@ -3,7 +3,6 @@ import { Types } from 'mongoose';
 
 import { CharacterBackend } from '../../../shared/src';
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
-import { AccountSchema } from './account.schema';
 import { CharacterAttributeSchema } from './characterAttribute.schema';
 import { CharacterCurrencySchema } from './characterCurrency.schema';
 import { EquipmentItemSchema } from './equipmentItem.schema';
@@ -11,7 +10,7 @@ import { InventoryItemSchema } from './inventoryItem.schema';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'characters' } })
 export class CharacterSchema implements CharacterBackend {
-  @prop({ requied: true, ref: () => AccountSchema })
+  @prop({ requied: true })
   public accountId!: Types.ObjectId;
 
   @prop({ required: true })

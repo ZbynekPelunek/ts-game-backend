@@ -58,8 +58,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
 charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response) => {
   const { characterId } = req.params;
   const { populateInventory } = req.query;
-  console.log('GET Character, characterId:', characterId);
-  console.log('characterId type: ', typeof characterId);
+  //console.log('GET Character, characterId:', characterId);
 
   if (!characterId || characterId === 'undefined') {
     return res.status(400).json({ success: false, error: 'Must provide character ID' });
@@ -150,12 +149,12 @@ charactersRouter.get('/:characterId/equipment', async (req: Request, res: Respon
 function setUiPosition(equipSlot: EquipmentSlot): UiPostition {
   switch (equipSlot) {
     case EquipmentSlot.CHEST:
+    case EquipmentSlot.SHOULDER:
     case EquipmentSlot.HEAD:
       return 'left';
 
     case EquipmentSlot.HANDS:
     case EquipmentSlot.LEGS:
-    case EquipmentSlot.SHOULDER:
       return 'right';
 
     case EquipmentSlot.MAIN_HAND:
