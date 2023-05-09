@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import {
   CharacterFrontend,
-  EquipmentItemFrontend,
+  CharacterEquipmentFrontend,
   EquipmentSlot,
   InventoryItemBackend,
   InventoryItemFrontend,
@@ -115,7 +115,7 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
 
 interface CharacterEquipmentResponse {
   characterId: string;
-  equipment: EquipmentItemFrontend[];
+  equipment: CharacterEquipmentFrontend[];
 }
 
 charactersRouter.get('/:characterId/equipment', async (req: Request, res: Response<{ success: boolean; character?: CharacterEquipmentResponse; error?: string; }>) => {
@@ -134,8 +134,8 @@ charactersRouter.get('/:characterId/equipment', async (req: Request, res: Respon
 
   const equipmentArr = [];
   for (const e in EquipmentSlot) {
-    const equipmentObj: EquipmentItemFrontend = {
-      equipmentItemId: e as EquipmentSlot,
+    const equipmentObj: CharacterEquipmentFrontend = {
+      equipmentId: e as EquipmentSlot,
       characterId: character.id,
       itemId: null,
       uiPosition: setUiPosition(e as EquipmentSlot)
