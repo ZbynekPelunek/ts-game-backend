@@ -32,6 +32,9 @@ export class EquipmentItemSchema implements EquipmentItemBackend {
   public equipmentType!: ArmorType | WeaponType;
 
   @prop()
+  public setId?: number;
+
+  @prop()
   public maxItemLevel?: number;
 
   @prop({ required: true, default: 1 })

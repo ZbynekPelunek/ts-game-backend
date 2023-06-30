@@ -7,7 +7,7 @@ const commonStarterArmorParams = {
   maxItemLevel: 5
 }
 
-const starterArmor: Armor[] = [
+export const starterArmor: Armor[] = [
   {
     ...commonStarterArmorParams,
     _id: 1,
@@ -222,7 +222,7 @@ const starterArmor: Armor[] = [
   },
   {
     ...commonStarterArmorParams,
-    _id: 5,
+    _id: 6,
     setId: 1,
     name: 'Loosely Threaded Shield',
     slot: EquipmentSlot.OFF_HAND,
@@ -269,7 +269,7 @@ const commonStarterWeaponParams = {
   maxItemLevel: 5
 }
 
-const starterWeapons: Weapon[] = [
+export const starterWeapons: Weapon[] = [
   {
     ...commonStarterWeaponParams,
     _id: 10,
@@ -327,7 +327,7 @@ const starterWeapons: Weapon[] = [
     _id: 11,
     setId: 2,
     name: 'Worn Cleaver',
-    slot: EquipmentSlot.ONE_HAND,
+    slot: EquipmentSlot.TWO_HAND,
     equipmentType: WeaponType.AXE_2HAND,
     attributes: [
       {
@@ -373,9 +373,213 @@ const starterWeapons: Weapon[] = [
         requiredQuality: ItemQuality.EPIC
       }
     ]
+  },
+  {
+    ...commonStarterWeaponParams,
+    _id: 12,
+    setId: 2,
+    name: 'Worn Blade',
+    slot: EquipmentSlot.ONE_HAND,
+    equipmentType: WeaponType.SWORD_1HAND,
+    attributes: [
+      {
+        attributeName: MainAttributeNames.MIN_DAMAGE,
+        attributeMaxValue: 7,
+        attributeMinValue: 3,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: MainAttributeNames.MAX_DAMAGE,
+        attributeMaxValue: 15,
+        attributeMinValue: 7,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.AGILITY,
+        attributeMaxValue: 6,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeMaxValue: 10,
+        attributeMinValue: 5,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.STAMINA,
+        attributeMaxValue: 5,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.UNCOMMON
+      },
+      {
+        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeMaxValue: 10,
+        attributeMinValue: 6,
+        requiredQuality: ItemQuality.RARE
+      },
+      {
+        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeMaxValue: 4,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.EPIC
+      }
+    ]
+  },
+  {
+    ...commonStarterWeaponParams,
+    _id: 13,
+    setId: 2,
+    name: 'Worn Greatsword',
+    slot: EquipmentSlot.TWO_HAND,
+    equipmentType: WeaponType.SWORD_2HAND,
+    attributes: [
+      {
+        attributeName: MainAttributeNames.MIN_DAMAGE,
+        attributeMaxValue: 7,
+        attributeMinValue: 3,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: MainAttributeNames.MAX_DAMAGE,
+        attributeMaxValue: 15,
+        attributeMinValue: 7,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.AGILITY,
+        attributeMaxValue: 6,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeMaxValue: 10,
+        attributeMinValue: 5,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.STAMINA,
+        attributeMaxValue: 5,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.UNCOMMON
+      },
+      {
+        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeMaxValue: 10,
+        attributeMinValue: 6,
+        requiredQuality: ItemQuality.RARE
+      },
+      {
+        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeMaxValue: 4,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.EPIC
+      }
+    ]
+  },
+  {
+    ...commonStarterWeaponParams,
+    _id: 14,
+    setId: 2,
+    name: 'Worn Scepter',
+    slot: EquipmentSlot.MAIN_HAND,
+    equipmentType: WeaponType.WAND,
+    attributes: [
+      {
+        attributeName: MainAttributeNames.MIN_DAMAGE,
+        attributeMaxValue: 7,
+        attributeMinValue: 3,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: MainAttributeNames.MAX_DAMAGE,
+        attributeMaxValue: 15,
+        attributeMinValue: 7,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.AGILITY,
+        attributeMaxValue: 6,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeMaxValue: 10,
+        attributeMinValue: 5,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.STAMINA,
+        attributeMaxValue: 5,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.UNCOMMON
+      },
+      {
+        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeMaxValue: 10,
+        attributeMinValue: 6,
+        requiredQuality: ItemQuality.RARE
+      },
+      {
+        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeMaxValue: 4,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.EPIC
+      }
+    ]
+  },
+  {
+    ...commonStarterWeaponParams,
+    _id: 15,
+    setId: 2,
+    name: 'Worn Quarterstaff',
+    slot: EquipmentSlot.TWO_HAND,
+    equipmentType: WeaponType.STAFF,
+    attributes: [
+      {
+        attributeName: MainAttributeNames.MIN_DAMAGE,
+        attributeMaxValue: 7,
+        attributeMinValue: 3,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: MainAttributeNames.MAX_DAMAGE,
+        attributeMaxValue: 15,
+        attributeMinValue: 7,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.AGILITY,
+        attributeMaxValue: 6,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeMaxValue: 10,
+        attributeMinValue: 5,
+        requiredQuality: ItemQuality.COMMON
+      },
+      {
+        attributeName: PrimaryAttributeName.STAMINA,
+        attributeMaxValue: 5,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.UNCOMMON
+      },
+      {
+        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeMaxValue: 10,
+        attributeMinValue: 6,
+        requiredQuality: ItemQuality.RARE
+      },
+      {
+        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeMaxValue: 4,
+        attributeMinValue: 0,
+        requiredQuality: ItemQuality.EPIC
+      }
+    ]
   }
-  /*
-  / MISSING:
-  / sword 1h, sword 2h, wand, staff
-  */
 ]

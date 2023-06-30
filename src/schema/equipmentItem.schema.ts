@@ -3,8 +3,8 @@ import { Types } from 'mongoose';
 
 import { CharacterEquipmentBackend, EquipmentSlot, UiPostition } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'equipment-items' } })
-export class EquipmentItemSchema implements CharacterEquipmentBackend {
+@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'character-equipment-items' } })
+export class CharacterEquipmentSchema implements CharacterEquipmentBackend {
   @prop({ required: true })
   public _id!: EquipmentSlot;
 
@@ -18,4 +18,4 @@ export class EquipmentItemSchema implements CharacterEquipmentBackend {
   public uiPosition!: UiPostition;
 }
 
-export const EquipmentItemModel = getModelForClass(EquipmentItemSchema);
+export const CharacterEquipmentModel = getModelForClass(CharacterEquipmentSchema);

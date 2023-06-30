@@ -7,7 +7,8 @@
     "start": "npm run build && node ./build/backend/src/server.js",
     "dev": "nodemon",
     "seedAttributes": "npm run build && node ./build/backend/seeder/seedAttributes.js",
-    "seedCurrencies": "npm run build && node ./build/backend/seeder/seedCurrencies.js"
+    "seedCurrencies": "npm run build && node ./build/backend/seeder/seedCurrencies.js",
+    "seedItems": "npm run build && node ./build/backend/seeder/seedItems.js"
   },
   "keywords": [],
   "author": "",

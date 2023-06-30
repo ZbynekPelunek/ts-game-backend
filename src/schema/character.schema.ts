@@ -5,7 +5,7 @@ import { CharacterBackend } from '../../../shared/src';
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 import { CharacterAttributeSchema } from './characterAttribute.schema';
 import { CharacterCurrencySchema } from './characterCurrency.schema';
-import { EquipmentItemSchema } from './equipmentItem.schema';
+import { CharacterEquipmentSchema } from './equipmentItem.schema';
 import { InventoryItemSchema } from './inventoryItem.schema';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'characters' } })
@@ -28,7 +28,7 @@ export class CharacterSchema implements CharacterBackend {
   @prop({ required: true, default: 0 })
   public currentExperience!: number;
 
-  @prop({ required: true, default: [], ref: () => EquipmentItemSchema })
+  @prop({ required: true, default: [], ref: () => CharacterEquipmentSchema })
   public equipment!: Types.ObjectId[];
 
   @prop({ required: true, default: [], ref: () => InventoryItemSchema })

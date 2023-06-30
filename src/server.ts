@@ -16,7 +16,7 @@ import { AccountModel } from './schema/account.schema';
 import { CharacterModel } from './schema/character.schema';
 import { CharacterAttributeModel } from './schema/characterAttribute.schema';
 import { CharacterCurrencyModel } from './schema/characterCurrency.schema';
-import { EquipmentItemModel } from './schema/equipmentItem.schema';
+import { CharacterEquipmentModel } from './schema/equipmentItem.schema';
 
 const app = express();
 const PORT: Number = 3000;
@@ -46,7 +46,7 @@ async function connect() {
     console.log('...character currencies cleaned.');
 
     console.log('cleaning character equipment items...');
-    await EquipmentItemModel.deleteMany({});
+    await CharacterEquipmentModel.deleteMany({});
     console.log('...character equipment items cleaned.');
 
 
