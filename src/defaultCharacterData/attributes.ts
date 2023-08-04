@@ -4,8 +4,8 @@ import {
   BasicAttributeFrontend,
   CharacterAttributeBackend,
   MainAttributeNames,
-  PrimaryAttributeName,
-  SecondaryAttributeName,
+  PrimaryAttributeNames,
+  SecondaryAttributeNames,
 } from '../../../shared/src';
 import { calculateAttributes } from '../engine/attributes';
 
@@ -44,25 +44,25 @@ export function generateDefaultCharacterAttributes(allAttributes: BasicAttribute
       case MainAttributeNames.ARMOR:
         attribute.baseValue = 100;
         break;
-      case PrimaryAttributeName.AGILITY:
+      case PrimaryAttributeNames.AGILITY:
         attribute.baseValue = 3;
         break;
-      case PrimaryAttributeName.STRENGTH:
+      case PrimaryAttributeNames.STRENGTH:
         attribute.baseValue = 4;
         break;
-      case PrimaryAttributeName.INTELLECT:
+      case PrimaryAttributeNames.INTELLECT:
         attribute.baseValue = 5;
         break;
-      case PrimaryAttributeName.STAMINA:
+      case PrimaryAttributeNames.STAMINA:
         attribute.baseValue = 6;
         break;
-      case SecondaryAttributeName.CRIT_CHANCE_PERCENT:
+      case SecondaryAttributeNames.CRIT_CHANCE_PERCENT:
         attribute.baseValue = 1;
         break;
-      case SecondaryAttributeName.CRIT_DAMAGE_PERCENT:
+      case SecondaryAttributeNames.CRIT_DAMAGE_PERCENT:
         attribute.baseValue = 50;
         break;
-      case SecondaryAttributeName.MULTRISTRIKE_CHANCE:
+      case SecondaryAttributeNames.MULTRISTRIKE_CHANCE:
         attribute.baseValue = 0.01;
         break;
     }
