@@ -1,31 +1,40 @@
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { getDiscriminatorModelForClass, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
-import { ArmorType, EquipmentSlot, ItemAttribute, ItemQuality, ItemType, WeaponType, EquipmentItemBackend } from '../../../shared/src';
+import { ArmorType, EquipmentSlot, ItemAttribute, ItemQuality, ItemType, WeaponType, CommonItemsEquipmenParams, CommonItemParams } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'equipment-items' } })
-export class EquipmentItemSchema implements EquipmentItemBackend {
+@modelOptions({ schemaOptions: { timestamps: true, discriminatorKey: "itemType" } })
+class Item implements CommonItemParams {
   @prop({ required: true })
-  public _id!: number;
+  public itemId!: number;
 
   @prop({ required: true })
   public name!: string;
 
+  @prop({ required: true, enum: ItemType })
+  public itemType!: ItemType;
+
   @prop({ required: true, default: 1 })
-  public sellValue!: number;
+  public maxAmount!: number;
 
-  @prop({ required: true, default: ItemQuality.COMMON })
-  public quality!: ItemQuality;
+  @prop()
+  public sellValue?: number;
 
+  @prop({ enum: ItemQuality })
+  public quality?: ItemQuality;
+
+  @prop()
+  public icon?: string;
+}
+
+
+class Equipment extends Item implements CommonItemsEquipmenParams {
   @prop({ required: true, default: 1 })
   public itemLevel!: number;
 
   @prop({ required: true })
   public attributes!: [ItemAttribute, ...ItemAttribute[]];
 
-  @prop({ required: true })
-  public itemType!: ItemType;
-
-  @prop({ required: true })
+  @prop({ required: true, enum: EquipmentSlot })
   public slot!: EquipmentSlot;
 
   @prop({ required: true })
@@ -42,12 +51,7 @@ export class EquipmentItemSchema implements EquipmentItemBackend {
 
   @prop({ required: true, default: false })
   public isShopItem!: boolean;
-
-  @prop({ required: true, default: 1 })
-  public maxStack!: number;
-
-  @prop()
-  public icon?: string;
 }
 
-export const EquipmentItemModel = getModelForClass(EquipmentItemSchema);
+export const ItemModel = getModelForClass(Item);
+export const ItemsEquipmentModel = getDiscriminatorModelForClass(ItemModel, Equipment, ItemType.EQUIPMENT);

@@ -1,7 +1,7 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
-import { CharacterEquipmentBackend, EquipmentSlot, UiPostition } from '../../../shared/src';
+import { CharacterEquipmentBackend, EquipmentSlot, UiPosition } from '../../../shared/src';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'character-equipment-items' } })
 export class CharacterEquipmentSchema implements CharacterEquipmentBackend {
@@ -12,10 +12,10 @@ export class CharacterEquipmentSchema implements CharacterEquipmentBackend {
   public characterId!: Types.ObjectId;
 
   @prop({ required: true })
-  public itemId!: Types.ObjectId;
+  public itemId!: number;
 
   @prop({ required: true })
-  public uiPosition!: UiPostition;
+  public uiPosition!: UiPosition;
 }
 
 export const CharacterEquipmentModel = getModelForClass(CharacterEquipmentSchema);

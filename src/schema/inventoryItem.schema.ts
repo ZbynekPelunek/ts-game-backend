@@ -9,7 +9,7 @@ export class InventoryItemSchema implements InventoryItemBackend {
   public characterId!: Types.ObjectId;
 
   @prop({ required: true })
-  public itemId!: Types.ObjectId;
+  public itemId!: number;
 
   @prop({ required: true, default: 0 })
   public amount!: number;

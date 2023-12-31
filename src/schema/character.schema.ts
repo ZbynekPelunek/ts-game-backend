@@ -1,12 +1,11 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
-import { CharacterBackend } from '../../../shared/src';
+import { CharacterBackend, InventoryItemBackend } from '../../../shared/src';
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 import { CharacterAttributeSchema } from './characterAttribute.schema';
 import { CharacterCurrencySchema } from './characterCurrency.schema';
 import { CharacterEquipmentSchema } from './equipmentItem.schema';
-import { InventoryItemSchema } from './inventoryItem.schema';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'characters' } })
 export class CharacterSchema implements CharacterBackend {
@@ -31,8 +30,8 @@ export class CharacterSchema implements CharacterBackend {
   @prop({ required: true, default: [], ref: () => CharacterEquipmentSchema })
   public equipment!: Types.ObjectId[];
 
-  @prop({ required: true, default: [], ref: () => InventoryItemSchema })
-  public inventory!: Types.ObjectId[];
+  @prop({ required: true, default: [] })
+  public inventory!: InventoryItemBackend[];
 
   @prop({ required: true, default: 1 })
   public level!: number;

@@ -1,16 +1,17 @@
-import { EquipmentSlot, ItemQuality, ItemType, MainAttributeNames, ArmorType, Armor, PrimaryAttributeName, SecondaryAttributeName, Weapon, WeaponType } from '../../shared/src';
+import { EquipmentSlot, ItemQuality, ItemType, MainAttributeNames, ArmorType, Armor, PrimaryAttributeNames, SecondaryAttributeNames, Weapon, WeaponType } from '../../shared/src';
 
 const commonStarterArmorParams = {
   itemLevel: 1,
   itemType: ItemType.EQUIPMENT,
   sellValue: 1,
-  maxItemLevel: 5
+  maxItemLevel: 5,
+  maxAmount: 1
 }
 
 export const starterArmor: Armor[] = [
   {
     ...commonStarterArmorParams,
-    _id: 1,
+    itemId: 1,
     setId: 1,
     name: 'Loosely Threaded Hat',
     slot: EquipmentSlot.HEAD,
@@ -23,31 +24,31 @@ export const starterArmor: Armor[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.INTELLECT,
+        attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 5,
         attributeMinValue: 1,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 2,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.RARE
       },
       {
-        attributeName: SecondaryAttributeName.MULTISTRIKE_RATING,
+        attributeName: SecondaryAttributeNames.MULTISTRIKE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.EPIC
@@ -56,7 +57,7 @@ export const starterArmor: Armor[] = [
   },
   {
     ...commonStarterArmorParams,
-    _id: 2,
+    itemId: 2,
     setId: 1,
     name: 'Loosely Threaded Shoulderpads',
     slot: EquipmentSlot.SHOULDER,
@@ -69,25 +70,25 @@ export const starterArmor: Armor[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.INTELLECT,
+        attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 4,
         attributeMinValue: 1,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.RARE
@@ -96,7 +97,7 @@ export const starterArmor: Armor[] = [
   },
   {
     ...commonStarterArmorParams,
-    _id: 3,
+    itemId: 3,
     setId: 1,
     name: 'Loosely Threaded Robe',
     slot: EquipmentSlot.CHEST,
@@ -109,31 +110,31 @@ export const starterArmor: Armor[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.INTELLECT,
+        attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 6,
         attributeMinValue: 1,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 2,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.RARE
       },
       {
-        attributeName: SecondaryAttributeName.MULTISTRIKE_RATING,
+        attributeName: SecondaryAttributeNames.MULTISTRIKE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.EPIC
@@ -142,7 +143,7 @@ export const starterArmor: Armor[] = [
   },
   {
     ...commonStarterArmorParams,
-    _id: 4,
+    itemId: 4,
     setId: 1,
     name: 'Loosely Threaded Gloves',
     slot: EquipmentSlot.HANDS,
@@ -155,25 +156,25 @@ export const starterArmor: Armor[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.INTELLECT,
+        attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 4,
         attributeMinValue: 1,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.RARE
@@ -182,7 +183,7 @@ export const starterArmor: Armor[] = [
   },
   {
     ...commonStarterArmorParams,
-    _id: 5,
+    itemId: 5,
     setId: 1,
     name: 'Loosely Threaded Pants',
     slot: EquipmentSlot.HANDS,
@@ -195,25 +196,25 @@ export const starterArmor: Armor[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.INTELLECT,
+        attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 4,
         attributeMinValue: 1,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.RARE
@@ -222,7 +223,7 @@ export const starterArmor: Armor[] = [
   },
   {
     ...commonStarterArmorParams,
-    _id: 6,
+    itemId: 6,
     setId: 1,
     name: 'Loosely Threaded Shield',
     slot: EquipmentSlot.OFF_HAND,
@@ -235,25 +236,25 @@ export const starterArmor: Armor[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.INTELLECT,
+        attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 4,
         attributeMinValue: 1,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.RARE
@@ -266,13 +267,14 @@ const commonStarterWeaponParams = {
   itemLevel: 1,
   itemType: ItemType.EQUIPMENT,
   sellValue: 1,
-  maxItemLevel: 5
+  maxItemLevel: 5,
+  maxAmount: 1
 }
 
 export const starterWeapons: Weapon[] = [
   {
     ...commonStarterWeaponParams,
-    _id: 10,
+    itemId: 10,
     setId: 2,
     name: 'Worn Hatchet',
     slot: EquipmentSlot.ONE_HAND,
@@ -291,31 +293,31 @@ export const starterWeapons: Weapon[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.AGILITY,
+        attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 3,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 5,
         attributeMinValue: 1,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 2,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 5,
         attributeMinValue: 1,
         requiredQuality: ItemQuality.RARE
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 2,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.EPIC
@@ -324,7 +326,7 @@ export const starterWeapons: Weapon[] = [
   },
   {
     ...commonStarterWeaponParams,
-    _id: 11,
+    itemId: 11,
     setId: 2,
     name: 'Worn Cleaver',
     slot: EquipmentSlot.TWO_HAND,
@@ -343,31 +345,31 @@ export const starterWeapons: Weapon[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.AGILITY,
+        attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
         requiredQuality: ItemQuality.RARE
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.EPIC
@@ -376,7 +378,7 @@ export const starterWeapons: Weapon[] = [
   },
   {
     ...commonStarterWeaponParams,
-    _id: 12,
+    itemId: 12,
     setId: 2,
     name: 'Worn Blade',
     slot: EquipmentSlot.ONE_HAND,
@@ -395,31 +397,31 @@ export const starterWeapons: Weapon[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.AGILITY,
+        attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
         requiredQuality: ItemQuality.RARE
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.EPIC
@@ -428,7 +430,7 @@ export const starterWeapons: Weapon[] = [
   },
   {
     ...commonStarterWeaponParams,
-    _id: 13,
+    itemId: 13,
     setId: 2,
     name: 'Worn Greatsword',
     slot: EquipmentSlot.TWO_HAND,
@@ -447,31 +449,31 @@ export const starterWeapons: Weapon[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.AGILITY,
+        attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
         requiredQuality: ItemQuality.RARE
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.EPIC
@@ -480,7 +482,7 @@ export const starterWeapons: Weapon[] = [
   },
   {
     ...commonStarterWeaponParams,
-    _id: 14,
+    itemId: 14,
     setId: 2,
     name: 'Worn Scepter',
     slot: EquipmentSlot.MAIN_HAND,
@@ -499,31 +501,31 @@ export const starterWeapons: Weapon[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.AGILITY,
+        attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
         requiredQuality: ItemQuality.RARE
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.EPIC
@@ -532,7 +534,7 @@ export const starterWeapons: Weapon[] = [
   },
   {
     ...commonStarterWeaponParams,
-    _id: 15,
+    itemId: 15,
     setId: 2,
     name: 'Worn Quarterstaff',
     slot: EquipmentSlot.TWO_HAND,
@@ -551,31 +553,31 @@ export const starterWeapons: Weapon[] = [
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.AGILITY,
+        attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STRENGTH,
+        attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
         requiredQuality: ItemQuality.COMMON
       },
       {
-        attributeName: PrimaryAttributeName.STAMINA,
+        attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.UNCOMMON
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_CHANCE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
         requiredQuality: ItemQuality.RARE
       },
       {
-        attributeName: SecondaryAttributeName.CRIT_DAMAGE_RATING,
+        attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
         requiredQuality: ItemQuality.EPIC

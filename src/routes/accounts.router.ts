@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { Types } from 'mongoose';
 
 import {
@@ -11,7 +11,7 @@ import {
 import { NotFoundError } from '../errors/not-found-error';
 import { AccountModel } from '../schema/account.schema';
 
-export const accountsRouter = express.Router();
+export const accountsRouter = Router();
 
 accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST>, res: Response<Response_Account_POST>) => {
   const accountBody = req.body;

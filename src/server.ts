@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import express from 'express';
 import mongoose from 'mongoose';
 
@@ -17,15 +19,16 @@ import { CharacterModel } from './schema/character.schema';
 import { CharacterAttributeModel } from './schema/characterAttribute.schema';
 import { CharacterCurrencyModel } from './schema/characterCurrency.schema';
 import { CharacterEquipmentModel } from './schema/equipmentItem.schema';
+import { itemsRouter } from './routes/items.router';
 
 const app = express();
 const PORT: Number = 3000;
 
-const uri = 'mongodb+srv://zbynek:12345159357@cluster0.n3nt6.mongodb.net/?retryWrites=true&w=majority';
+const uri = process.env.MONGOOSE_URI;
 
 async function connect() {
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(uri!);
     console.log('Connected to MongoDB');
 
     console.log('Cleaning database...');
@@ -76,6 +79,7 @@ app.use('/api/v1/attributes', attributesRouter);
 app.use('/api/v1/character-attributes', characterAttributesRouter);
 app.use('/api/v1/character-currencies', characterCurrenciesRouter);
 app.use('/api/v1/equipment-items', equipmentItemsRouter);
+app.use('/api/v1/items', itemsRouter);
 
 app.all('*', async (req, _res) => {
   throw new NotFoundError(`Route ${req.url} does not exist.`);

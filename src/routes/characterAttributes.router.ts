@@ -71,7 +71,7 @@ characterAttributesRouter.post('', async (req: Request<{}, {}, Request_Character
   const characterAttributes = await CharacterAttributeModel.create(defaultCharacterAttributes);
 
   //console.log('characterAttributes after model create: ', characterAttributes);
-  const responseArr = characterAttributes.map(ca => ca._id);
+  const responseArr = characterAttributes.map(ca => ca.id);
 
   return res.status(201).json({ success: true, characterAttributes: responseArr });
 })

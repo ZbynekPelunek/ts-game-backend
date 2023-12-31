@@ -11,11 +11,19 @@ import {
   Request_Characters_GET_one_params,
   Request_Characters_GET_one_query,
   Response_Characters_POST,
-  UiPostition,
+  UiPosition,
+  Response_CharacterAttributes_POST,
 } from '../../../shared/src';
 import { CharacterModel } from '../schema/character.schema';
 
 export const charactersRouter = express.Router();
+
+charactersRouter.get('', async (_req: Request, res: Response) => {
+
+  const characters = await CharacterModel.find();
+
+  return res.status(200).json({ success: true, characters });
+})
 
 interface Request_Character_POST {
   accountId: string;
@@ -27,18 +35,29 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
 
   const character = new CharacterModel({
     accountId: characterBody.accountId,
-    name: characterBody.name
+    name: characterBody.name,
+    maxInventorySlot: 20,
   });
 
-  const characterAttributesResponse = await axios.post('http://localhost:3000/api/v1/character-attributes', { characterId: character._id });
+  const characterAttributesResponse = await axios.post<Response_CharacterAttributes_POST>('http://localhost:3000/api/v1/character-attributes', { characterId: character.id });
   //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
+  if (!characterAttributesResponse.data.success) {
+    console.error('Something went wrong while creating character attributes');
+    return res.status(500).json({ success: false, error: 'Character attributes error' })
+  }
+
   character.characterAttributes = characterAttributesResponse.data.characterAttributes;
+
   // if (!character.populated('characterAttributes')) {
   //   return res.status(500).json({ succes: false, error: 'characterAttributes is empty' });
   // }
-  const characterCurrenciesResponse = await axios.post('http://localhost:3000/api/v1/character-currencies', { characterId: character._id });
+  const characterCurrenciesResponse = await axios.post('http://localhost:3000/api/v1/character-currencies', { characterId: character.id });
   //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
   character.currencyIds = characterCurrenciesResponse.data.characterCurrencies;
+
+  const inventoryItemsResponse = await axios.post('http://localhost:3000/api/v1/inventory-items', { characterId: character.id, maxInventorySlot: character.maxInventorySlot });
+
+  character.inventory = inventoryItemsResponse.data.inventory;
 
   //console.log('saving character: ', character);
 
@@ -50,14 +69,13 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   return res.status(201).json(
     {
       success: true,
-      character: { characterId: character._id.toString() }
+      character: { characterId: character.id }
     }
   );
 })
 
 charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response) => {
   const { characterId } = req.params;
-  const { populateInventory } = req.query;
   //console.log('GET Character, characterId:', characterId);
 
   if (!characterId || characterId === 'undefined') {
@@ -70,11 +88,6 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
   }
   //console.log('GET character db response: ', character);
 
-  const emptyInventory = [];
-  for (let i = 0; i < character.maxInventorySlot; i++) {
-    emptyInventory.push(null);
-  }
-
   const responseCharacter: CharacterFrontend = {
     characterId: character.id,
     accountId: character.accountId.toString(),
@@ -83,32 +96,32 @@ charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET
     currencyIds: character.currencyIds.length > 0 ? character.currencyIds.map(c => c.toString()) : [],
     currentExperience: character.currentExperience,
     equipment: character.equipment.length > 0 ? character.equipment.map(e => e.toString()) : [],
-    inventory: character.inventory.length > 0 ? character.inventory.map(i => i.toString()) : emptyInventory,
+    inventory: character.inventory ? character.inventory.map(i => { return { amount: i.amount, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
     level: character.level,
     maxExperience: character.maxExperience,
     name: character.name
   };
 
   // let populatedResponse;
-  if (populateInventory) {
-    const populateResponse = await CharacterModel.populate<{ inventory: InventoryItemBackend[] }>(character, { path: 'inventory', select: '-createdAt -updatedAt -__v' });
+  // if (populateInventory) {
+  //   const populateResponse = await CharacterModel.populate<{ inventory: InventoryItemBackend[] }>(character, { path: 'inventory', select: '-createdAt -updatedAt -__v' });
 
-    if (populateResponse.inventory.length > 0) {
-      const inventoryResult: unknown[] = [...emptyInventory];
-      populateResponse.inventory.forEach(inv => {
-        inventoryResult[inv.slot - 1] = {
-          amount: inv.amount,
-          characterId: inv.characterId.toString(),
-          itemId: inv.itemId.toString(),
-          slot: inv.slot
-        } as InventoryItemFrontend
-      });
+  //   if (populateResponse.inventory.length > 0) {
+  //     const inventoryResult: unknown[] = [];
+  //     populateResponse.inventory.forEach(inv => {
+  //       inventoryResult[inv.slot - 1] = {
+  //         amount: inv.amount,
+  //         characterId: inv.characterId.toString(),
+  //         itemId: inv.itemId,
+  //         slot: inv.slot
+  //       } as InventoryItemFrontend
+  //     });
 
-      responseCharacter.inventoryItems = inventoryResult as InventoryItemFrontend[];
-    }
+  //     responseCharacter.inventoryItems = inventoryResult as InventoryItemFrontend[];
+  //   }
 
-    //console.log('populatedResponse: ', populatedResponse);
-  }
+  //   //console.log('populatedResponse: ', populatedResponse);
+  // }
 
   return res.status(200).json({ success: true, character: responseCharacter });
 })
@@ -146,7 +159,7 @@ charactersRouter.get('/:characterId/equipment', async (req: Request, res: Respon
   return res.status(200).json({ success: true, character: { characterId, equipment: equipmentArr } })
 })
 
-function setUiPosition(equipSlot: EquipmentSlot): UiPostition {
+function setUiPosition(equipSlot: EquipmentSlot): UiPosition {
   switch (equipSlot) {
     case EquipmentSlot.CHEST:
     case EquipmentSlot.SHOULDER:

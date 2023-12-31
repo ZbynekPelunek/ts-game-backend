@@ -1,22 +1,25 @@
+import 'dotenv/config'
 import mongoose from 'mongoose';
 
-import { EquipmentItemBackend } from '../../shared/src';
+import { Armor, Weapon } from '../../shared/src';
 import { starterArmor, starterWeapons } from '../data/items';
-import { EquipmentItemModel } from '../src/schema/item.schema';
+import { ItemsEquipmentModel } from '../src/schema/item.schema';
 
-const uri = 'mongodb+srv://zbynek:12345159357@cluster0.n3nt6.mongodb.net/?retryWrites=true&w=majority';
+const uri = process.env.MONGOOSE_URI;
 
-const equipmentArmorData: EquipmentItemBackend[] = starterArmor;
-const equipmentWeaponData: EquipmentItemBackend[] = starterWeapons;
+const equipmentArmorData: Armor[] = starterArmor;
+const equipmentWeaponData: Weapon[] = starterWeapons;
 
 async function connect() {
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(uri!);
     console.log('Connected to MongoDB');
 
-    await EquipmentItemModel.deleteMany({});
-    await EquipmentItemModel.insertMany(equipmentArmorData);
-    await EquipmentItemModel.insertMany(equipmentWeaponData);
+    console.log('Clearing previously saved items...');
+    await ItemsEquipmentModel.deleteMany({});
+    console.log('...clearing done');
+    await ItemsEquipmentModel.insertMany(equipmentArmorData);
+    await ItemsEquipmentModel.insertMany(equipmentWeaponData);
     console.log('seeding done');
 
     await mongoose.connection.close();
