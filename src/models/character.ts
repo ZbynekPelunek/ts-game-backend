@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 import { IAdventure } from '../../../shared/src';
-import { characterAvailableAdventures } from '../test/testAdventures';
+import { characterAvailableAdventures } from '../mockData/testAdventures';
 
 export class Character {
   constructor(

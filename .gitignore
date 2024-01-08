@@ -1,6 +1,5 @@
 # Compiled output
 /dist
-/build
 
 # Node
 /node_modules
@@ -8,3 +7,4 @@
 # Miscellaneous
 /coverage
 .env
+jest.config.js

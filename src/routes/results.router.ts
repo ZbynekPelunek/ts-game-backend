@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 
 import { AdventureResult, AdventureState } from '../../../shared/src';
 import { NotFoundError } from '../errors/not-found-error';
-import { testCharacter } from '../test/testCharacter';
+import { testCharacter } from '../mockData/testCharacter';
 
 export const resultsRouter = express.Router();
 

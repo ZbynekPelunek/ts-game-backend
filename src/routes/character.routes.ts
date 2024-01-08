@@ -13,16 +13,33 @@ import {
   Response_Characters_POST,
   UiPosition,
   Response_CharacterAttributes_POST,
+  Response_Characters_GET_All,
 } from '../../../shared/src';
 import { CharacterModel } from '../schema/character.schema';
 
 export const charactersRouter = express.Router();
 
-charactersRouter.get('', async (_req: Request, res: Response) => {
+charactersRouter.get('', async (_req: Request, res: Response<Response_Characters_GET_All>) => {
 
   const characters = await CharacterModel.find();
 
-  return res.status(200).json({ success: true, characters });
+  const responseCharacters: CharacterFrontend[] = characters.map(character => {
+    return {
+      characterId: character.id,
+      accountId: character.accountId.toString(),
+      adventures: character.adventures.length > 0 ? character.adventures.map(a => a.toString()) : [],
+      characterAttributes: character.characterAttributes.length > 0 ? character.characterAttributes.map(ca => ca.toString()) : [],
+      currencyIds: character.currencyIds.length > 0 ? character.currencyIds.map(c => c.toString()) : [],
+      currentExperience: character.currentExperience,
+      equipment: character.equipment.length > 0 ? character.equipment.map(e => e.toString()) : [],
+      inventory: character.inventory ? character.inventory.map(i => { return { amount: i.amount, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
+      level: character.level,
+      maxExperience: character.maxExperience,
+      name: character.name
+    }
+  });
+
+  return res.status(200).json({ success: true, characters: responseCharacters });
 })
 
 interface Request_Character_POST {

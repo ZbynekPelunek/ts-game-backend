@@ -1,9 +1,9 @@
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { Severity, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
 import { CharacterEquipmentBackend, EquipmentSlot, UiPosition } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'character-equipment-items' } })
+@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'character-equipment-items', allowMixed: Severity.ALLOW } })
 export class CharacterEquipmentSchema implements CharacterEquipmentBackend {
   @prop({ required: true })
   public _id!: EquipmentSlot;

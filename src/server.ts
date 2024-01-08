@@ -1,7 +1,4 @@
-import 'dotenv/config'
-
 import express from 'express';
-import mongoose from 'mongoose';
 
 import { NotFoundError } from './errors/not-found-error';
 import { errorHandler } from './middleware/errorHandler';
@@ -10,84 +7,93 @@ import { adventuresRouter } from './routes/adventures.router';
 import { attributesRouter } from './routes/attributes.router';
 import { characterAttributesRouter } from './routes/characterAttributes.router';
 import { characterCurrenciesRouter } from './routes/characterCurrencies.router';
-import { charactersRouter } from './routes/characters.router';
+import { charactersRouter } from './routes/character.routes';
 import { equipmentItemsRouter } from './routes/equipmentItem.router';
 import { inventoryItemsRouter } from './routes/inventoryItems.router';
 import { resultsRouter } from './routes/results.router';
-import { AccountModel } from './schema/account.schema';
-import { CharacterModel } from './schema/character.schema';
-import { CharacterAttributeModel } from './schema/characterAttribute.schema';
-import { CharacterCurrencyModel } from './schema/characterCurrency.schema';
-import { CharacterEquipmentModel } from './schema/equipmentItem.schema';
 import { itemsRouter } from './routes/items.router';
+import { MongoDBHandler } from './mongoDB.handler';
+import { Server } from 'http';
 
-const app = express();
-const PORT: Number = 3000;
+export class AppServer {
+  mongoDbHandler: MongoDBHandler;
+  port = 3000;
+  app = express();
+  serverListener: Server;
 
-const uri = process.env.MONGOOSE_URI;
+  constructor() {
+    this.mongoDbHandler = new MongoDBHandler();
+    this.serverListener = new Server();
+  }
 
-async function connect() {
-  try {
-    await mongoose.connect(uri!);
-    console.log('Connected to MongoDB');
+  getApp() {
+    return this.app;
+  }
 
-    console.log('Cleaning database...');
-    console.log('cleaning accounts...');
-    await AccountModel.deleteMany({});
-    console.log('...accounts cleaned.');
+  async start(): Promise<void> {
+    this.app.use(express.json());
 
-    console.log('cleaning characters...');
-    await CharacterModel.deleteMany({});
-    console.log('...characters cleaned.');
+    this.app.use((_req, res, next) => {
+      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+      res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+      res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, PUT, DELETE, POST');
 
-    console.log('cleaning character attributes...');
-    await CharacterAttributeModel.deleteMany({});
-    console.log('...character attributes cleaned.');
+      next();
+    });
 
-    console.log('cleaning character currencies...');
-    await CharacterCurrencyModel.deleteMany({});
-    console.log('...character currencies cleaned.');
+    this.setupRouters();
 
-    console.log('cleaning character equipment items...');
-    await CharacterEquipmentModel.deleteMany({});
-    console.log('...character equipment items cleaned.');
+    this.app.all('*', async (req, _res) => {
+      throw new NotFoundError(`Route ${req.url} does not exist.`);
+    });
 
+    this.app.use(errorHandler);
 
-    console.log('...cleaning database done.');
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
+    await this.connectDb();
+    this.serverListener = this.app.listen(this.port, () => {
+      console.log('The application is listening on port http://localhost:' + this.port);
+    })
+
+    process.on('SIGINT', () => {
+      this.destroy().then(() => {
+        console.log('Closing application');
+        process.exit(2)
+      });
+    })
+  }
+
+  async connectDb(): Promise<void> {
+    const nodeEnv = process.env.NODE_ENV ?? 'dev';
+    await this.mongoDbHandler.connect(nodeEnv);
+  }
+
+  setupRouters() {
+    this.app.use('/api/v1/accounts', accountsRouter);
+    this.app.use('/api/v1/characters', charactersRouter);
+    this.app.use('/api/v1/adventures', adventuresRouter);
+    this.app.use('/api/v1/results', resultsRouter);
+    this.app.use('/api/v1/inventory-items', inventoryItemsRouter);
+    this.app.use('/api/v1/attributes', attributesRouter);
+    this.app.use('/api/v1/character-attributes', characterAttributesRouter);
+    this.app.use('/api/v1/character-currencies', characterCurrenciesRouter);
+    this.app.use('/api/v1/equipment-items', equipmentItemsRouter);
+    this.app.use('/api/v1/items', itemsRouter);
+  }
+
+  async closeServer(): Promise<void> {
+    await new Promise<void>((res) => {
+      this.serverListener.close(() => {
+        console.log('Server closed')
+        res()
+      })
+    });
+  }
+
+  async destroy(): Promise<void> {
+    await this.closeServer();
+    await this.mongoDbHandler.disconnect();
   }
 }
 
-app.use(express.json());
-
-app.use((_req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, PUT, DELETE, POST');
-
-  next();
-});
-
-app.use('/api/v1/accounts', accountsRouter);
-app.use('/api/v1/characters', charactersRouter);
-app.use('/api/v1/adventures', adventuresRouter);
-app.use('/api/v1/results', resultsRouter);
-app.use('/api/v1/inventory-items', inventoryItemsRouter);
-app.use('/api/v1/attributes', attributesRouter);
-app.use('/api/v1/character-attributes', characterAttributesRouter);
-app.use('/api/v1/character-currencies', characterCurrenciesRouter);
-app.use('/api/v1/equipment-items', equipmentItemsRouter);
-app.use('/api/v1/items', itemsRouter);
-
-app.all('*', async (req, _res) => {
-  throw new NotFoundError(`Route ${req.url} does not exist.`);
-});
-
-app.use(errorHandler);
-
-connect();
-app.listen(PORT, () => {
-  console.log('The application is listening on port http://localhost:' + PORT);
-})
+const server = new AppServer();
+void server.start();

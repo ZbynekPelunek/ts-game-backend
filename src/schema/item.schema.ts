@@ -1,8 +1,8 @@
-import { getDiscriminatorModelForClass, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { Severity, getDiscriminatorModelForClass, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
 import { ArmorType, EquipmentSlot, ItemAttribute, ItemQuality, ItemType, WeaponType, CommonItemsEquipmenParams, CommonItemParams } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true, discriminatorKey: "itemType" } })
+@modelOptions({ schemaOptions: { timestamps: true, discriminatorKey: "itemType" }, options: { allowMixed: Severity.ALLOW } })
 class Item implements CommonItemParams {
   @prop({ required: true })
   public itemId!: number;

@@ -2,8 +2,8 @@ import express, { Request, Response } from 'express';
 
 import { AdventureActions, AdventureState, API_Response_Error, IAdventure } from '../../../shared/src';
 import { NotFoundError } from '../errors/not-found-error';
-import { allAdventures } from '../test/testAdventures';
-import { testCharacter } from '../test/testCharacter';
+import { allAdventures } from '../mockData/testAdventures';
+import { testCharacter } from '../mockData/testCharacter';
 
 // import { startAdventure } from '../engine/adventure';
 export const adventuresRouter = express.Router();

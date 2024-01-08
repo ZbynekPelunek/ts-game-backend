@@ -1,20 +1,19 @@
 import 'dotenv/config'
 import mongoose from 'mongoose';
 
-import { generateAttributes } from '../data/attributes';
-import { AttributeDetailModel } from '../src/schema/attribute.schema';
+import { defaultCurrencies } from '../../data/currencies';
+import { CurrencyModel } from '../schema/currency.schema';
 
 const uri = process.env.MONGOOSE_URI;
-
-const attributesData = generateAttributes();
+const currencyData = defaultCurrencies;
 
 async function connect() {
   try {
     await mongoose.connect(uri!);
     console.log('Connected to MongoDB');
 
-    await AttributeDetailModel.deleteMany({});
-    await AttributeDetailModel.insertMany(attributesData);
+    await CurrencyModel.deleteMany({});
+    await CurrencyModel.insertMany(currencyData);
     console.log('seeding done');
 
     await mongoose.connection.close();
