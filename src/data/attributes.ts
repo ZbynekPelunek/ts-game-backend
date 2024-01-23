@@ -4,7 +4,7 @@ import {
   MiscAttributeNames,
   PrimaryAttributeNames,
   SecondaryAttributeNames,
-} from '../../shared/src';
+} from '../../../shared/src';
 
 const commonAttributeParams = {
   isPercent: false,

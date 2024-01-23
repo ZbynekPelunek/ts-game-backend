@@ -6,9 +6,9 @@
     "build": "rimraf ./build && tsc",
     "start": "npm run build && node ./build/backend/src/server.js",
     "dev": "cross-env NODE_ENV=dev nodemon",
-    "seedAttributes": "npm run build && node ./build/backend/seeder/seedAttributes.js",
-    "seedCurrencies": "npm run build && node ./build/backend/seeder/seedCurrencies.js",
-    "seedItems": "npm run build && node ./build/backend/seeder/seedItems.js",
+    "seedAttributes": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedAttributes.ts",
+    "seedCurrencies": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedCurrencies.ts",
+    "seedItems": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedItems.ts",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles"
   },
   "keywords": [],

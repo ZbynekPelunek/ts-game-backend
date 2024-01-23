@@ -1,10 +1,10 @@
 import 'dotenv/config'
 import mongoose from 'mongoose';
 
-import { generateAttributes } from '../../data/attributes';
+import { generateAttributes } from '../data/attributes';
 import { AttributeDetailModel } from '../schema/attribute.schema';
 
-const uri = process.env.MONGOOSE_URI;
+const uri = process.env.MONGOOSE_URI_DEV;
 
 const attributesData = generateAttributes();
 

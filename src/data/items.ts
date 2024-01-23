@@ -1,4 +1,4 @@
-import { EquipmentSlot, ItemQuality, ItemType, MainAttributeNames, ArmorType, Armor, PrimaryAttributeNames, SecondaryAttributeNames, Weapon, WeaponType } from '../../shared/src';
+import { EquipmentSlot, ItemQuality, ItemType, MainAttributeNames, ArmorType, Armor, PrimaryAttributeNames, SecondaryAttributeNames, Weapon, WeaponType } from '../../../shared/src';
 
 const commonStarterArmorParams = {
   itemLevel: 1,

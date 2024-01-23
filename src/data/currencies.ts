@@ -1,4 +1,4 @@
-import { Currency, CurrencyId } from '../../shared/src';
+import { Currency, CurrencyId } from '../../../shared/src';
 
 export const defaultCurrencies: Currency[] = [
   {

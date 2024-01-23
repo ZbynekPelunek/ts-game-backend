@@ -2,10 +2,10 @@ import 'dotenv/config'
 import mongoose from 'mongoose';
 
 import { Armor, Weapon } from '../../../shared/src';
-import { starterArmor, starterWeapons } from '../../data/items';
+import { starterArmor, starterWeapons } from '../data/items';
 import { ItemsEquipmentModel } from '../schema/item.schema';
 
-const uri = process.env.MONGOOSE_URI;
+const uri = process.env.MONGOOSE_URI_DEV;
 
 const equipmentArmorData: Armor[] = starterArmor;
 const equipmentWeaponData: Weapon[] = starterWeapons;

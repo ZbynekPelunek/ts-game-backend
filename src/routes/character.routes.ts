@@ -86,7 +86,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   return res.status(201).json(
     {
       success: true,
-      character: { characterId: character.id }
+      character: { characterId: character.id, name: character.name }
     }
   );
 })

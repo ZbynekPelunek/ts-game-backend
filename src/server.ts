@@ -49,7 +49,10 @@ export class AppServer {
 
     this.app.use(errorHandler);
 
+
     await this.connectDb();
+
+
     this.serverListener = this.app.listen(this.port, () => {
       console.log('The application is listening on port http://localhost:' + this.port);
     })
@@ -62,9 +65,9 @@ export class AppServer {
     })
   }
 
-  async connectDb(): Promise<void> {
+  async connectDb() {
     const nodeEnv = process.env.NODE_ENV ?? 'dev';
-    await this.mongoDbHandler.connect(nodeEnv);
+    return await this.mongoDbHandler.connect(nodeEnv);
   }
 
   setupRouters() {
@@ -80,20 +83,15 @@ export class AppServer {
     this.app.use('/api/v1/items', itemsRouter);
   }
 
-  async closeServer(): Promise<void> {
-    await new Promise<void>((res) => {
-      this.serverListener.close(() => {
-        console.log('Server closed')
-        res()
-      })
-    });
-  }
-
   async destroy(): Promise<void> {
-    await this.closeServer();
-    await this.mongoDbHandler.disconnect();
+    await Promise.all([this.serverListener.close(), this.mongoDbHandler.disconnect()])
+    // await this.closeServer();
+    // await this.mongoDbHandler.disconnect();
   }
 }
 
-const server = new AppServer();
-void server.start();
+if (process.env.NODE_ENV !== 'test') {
+  const server = new AppServer();
+  void server.start();
+}
+

@@ -1,10 +1,10 @@
 import 'dotenv/config'
 import mongoose from 'mongoose';
 
-import { defaultCurrencies } from '../../data/currencies';
+import { defaultCurrencies } from '../data/currencies';
 import { CurrencyModel } from '../schema/currency.schema';
 
-const uri = process.env.MONGOOSE_URI;
+const uri = process.env.MONGOOSE_URI_DEV;
 const currencyData = defaultCurrencies;
 
 async function connect() {
