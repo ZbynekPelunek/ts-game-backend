@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import { Types } from 'mongoose';
 
 import {
-  Request_Account_POST,
+  Request_Account_POST_body,
   Request_Account_POST_Characters_body,
   Request_Account_POST_Characters_params,
   Response_Account_POST,
@@ -13,7 +13,7 @@ import { AccountModel } from '../schema/account.schema';
 
 export const accountsRouter = Router();
 
-accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST>, res: Response<Response_Account_POST>) => {
+accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST_body>, res: Response<Response_Account_POST>) => {
   const accountBody = req.body;
 
   const account = new AccountModel({
@@ -27,7 +27,7 @@ accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST>, res: 
   return res.status(201).json(
     {
       success: true,
-      account: { accountId: account.id }
+      account: { accountId: account.id, email: account.email, username: account.username }
     }
   );
 });
@@ -39,7 +39,7 @@ accountsRouter.post('/:accountId/characters', async (req: Request<Request_Accoun
   const account = await AccountModel.findById(accountId);
 
   if (!account) {
-    throw new NotFoundError(`Account witd id '${accountId}' not found`);
+    throw new NotFoundError(`Account with id '${accountId}' not found`);
   }
 
   const convertCharacterId = new Types.ObjectId(characterId);

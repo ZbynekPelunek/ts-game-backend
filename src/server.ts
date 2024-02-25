@@ -2,7 +2,7 @@ import express from 'express';
 
 import { NotFoundError } from './errors/not-found-error';
 import { errorHandler } from './middleware/errorHandler';
-import { accountsRouter } from './routes/accounts.router';
+import { accountsRouter } from './routes/account.routes';
 import { adventuresRouter } from './routes/adventures.router';
 import { attributesRouter } from './routes/attributes.router';
 import { characterAttributesRouter } from './routes/characterAttributes.router';

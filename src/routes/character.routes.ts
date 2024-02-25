@@ -14,6 +14,8 @@ import {
   UiPosition,
   Response_CharacterAttributes_POST,
   Response_Characters_GET_All,
+  Request_Characters_POST_body,
+  Response_Characters_GET_one,
 } from '../../../shared/src';
 import { CharacterModel } from '../schema/character.schema';
 
@@ -42,12 +44,7 @@ charactersRouter.get('', async (_req: Request, res: Response<Response_Characters
   return res.status(200).json({ success: true, characters: responseCharacters });
 })
 
-interface Request_Character_POST {
-  accountId: string;
-  name: string;
-}
-
-charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, res: Response<Response_Characters_POST>) => {
+charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_body>, res: Response<Response_Characters_POST>) => {
   const characterBody = req.body;
 
   const character = new CharacterModel({
@@ -91,7 +88,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST>, r
   );
 })
 
-charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response) => {
+charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response<Response_Characters_GET_one>) => {
   const { characterId } = req.params;
   //console.log('GET Character, characterId:', characterId);
 
