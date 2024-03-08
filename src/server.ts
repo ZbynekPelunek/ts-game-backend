@@ -4,11 +4,11 @@ import { NotFoundError } from './errors/not-found-error';
 import { errorHandler } from './middleware/errorHandler';
 import { accountsRouter } from './routes/account.routes';
 import { adventuresRouter } from './routes/adventures.router';
-import { attributesRouter } from './routes/attributes.router';
-import { characterAttributesRouter } from './routes/characterAttributes.router';
-import { characterCurrenciesRouter } from './routes/characterCurrencies.router';
+import { attributesRouter } from './routes/attribute.routes';
+import { characterAttributesRouter } from './routes/characterAttribute.routes';
+import { characterCurrenciesRouter } from './routes/characterCurrency.routes';
 import { charactersRouter } from './routes/character.routes';
-import { equipmentItemsRouter } from './routes/equipmentItem.router';
+import { characterEquipmentRouter } from './routes/characterEquipment.routes';
 import { inventoryItemsRouter } from './routes/inventoryItems.router';
 import { resultsRouter } from './routes/results.router';
 import { itemsRouter } from './routes/items.router';
@@ -79,7 +79,7 @@ export class AppServer {
     this.app.use('/api/v1/attributes', attributesRouter);
     this.app.use('/api/v1/character-attributes', characterAttributesRouter);
     this.app.use('/api/v1/character-currencies', characterCurrenciesRouter);
-    this.app.use('/api/v1/equipment-items', equipmentItemsRouter);
+    this.app.use('/api/v1/character-equipment', characterEquipmentRouter);
     this.app.use('/api/v1/items', itemsRouter);
   }
 

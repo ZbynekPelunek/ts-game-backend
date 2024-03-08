@@ -27,7 +27,7 @@ class Item implements CommonItemParams {
 }
 
 
-class Equipment extends Item implements CommonItemsEquipmenParams {
+export class Equipment extends Item implements CommonItemsEquipmenParams {
   @prop({ required: true, default: 1 })
   public itemLevel!: number;
 

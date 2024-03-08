@@ -1,29 +1,15 @@
 import request from 'supertest';
-import { AppServer } from '../server';
-import { Express } from 'express-serve-static-core';
-import { Accounts_POST, Accounts_POST_Characters, Request_Account_POST_Characters_body, Request_Account_POST_body } from '../../../shared/src';
+import { Accounts_POST, Accounts_POST_Characters, Request_Account_POST_Characters_body, Request_Account_POST_body, Response_Account_POST_Characters } from '../../../shared/src';
 import { AccountModel } from '../schema/account.schema';
-import { Types } from 'mongoose';
+import { APP_SERVER, unknownID } from '../tests/setupFile';
+import { Common_Response_Error } from '../../../shared/src/interface/api-response/common';
 
-describe("Character routes", () => {
-  let appServer: AppServer;
-  let app: Express;
+describe('Account routes', () => {
   const apiAddress = '/api/v1/accounts';
-
-  beforeAll(async () => {
-    appServer = new AppServer();
-    appServer.start();
-    appServer.setupRouters();
-    app = appServer.getApp();
-  })
 
   afterEach(async () => {
     await AccountModel.deleteMany();
-  })
-
-  afterAll(async () => {
-    await appServer.destroy();
-  })
+  });
 
   describe(`POST ${apiAddress}`, () => {
     it('creates new account with status code 201', async () => {
@@ -34,7 +20,7 @@ describe("Character routes", () => {
       await addAccountToDb('acc2@test.test', 'testAccount2', '12345');
       const currentLength = await AccountModel.countDocuments();
 
-      const res = await request(app).post(apiAddress).send(<Request_Account_POST_body>{ email: newAccEmail, username: newAccUsername, password: newAccPassword });
+      const res = await request(APP_SERVER).post(apiAddress).send(<Request_Account_POST_body>{ email: newAccEmail, username: newAccUsername, password: newAccPassword });
 
       const newLength = await AccountModel.countDocuments();
 
@@ -51,20 +37,29 @@ describe("Character routes", () => {
   describe(`POST ${apiAddress}/<ACCOUNT_ID>/characters`, () => {
     it('adds character to the account and returns 201', async () => {
       const addedAccount = await addAccountToDb('acc@test.test', 'testAccount', '12345');
-      const addedAccountId = addedAccount.id;
-      const newCharId = new Types.ObjectId;
+      const addedAccountId: string = addedAccount.id;
+      const newCharId = unknownID;
       const currentAccCharsLength = addedAccount.characters.length;
 
-      const res = await request(app).post(`${apiAddress}/${addedAccountId}/characters`).send(<Request_Account_POST_Characters_body>{ characterId: newCharId.toString() });
+      const res = await request(APP_SERVER).post(`${apiAddress}/${addedAccountId}/characters`).send(<Request_Account_POST_Characters_body>{ characterId: newCharId.toString() });
 
       const account = await AccountModel.findById(addedAccountId);
       const newAccCharsLength = account!.characters.length;
 
       expect(res.statusCode).toEqual(201);
-      const characterResponse: Accounts_POST_Characters = res.body;
-      expect(characterResponse.success).toBe(true);
+      const accountResponse: Accounts_POST_Characters = res.body;
+      expect(accountResponse.success).toBe(true);
       expect(newAccCharsLength).toBe(currentAccCharsLength + 1);
-      expect(characterResponse.account.accountId).toBe(addedAccountId);
+      expect(accountResponse.account.accountId).toBe(addedAccountId);
+    })
+
+    it('returns 404 when account ID doesnt exists in database', async () => {
+      const res = await request(APP_SERVER).post(`${apiAddress}/${unknownID}/characters`).send(<Request_Account_POST_Characters_body>{ characterId: unknownID.toString() });
+
+      expect(res.statusCode).toEqual(404);
+      const characterResponse: Common_Response_Error = res.body;
+      expect(characterResponse.success).toBe(false);
+      expect(characterResponse.error).toBe(`Account with id '${unknownID}' not found`);
     })
   })
 });

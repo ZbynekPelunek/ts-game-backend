@@ -3,7 +3,7 @@ import { AccountModel } from './schema/account.schema';
 import { CharacterModel } from './schema/character.schema';
 import { CharacterAttributeModel } from './schema/characterAttribute.schema';
 import { CharacterCurrencyModel } from './schema/characterCurrency.schema';
-import { CharacterEquipmentModel } from './schema/equipmentItem.schema';
+import { CharacterEquipmentModel } from './schema/characterEquipment.schema';
 
 export class MongoDBHandler {
   connection: Mongoose | undefined

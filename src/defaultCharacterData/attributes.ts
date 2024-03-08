@@ -1,8 +1,6 @@
-import { Types } from 'mongoose';
-
 import {
   BasicAttributeFrontend,
-  CharacterAttributeBackend,
+  CharacterAttributeFrontend,
   MainAttributeNames,
   PrimaryAttributeNames,
   SecondaryAttributeNames,
@@ -16,17 +14,16 @@ const commonCharAttributesValues = {
   totalValue: 0
 }
 
-export function generateDefaultCharacterAttributes(allAttributes: BasicAttributeFrontend[], characterId: string): CharacterAttributeBackend[] {
-  const defaultAttributes: CharacterAttributeBackend[] = [];
-
-  const convertCharacterId = new Types.ObjectId(characterId);
+export function generateDefaultCharacterAttributes(allAttributes: BasicAttributeFrontend[], characterId: string): CharacterAttributeFrontend[] {
+  const defaultAttributes: CharacterAttributeFrontend[] = [];
 
   allAttributes.forEach(a => {
-    const attribute: CharacterAttributeBackend = {
+    const attribute: CharacterAttributeFrontend = {
       ...commonCharAttributesValues,
-      characterId: convertCharacterId,
-      attributeId: new Types.ObjectId(a.attributeId),
-      attribute: a
+      characterId,
+      attributeId: a.attributeId,
+      attribute: a,
+      characterAttributeId: ''
     }
     switch (a.attributeName) {
       case MainAttributeNames.HEALTH:

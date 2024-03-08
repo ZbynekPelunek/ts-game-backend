@@ -1,8 +1,8 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
-import { AccountBackend } from '../../../shared/src';
 import { CharacterSchema } from './character.schema';
+import { AccountBackend } from '../../../shared/src';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'accounts' } })
 export class AccountSchema implements AccountBackend {

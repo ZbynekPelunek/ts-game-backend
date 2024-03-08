@@ -38,7 +38,7 @@ attributesRouter.get('/:attributeId', async (req: Request<Request_Attributes_GET
   try {
     const { attributeId } = req.params;
 
-    const attribute: BasicAttribute | null = await AttributeDetailModel.findOne({ 'internal-name': attributeId });
+    const attribute: BasicAttribute | null = await AttributeDetailModel.findById(attributeId);
     if (!attribute) {
       return res.status(404).json({ success: false, error: `Attribute with id '${attributeId}' not found` });
     }

@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
+import axios from 'axios';
 
 import { InventoryItemModel } from '../schema/inventoryItem.schema';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
 import { InventoryItemBackend, Request_Inventories_GET_all_query, Request_Inventories_POST_body, Request_Inventories_POST_item_body, Request_Inventories_POST_item_param } from '../../../shared/src';
-import axios from 'axios';
 
 export const inventoryItemsRouter = express.Router();
 

@@ -1,5 +1,4 @@
 import {
-  CharacterAttributeBackend,
   CharacterAttributeFrontend,
   CommonCharacterAttributeParams,
   MainAttributeNames,
@@ -7,7 +6,7 @@ import {
   SecondaryAttributeNames,
 } from '../../../shared/src';
 
-export function calculateAttributes(attributes: CharacterAttributeBackend[]) {
+export function calculateAttributes(attributes: CharacterAttributeFrontend[]): CharacterAttributeFrontend[] {
   console.log('calculating attributes...');
 
   attributes.forEach((att) => {

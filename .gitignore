@@ -7,4 +7,3 @@
 # Miscellaneous
 /coverage
 .env
-jest.config.js
