@@ -1,27 +1,40 @@
 import express, { Request, Response } from 'express';
 import axios from 'axios';
+import { Document } from 'mongoose';
 
-import { InventoryItemModel } from '../schema/inventoryItem.schema';
+import { InventoryItemModel, InventoryItemSchema } from '../schema/inventoryItem.schema';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
-import { InventoryItemBackend, Request_Inventories_GET_all_query, Request_Inventories_POST_body, Request_Inventories_POST_item_body, Request_Inventories_POST_item_param } from '../../../shared/src';
+import { InventoryItemBackend, InventoryItemFrontend, Request_Inventories_GET_all_query, Request_Inventories_GET_item_param, Request_Inventories_POST_body, Request_Inventories_POST_item_body, Request_Inventories_POST_item_param, Response_Inventories_GET_all, Response_Inventories_GET_one, Response_Items_GET_one } from '../../../shared/src';
 
 export const inventoryItemsRouter = express.Router();
 
-inventoryItemsRouter.get('', async (req: Request<{}, {}, {}, Request_Inventories_GET_all_query>, res: Response) => {
+inventoryItemsRouter.get('', async (req: Request<{}, {}, {}, Request_Inventories_GET_all_query>, res: Response<Response_Inventories_GET_all>) => {
   const { characterId } = req.query;
 
-  const inventoryItems = await InventoryItemModel.find({ characterId });
+  let inventoryItems;
+  if (characterId) {
+    inventoryItems = await InventoryItemModel.find({ characterId });
+  } else {
+    inventoryItems = await InventoryItemModel.find();
+  }
 
-  return res.status(200).json({ success: true, inventoryItems });
+  const response = inventoryItems.map(invItem => {
+    return transformResponse(invItem);
+  })
+
+  return res.status(200).json({ success: true, inventoryItems: response });
 })
 
-inventoryItemsRouter.get('/:slot', async (req: Request<{ slot: number }, {}, {}, Request_Inventories_GET_all_query>, res: Response) => {
-  const { slot } = req.params;
-  const { characterId } = req.query;
+inventoryItemsRouter.get('/:inventoryItemId', async (req: Request<Request_Inventories_GET_item_param>, res: Response<Response_Inventories_GET_one>) => {
+  const { inventoryItemId } = req.params;
 
-  const inventoryItem = await InventoryItemModel.findOne({ slot, characterId });
+  const inventoryItem = await InventoryItemModel.findById(inventoryItemId);
 
-  return res.status(200).json({ success: true, inventoryItem });
+  if (!inventoryItem) {
+    return res.status(404).json({ success: false, error: `Inventory item with id '${inventoryItemId}' not found` });
+  }
+
+  return res.status(200).json({ success: true, inventoryItem: transformResponse(inventoryItem) });
 })
 
 inventoryItemsRouter.post('', async (req: Request<{}, {}, Request_Inventories_POST_body>, res: Response) => {
@@ -41,7 +54,14 @@ inventoryItemsRouter.patch('/:slot', async (req: Request<Request_Inventories_POS
 
   try {
     console.log('Looking for item data...');
-    const item = await axios.get(`http://localhost:3000/api/v1/items/${itemId}`);
+    const item = await axios.get<Response_Items_GET_one>(`http://localhost:3000/api/v1/items/${itemId}`);
+    if (!item.data.success) {
+      return res.status(500).json({ success: false, error: 'Error while retrieving item data' });
+    }
+
+    if (!item.data.item) {
+      return res.status(500).json({ success: false, error: 'Item not found' });
+    }
     console.log('...found item data: ', item.data.item);
 
     console.log('Getting all inventory slots data...');
@@ -50,7 +70,7 @@ inventoryItemsRouter.patch('/:slot', async (req: Request<Request_Inventories_POS
 
     let updateRes;
     if (inventorySlotItem.data.inventoryItem.itemId === item.data.item.itemId) {
-      if (inventorySlotItem.data.inventoryItem.amount + 1 > item.data.item.maxAmount) {
+      if (inventorySlotItem.data.inventoryItem.amount + 1 > item.data.item.maxAmount!) {
         return res.status(500).json({ succes: false, error: `Max amount reached ${amount}/${item.data.item.maxAmount}` });
       }
 
@@ -94,3 +114,13 @@ inventoryItemsRouter.patch('/:slot', async (req: Request<Request_Inventories_POS
     return res.status(500).json({ success: false, error });
   }
 })
+
+const transformResponse = (databaseResponse: InventoryItemSchema & Document): InventoryItemFrontend => {
+  return {
+    inventoryItemId: databaseResponse.id,
+    characterId: databaseResponse.characterId.toString(),
+    amount: databaseResponse.amount,
+    itemId: databaseResponse.itemId,
+    slot: databaseResponse.slot
+  }
+}

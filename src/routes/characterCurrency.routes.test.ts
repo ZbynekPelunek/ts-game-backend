@@ -4,9 +4,10 @@ import { CharacterCurrencies_GET_all, CharacterCurrencyBackend, Currency, Curren
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { CharacterCurrencyModel } from '../schema/characterCurrency.schema';
 import { CurrencyModel } from '../schema/currency.schema';
+import { PUBLIC_ROUTES } from '../server';
 
 describe('Character Currency routes', () => {
-  const apiAddress = '/api/v1/character-currencies';
+  const apiAddress = PUBLIC_ROUTES.CharacterCurrencies;
 
   afterEach(async () => {
     await CharacterCurrencyModel.deleteMany();

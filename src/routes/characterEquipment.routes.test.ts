@@ -1,12 +1,13 @@
 import request from 'supertest';
+import { Types } from 'mongoose';
 
 import { CharacterEquipmentBackend, CharacterEquipmentFrontend, CharacterEquipment_GET_all, CharacterEquipment_POST, EquipmentSlot, UiPosition } from '../../../shared/src';
 import { CharacterEquipmentModel } from '../schema/characterEquipment.schema';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
-import { Types } from 'mongoose';
+import { PUBLIC_ROUTES } from '../server';
 
 describe('Character Equipment routes', () => {
-  const apiAddress = '/api/v1/character-equipment';
+  const apiAddress = PUBLIC_ROUTES.CharacterEquipment;
 
   afterEach(async () => {
     await CharacterEquipmentModel.deleteMany();

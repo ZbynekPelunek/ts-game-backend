@@ -33,19 +33,7 @@ charactersRouter.get('', async (_req: Request, res: Response<Response_Characters
   const characters = await CharacterModel.find();
 
   const responseCharacters: CharacterFrontend[] = characters.map(character => {
-    return {
-      characterId: character.id,
-      accountId: character.accountId.toString(),
-      adventures: character.adventures!.length > 0 ? character.adventures!.map(a => a.toString()) : [],
-      characterAttributes: character.characterAttributes!.length > 0 ? character.characterAttributes!.map(ca => ca.toString()) : [],
-      currencyIds: character.currencyIds!.length > 0 ? character.currencyIds!.map(c => c.toString()) : [],
-      currentExperience: character.currentExperience,
-      equipment: character.equipment!.length > 0 ? character.equipment!.map(e => e.toString()) : [],
-      inventory: character.inventory ? character.inventory.map(i => { return { amount: i.amount, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
-      level: character.level,
-      maxExperience: character.maxExperience,
-      name: character.name
-    }
+    return transformResponse(character)
   });
 
   return res.status(200).json({ success: true, characters: responseCharacters });
@@ -217,7 +205,7 @@ const transformResponse = (databaseResponse: CharacterSchema & Document): Charac
     currencyIds: databaseResponse.currencyIds!.length > 0 ? databaseResponse.currencyIds!.map(c => c.toString()) : [],
     currentExperience: databaseResponse.currentExperience,
     equipment: databaseResponse.equipment!.length > 0 ? databaseResponse.equipment!.map(e => e.toString()) : [],
-    inventory: databaseResponse.inventory ? databaseResponse.inventory.map(i => { return { amount: i.amount, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
+    inventory: databaseResponse.inventory ? databaseResponse.inventory.map(i => { return { inventoryItemId: i._id!.toString(), amount: i.amount, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
     level: databaseResponse.level,
     maxExperience: databaseResponse.maxExperience,
     name: databaseResponse.name

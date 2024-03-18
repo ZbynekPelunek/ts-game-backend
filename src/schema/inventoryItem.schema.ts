@@ -11,11 +11,12 @@ export class InventoryItemSchema implements InventoryItemBackend {
   @prop({ required: true })
   public itemId!: number;
 
-  @prop({ required: true, default: 0 })
-  public amount!: number;
-
   @prop({ required: true })
   public slot!: number;
+
+  @prop({ default: 0 })
+  public amount!: number;
+
 }
 
 export const InventoryItemModel = getModelForClass(InventoryItemSchema);

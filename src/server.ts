@@ -9,11 +9,25 @@ import { characterAttributesRouter } from './routes/characterAttribute.routes';
 import { characterCurrenciesRouter } from './routes/characterCurrency.routes';
 import { charactersRouter } from './routes/character.routes';
 import { characterEquipmentRouter } from './routes/characterEquipment.routes';
-import { inventoryItemsRouter } from './routes/inventoryItems.router';
+import { inventoryItemsRouter } from './routes/inventoryItem.routes';
 import { resultsRouter } from './routes/results.router';
-import { itemsRouter } from './routes/items.router';
+import { itemsRouter } from './routes/item.routes';
 import { MongoDBHandler } from './mongoDB.handler';
 import { Server } from 'http';
+import { ApiRoutes, Paths } from '../../shared/src';
+
+export const PUBLIC_ROUTES = {
+  Accounts: `/${Paths.PUBLIC}/${ApiRoutes.ACCOUNTS}`,
+  Characters: `/${Paths.PUBLIC}/${ApiRoutes.CHARACTERS}`,
+  Adventures: `/${Paths.PUBLIC}/${ApiRoutes.ADVENTURES}`,
+  Results: `/${Paths.PUBLIC}/${ApiRoutes.RESULTS}`,
+  Inventory: `/${Paths.PUBLIC}/${ApiRoutes.INVENTORY}`,
+  Attributes: `/${Paths.PUBLIC}/${ApiRoutes.ATTRIBUTES}`,
+  CharacterAttributes: `/${Paths.PUBLIC}/${ApiRoutes.CHARACTER_ATTRIBUTES}`,
+  CharacterCurrencies: `/${Paths.PUBLIC}/${ApiRoutes.CHARACTER_CURRENCIES}`,
+  CharacterEquipment: `/${Paths.PUBLIC}/${ApiRoutes.CHARACTER_EQUIPMENT}`,
+  Items: `/${Paths.PUBLIC}/${ApiRoutes.ITEMS}`
+}
 
 export class AppServer {
   mongoDbHandler: MongoDBHandler;
@@ -71,22 +85,20 @@ export class AppServer {
   }
 
   setupRouters() {
-    this.app.use('/api/v1/accounts', accountsRouter);
-    this.app.use('/api/v1/characters', charactersRouter);
-    this.app.use('/api/v1/adventures', adventuresRouter);
-    this.app.use('/api/v1/results', resultsRouter);
-    this.app.use('/api/v1/inventory-items', inventoryItemsRouter);
-    this.app.use('/api/v1/attributes', attributesRouter);
-    this.app.use('/api/v1/character-attributes', characterAttributesRouter);
-    this.app.use('/api/v1/character-currencies', characterCurrenciesRouter);
-    this.app.use('/api/v1/character-equipment', characterEquipmentRouter);
-    this.app.use('/api/v1/items', itemsRouter);
+    this.app.use(PUBLIC_ROUTES.Accounts, accountsRouter);
+    this.app.use(PUBLIC_ROUTES.Characters, charactersRouter);
+    this.app.use(PUBLIC_ROUTES.Adventures, adventuresRouter);
+    this.app.use(PUBLIC_ROUTES.Results, resultsRouter);
+    this.app.use(PUBLIC_ROUTES.Inventory, inventoryItemsRouter);
+    this.app.use(PUBLIC_ROUTES.Attributes, attributesRouter);
+    this.app.use(PUBLIC_ROUTES.CharacterAttributes, characterAttributesRouter);
+    this.app.use(PUBLIC_ROUTES.CharacterCurrencies, characterCurrenciesRouter);
+    this.app.use(PUBLIC_ROUTES.CharacterEquipment, characterEquipmentRouter);
+    this.app.use(PUBLIC_ROUTES.Items, itemsRouter);
   }
 
   async destroy(): Promise<void> {
     await Promise.all([this.serverListener.close(), this.mongoDbHandler.disconnect()])
-    // await this.closeServer();
-    // await this.mongoDbHandler.disconnect();
   }
 }
 

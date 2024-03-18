@@ -4,9 +4,10 @@ import { AttributeName, Attributes_GET_all, Attributes_GET_one, BasicAttribute, 
 import { AttributeDetailModel } from '../schema/attribute.schema';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { Common_Response_Error } from '../../../shared/src/interface/api-response/common';
+import { PUBLIC_ROUTES } from '../server';
 
 describe('Attribute routes', () => {
-  const apiAddress = '/api/v1/attributes';
+  const apiAddress = PUBLIC_ROUTES.Attributes;
 
   afterEach(async () => {
     await AttributeDetailModel.deleteMany();

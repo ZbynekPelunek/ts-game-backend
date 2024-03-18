@@ -2,11 +2,12 @@ import request from 'supertest';
 import { CharacterModel } from '../schema/character.schema';
 import { CharacterBackend, Characters_GET_All, Characters_GET_one, Characters_POST, Response_Attributes_GET_all } from '../../../shared/src';
 import { APP_SERVER, mockedAxios, unknownID } from '../tests/setupFile';
+import { PUBLIC_ROUTES } from '../server';
 
 describe('Character routes', () => {
   const accountId = unknownID;
   const characterName = 'TEST CHAR';
-  const apiAddress = '/api/v1/characters';
+  const apiAddress = PUBLIC_ROUTES.Characters;
 
   afterEach(async () => {
     await CharacterModel.deleteMany();

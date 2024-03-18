@@ -4,9 +4,10 @@ import { BasicAttribute, CharacterAttributeBackend, CharacterAttributeFrontend, 
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { CharacterAttributeModel } from '../schema/characterAttribute.schema';
 import { AttributeDetailModel } from '../schema/attribute.schema';
+import { PUBLIC_ROUTES } from '../server';
 
 describe('Character Attribute routes', () => {
-  const apiAddress = '/api/v1/character-attributes';
+  const apiAddress = PUBLIC_ROUTES.CharacterAttributes;
   const commonCharAttributesValues: CharacterAttributeFrontend = {
     baseValue: 0,
     addedValue: 0,

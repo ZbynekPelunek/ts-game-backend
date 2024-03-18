@@ -13,8 +13,8 @@ class Item implements CommonItemParams {
   @prop({ required: true, enum: ItemType })
   public itemType!: ItemType;
 
-  @prop({ required: true, default: 1 })
-  public maxAmount!: number;
+  @prop({ default: 1 })
+  public maxAmount?: number;
 
   @prop()
   public sellValue?: number;
@@ -46,10 +46,10 @@ export class Equipment extends Item implements CommonItemsEquipmenParams {
   @prop()
   public maxItemLevel?: number;
 
-  @prop({ required: true, default: 1 })
+  @prop({ default: 1 })
   public levelReq!: number;
 
-  @prop({ required: true, default: false })
+  @prop({ default: false })
   public isShopItem!: boolean;
 }
 

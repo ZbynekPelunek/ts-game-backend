@@ -3,9 +3,10 @@ import { Accounts_POST, Accounts_POST_Characters, Request_Account_POST_Character
 import { AccountModel } from '../schema/account.schema';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { Common_Response_Error } from '../../../shared/src/interface/api-response/common';
+import { PUBLIC_ROUTES } from '../server';
 
 describe('Account routes', () => {
-  const apiAddress = '/api/v1/accounts';
+  const apiAddress = PUBLIC_ROUTES.Accounts;
 
   afterEach(async () => {
     await AccountModel.deleteMany();
