@@ -117,7 +117,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_bo
 
     // INVENTORY PART
     const inventoryItemsResponse = await axios.post<Response_Inventories_POST>(`http://localhost:3000/api/v1/inventory-items?action=${InventoryActions.NEW}`, { characterId: character.id });
-    console.log('Characters POST inventoryItemsResponse: ', inventoryItemsResponse);
+    console.log('Characters POST inventoryItemsResponse: ', inventoryItemsResponse.data);
     if (!inventoryItemsResponse.data.success) {
       console.error('Something went wrong while creating character inventory: ', inventoryItemsResponse.data.error);
       return res.status(500).json({ success: false, error: 'Character inventory error' })
