@@ -21,10 +21,12 @@ import {
   Request_CharacterCurrency_POST_body,
   Response_CharacterEquipment_POST,
   Request_CharacterEquipment_POST_body,
+  Response_Inventories_POST,
 } from '../../../shared/src';
 import { CharacterModel, CharacterSchema } from '../schema/character.schema';
 import { generateDefaultCharacterAttributes } from '../defaultCharacterData/attributes';
 import { generateCharacterCurrencies } from '../defaultCharacterData/currencies';
+import { InventoryActions } from './inventoryItem.routes';
 
 export const charactersRouter = express.Router();
 
@@ -114,9 +116,21 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_bo
     character.equipment = characterEquipmentResponse.data.characterEquipment.map(ce => new Types.ObjectId(ce.equipmentId));
 
     // INVENTORY PART
-    const inventoryItemsResponse = await axios.post('http://localhost:3000/api/v1/inventory-items', { characterId: character.id, maxInventorySlot: character.maxInventorySlot });
+    const inventoryItemsResponse = await axios.post<Response_Inventories_POST>(`http://localhost:3000/api/v1/inventory-items?action=${InventoryActions.NEW}`, { characterId: character.id });
+    console.log('Characters POST inventoryItemsResponse: ', inventoryItemsResponse);
+    if (!inventoryItemsResponse.data.success) {
+      console.error('Something went wrong while creating character inventory: ', inventoryItemsResponse.data.error);
+      return res.status(500).json({ success: false, error: 'Character inventory error' })
+    }
 
-    character.inventory = inventoryItemsResponse.data.inventory;
+    character.inventory = inventoryItemsResponse.data.inventoryItems.map(ii => {
+      return {
+        slot: ii.slot,
+        characterId: new Types.ObjectId(ii.characterId),
+        amount: ii.amount,
+        itemId: ii.itemId
+      }
+    });
 
     //console.log('saving character: ', character);
 
@@ -205,7 +219,7 @@ const transformResponse = (databaseResponse: CharacterSchema & Document): Charac
     currencyIds: databaseResponse.currencyIds!.length > 0 ? databaseResponse.currencyIds!.map(c => c.toString()) : [],
     currentExperience: databaseResponse.currentExperience,
     equipment: databaseResponse.equipment!.length > 0 ? databaseResponse.equipment!.map(e => e.toString()) : [],
-    inventory: databaseResponse.inventory ? databaseResponse.inventory.map(i => { return { inventoryItemId: i._id!.toString(), amount: i.amount, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
+    inventory: databaseResponse.inventory ? databaseResponse.inventory.map(i => { return { inventoryItemId: i._id!.toString(), amount: i.amount ?? 0, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
     level: databaseResponse.level,
     maxExperience: databaseResponse.maxExperience,
     name: databaseResponse.name

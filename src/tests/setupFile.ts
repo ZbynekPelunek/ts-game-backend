@@ -1,8 +1,9 @@
-import { AppServer } from '../server';
+import { AppServer, PUBLIC_ROUTES } from '../server';
 import { Express } from 'express-serve-static-core';
 import axios from 'axios';
-import { Response_Attributes_GET_all, Response_CharacterAttributes_POST, Response_CharacterEquipment_POST } from '../../../shared/src';
+import { Response_Attributes_GET_all, Response_CharacterAttributes_POST, Response_CharacterEquipment_POST, Response_Inventories_POST } from '../../../shared/src';
 import { Types } from 'mongoose';
+import { InventoryActions } from '../routes/inventoryItem.routes';
 
 jest.mock('axios');
 
@@ -27,15 +28,16 @@ beforeAll(async () => {
   });
 
   mockedAxios.post.mockImplementation((url) => {
+    console.log('mockedAxios POST url: ', url);
     switch (url) {
-      case 'http://localhost:3000/api/v1/character-attributes':
+      case `http://localhost:3000${PUBLIC_ROUTES.CharacterAttributes}`:
         return Promise.resolve<{ data: Response_CharacterAttributes_POST }>({ data: { success: true, characterAttributes: [] } });
-      case 'http://localhost:3000/api/v1/character-currencies':
+      case `http://localhost:3000${PUBLIC_ROUTES.CharacterCurrencies}`:
         return Promise.resolve({ data: { success: true, characterCurrencies: [] } });
-      case 'http://localhost:3000/api/v1/character-equipment':
+      case `http://localhost:3000${PUBLIC_ROUTES.CharacterEquipment}`:
         return Promise.resolve<{ data: Response_CharacterEquipment_POST }>({ data: { success: true, characterEquipment: [] } });
-      case 'http://localhost:3000/api/v1/inventory-items':
-        return Promise.resolve({ data: { success: true, inventory: [] } });
+      case `http://localhost:3000${PUBLIC_ROUTES.Inventory}?action=${InventoryActions.NEW}`:
+        return Promise.resolve<{ data: Response_Inventories_POST }>({ data: { success: true, inventoryItems: [] } });
       default:
         return Promise.resolve({ data: [] })
     }
