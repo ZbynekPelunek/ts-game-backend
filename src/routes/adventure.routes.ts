@@ -1,26 +1,37 @@
 import express, { Request, Response } from 'express';
 
-import { AdventureActions, AdventureState, API_Response_Error, IAdventure } from '../../../shared/src';
-import { NotFoundError } from '../errors/not-found-error';
-import { allAdventures } from '../mockData/testAdventures';
-import { testCharacter } from '../mockData/testCharacter';
+import { Request_Adventure_GET_one_params, Request_Adventure_GET_one_query, Response_Adventures_GET_all, Response_Adventures_GET_one } from '../../../shared/src';
+import { AdventureModel } from '../schema/adventure.schema';
 
 // import { startAdventure } from '../engine/adventure';
 export const adventuresRouter = express.Router();
 
-adventuresRouter.get('', (_req, res: Response): Response<IAdventure[]> => {
-  return res.status(200).json(allAdventures);
-})
+adventuresRouter.get('', async (req: Request<{}, {}, {}, Request_Adventure_GET_one_query>, res: Response<Response_Adventures_GET_all>) => {
+  const { populateReward } = req.query;
 
-adventuresRouter.get('/:id', (req: Request, res: Response): Response<IAdventure | API_Response_Error> => {
-  const adventureId: string = req.params.id;
+  const query = AdventureModel.find().lean();
 
-  const adventure = allAdventures[allAdventures.findIndex((a) => a.adventureId === adventureId)];
-  if (!adventure) {
-    throw new NotFoundError(`Adventure with id ${adventureId} not found`);
+  if (populateReward) {
+    query.populate('reward');
   }
 
-  return res.status(200).json({ adventure });
+  const adventures = await query.exec();
+  console.log('Adventures All lean response: ', adventures);
+
+  return res.status(200).json({ success: true, adventures });
+})
+
+adventuresRouter.get('/:adventureId', async (req: Request<Request_Adventure_GET_one_params>, res: Response<Response_Adventures_GET_one>) => {
+  const { adventureId } = req.params;
+
+  const adventure = await AdventureModel.findOne({ adventureId }).lean();
+  //console.log('Adventure One lean response: ', adventure);
+
+  if (!adventure) {
+    return res.status(404).json({ success: false, error: `Adventure with id '${adventureId}' not found.` })
+  }
+
+  return res.status(200).json({ success: true, adventure });
 })
 
 // adventuresRouter.post('/:adventureId/actions/:actionId', async (req: Request, res: Response) => {

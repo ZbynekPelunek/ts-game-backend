@@ -3,7 +3,7 @@ import { Severity, getDiscriminatorModelForClass, getModelForClass, modelOptions
 import { ArmorType, EquipmentSlot, ItemAttribute, ItemQuality, ItemType, WeaponType, CommonItemsEquipmenParams, CommonItemParams } from '../../../shared/src';
 
 @modelOptions({ schemaOptions: { timestamps: true, discriminatorKey: "itemType" }, options: { allowMixed: Severity.ALLOW } })
-class Item implements CommonItemParams {
+class ItemSchema implements CommonItemParams {
   @prop({ required: true })
   public itemId!: number;
 
@@ -27,7 +27,7 @@ class Item implements CommonItemParams {
 }
 
 
-export class Equipment extends Item implements CommonItemsEquipmenParams {
+export class EquipmentSchema extends ItemSchema implements CommonItemsEquipmenParams {
   @prop({ required: true, default: 1 })
   public itemLevel!: number;
 
@@ -53,5 +53,5 @@ export class Equipment extends Item implements CommonItemsEquipmenParams {
   public isShopItem!: boolean;
 }
 
-export const ItemModel = getModelForClass(Item);
-export const ItemsEquipmentModel = getDiscriminatorModelForClass(ItemModel, Equipment, ItemType.EQUIPMENT);
+export const ItemModel = getModelForClass(ItemSchema);
+export const ItemsEquipmentModel = getDiscriminatorModelForClass(ItemModel, EquipmentSchema, ItemType.EQUIPMENT);

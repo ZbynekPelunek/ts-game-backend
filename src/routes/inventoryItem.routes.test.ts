@@ -278,7 +278,6 @@ describe('Inventory routes', () => {
       const inventoryItemSlot_1_AfterRequest = await InventoryItemModel.findById(inventoryItemSlot1Id);
       const inventoryItemSlot_3_AfterRequest = await InventoryItemModel.findById(inventoryItemSlot_3);
 
-      console.log('Response: ', res.body)
       expect(res.statusCode).toEqual(200);
       const inventoryItemResponse: InventoryItems_PATCH = res.body;
       expect(inventoryItemResponse.success).toEqual(true);
@@ -286,6 +285,45 @@ describe('Inventory routes', () => {
       expect(inventoryItemResponse.inventoryItem.itemId).toBe(newItemId);
       expect(inventoryItemSlot_1_AfterRequest?.itemId).toBe(invSlot1ItemId);
       expect(inventoryItemSlot_3_AfterRequest?.itemId).toBe(invSlot3ItemId);
+    })
+
+    it('returns status code 500 when new item is received but inventory is full', async () => {
+      const characterId = unknownID;
+      const invSlot1ItemId = 10;
+      const invSlot2ItemId = 15;
+      const invSlot3ItemId = 7;
+      const inventoryItemSlot_1 = await addInventoryItemToDb({
+        characterId,
+        slot: 1,
+        itemId: invSlot1ItemId,
+        amount: 1
+      });
+      await addInventoryItemToDb({
+        characterId: unknownID,
+        slot: 2,
+        itemId: invSlot2ItemId,
+        amount: 1
+      });
+      await addInventoryItemToDb({
+        characterId: unknownID,
+        slot: 3,
+        itemId: invSlot3ItemId,
+        amount: 1
+      });
+      const inventoryItemSlot1Id = inventoryItemSlot_1.id;
+
+      const updatedInventoryItem: Request_Inventories_PATCH_body = {
+        itemId: newItemId,
+        amount: 2,
+        characterId: characterId.toString()
+      }
+
+      const res = await request(APP_SERVER).patch(`${apiAddress}/${inventoryItemSlot1Id}`).send(updatedInventoryItem);
+
+      expect(res.statusCode).toEqual(500);
+      const inventoryItemResponse: Common_Response_Error = res.body;
+      expect(inventoryItemResponse.success).toEqual(false);
+      expect(inventoryItemResponse.error).toBe('Inventory is full');
     })
   })
 })

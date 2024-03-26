@@ -1,12 +1,8 @@
 import express, { Request, Response } from 'express';
 
-import { AdventureResult, AdventureState } from '../../../shared/src';
-import { NotFoundError } from '../errors/not-found-error';
-import { testCharacter } from '../mockData/testCharacter';
-
 export const resultsRouter = express.Router();
 
-export const adventureResults: AdventureResult[] = [];
+export const adventureResults = [];
 
 // resultsRouter.get('/:resultId', (req: Request, res: Response) => {
 //   const { resultId } = req.params;

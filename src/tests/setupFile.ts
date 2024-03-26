@@ -17,7 +17,7 @@ export const unknownID = new Types.ObjectId;
 beforeAll(async () => {
   appServer = new AppServer();
   appServer.start();
-  appServer.setupRouters();
+  appServer.setupPublicRouters();
   APP_SERVER = appServer.getApp();
 
   mockedAxios.get.mockImplementation((url) => {

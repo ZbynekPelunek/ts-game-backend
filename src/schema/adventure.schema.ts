@@ -1,8 +1,29 @@
-import { randomUUID } from 'crypto';
-import mongoose, { Schema } from 'mongoose';
+import { getModelForClass, modelOptions, prop, Severity } from '@typegoose/typegoose';
+import { Adventure } from '../../../shared/src';
+import { RewardSchema } from './reward.schema';
 
-const adventureSchema = new Schema({
+@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'adventures', allowMixed: Severity.ALLOW } })
+export class AdventureSchema implements Adventure {
+  @prop({ required: true })
+  public adventureId!: number;
 
-});
+  @prop({ required: true })
+  public name!: string;
 
-export const AdventureModel = mongoose.model('Adventure', adventureSchema);
+  @prop({ required: true })
+  public level!: number;
+
+  @prop({ required: true })
+  public timeInSeconds!: number;
+
+  @prop({ required: true, ref: () => RewardSchema, type: () => Number })
+  public reward!: [number, ...number[]];
+
+  @prop()
+  public enemyId?: number[];
+
+  @prop()
+  public requiredLevel?: number;
+}
+
+export const AdventureModel = getModelForClass(AdventureSchema);

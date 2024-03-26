@@ -2,7 +2,7 @@ import { Severity, getModelForClass, modelOptions, prop } from '@typegoose/typeg
 import { Types } from 'mongoose';
 
 import { CharacterEquipmentBackend, EquipmentSlot, UiPosition } from '../../../shared/src';
-import { Equipment } from './item.schema';
+import { EquipmentSchema } from './item.schema';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'character-equipment-items', allowMixed: Severity.ALLOW } })
 export class CharacterEquipmentSchema implements CharacterEquipmentBackend {
@@ -15,7 +15,7 @@ export class CharacterEquipmentSchema implements CharacterEquipmentBackend {
   @prop({ required: true })
   public uiPosition!: UiPosition;
 
-  @prop({ default: 0, ref: () => Equipment })
+  @prop({ default: 0, ref: () => EquipmentSchema })
   public itemId?: number;
 }
 

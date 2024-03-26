@@ -3,24 +3,23 @@ import { Types } from 'mongoose';
 
 import {
   Request_Account_POST_body,
-  Request_Account_POST_Characters_body,
-  Request_Account_POST_Characters_params,
+  Request_Account_PATCH_body,
+  Request_Account_PATCH_params,
   Response_Account_POST,
-  Response_Account_POST_Characters,
+  Response_Account_PATCH,
 } from '../../../shared/src';
-import { NotFoundError } from '../errors/not-found-error';
 import { AccountModel } from '../schema/account.schema';
 import { validateObjectId } from '../utils/utils';
 
 export const accountsRouter = Router();
 
 accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST_body>, res: Response<Response_Account_POST>) => {
-  const accountBody = req.body;
+  const { email, password, username } = req.body;
 
   const account = new AccountModel({
-    email: accountBody.email,
-    password: accountBody.password,
-    username: accountBody.username
+    email,
+    password,
+    username
   });
 
   await account.save();
@@ -33,9 +32,9 @@ accountsRouter.post('', async (req: Request<{}, {}, Request_Account_POST_body>, 
   );
 });
 
-accountsRouter.post('/:accountId/characters', async (req: Request<Request_Account_POST_Characters_params, {}, Request_Account_POST_Characters_body>, res: Response<Response_Account_POST_Characters>) => {
-  const accountId = req.params.accountId;
-  const characterId = req.body.characterId;
+accountsRouter.patch('/:accountId', async (req: Request<Request_Account_PATCH_params, {}, Request_Account_PATCH_body>, res: Response<Response_Account_PATCH>) => {
+  const { accountId } = req.params;
+  const { characterId } = req.body;
 
   // TODO: Object ID validator
   // if (validateObjectId(accountId)) {
@@ -60,7 +59,7 @@ accountsRouter.post('/:accountId/characters', async (req: Request<Request_Accoun
   account.characters.push(convertCharacterId);
   await account.save();
 
-  return res.status(201).json(
+  return res.status(200).json(
     {
       success: true,
       account: { accountId: account.id }
