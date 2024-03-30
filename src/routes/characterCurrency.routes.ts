@@ -1,12 +1,12 @@
 import express, { Request, Response } from 'express';
 
-import { CharacterCurrencyFrontend, Currency, CurrencyId, Request_CharacterCurrency_GET_all_query, Request_CharacterCurrency_POST_body, Response_CharacterCurrencies_GET_all, Response_CharacterCurrencies_POST } from '../../../shared/src';
+import { CharacterCurrencyFrontend, Currency, Request_CharacterCurrency_GET_all_query, Request_CharacterCurrency_POST_body, Response_CharacterCurrency_GET_all, Response_CharacterCurrency_POST } from '../../../shared/src';
 import { CharacterCurrencyModel, CharacterCurrencySchema } from '../schema/characterCurrency.schema';
 import { Document } from 'mongoose';
 
 export const characterCurrenciesRouter = express.Router();
 
-characterCurrenciesRouter.get('', async (req: Request<{}, {}, {}, Request_CharacterCurrency_GET_all_query>, res: Response<Response_CharacterCurrencies_GET_all>) => {
+characterCurrenciesRouter.get('', async (req: Request<{}, {}, {}, Request_CharacterCurrency_GET_all_query>, res: Response<Response_CharacterCurrency_GET_all>) => {
   const { characterId } = req.query;
   const { populateCurrency } = req.query;
 
@@ -44,7 +44,7 @@ characterCurrenciesRouter.get('', async (req: Request<{}, {}, {}, Request_Charac
   return res.status(200).json({ success: true, characterCurrencies: responseCharacterCurrencies });
 });
 
-characterCurrenciesRouter.post('', async (req: Request<{}, {}, Request_CharacterCurrency_POST_body>, res: Response<Response_CharacterCurrencies_POST>) => {
+characterCurrenciesRouter.post('', async (req: Request<{}, {}, Request_CharacterCurrency_POST_body>, res: Response<Response_CharacterCurrency_POST>) => {
   try {
     const { characterCurrencies } = req.body;
 

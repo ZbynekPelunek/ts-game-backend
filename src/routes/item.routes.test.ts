@@ -1,10 +1,10 @@
 import request from 'supertest';
 
-import { ArmorType, CommonItemsEquipmenParams, EquipmentSlot, ItemQuality, ItemType, Items_GET_all, Items_GET_one, MainAttributeNames } from '../../../shared/src';
+import { ArmorType, CommonItemsEquipmenParams, EquipmentSlot, ItemQuality, ItemType, Item_GET_all, Item_GET_one, MainAttributeNames } from '../../../shared/src';
 import { APP_SERVER } from '../tests/setupFile';
 import { ItemModel } from '../schema/item.schema';
-import { Common_Response_Error } from '../../../shared/src/interface/api-response/common';
 import { PUBLIC_ROUTES } from '../server';
+import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
 
 describe('Item routes', () => {
   const apiAddress = PUBLIC_ROUTES.Items;
@@ -32,7 +32,7 @@ describe('Item routes', () => {
       const res = await request(APP_SERVER).get(apiAddress);
 
       expect(res.statusCode).toEqual(200);
-      const itemsResponse: Items_GET_all = res.body;
+      const itemsResponse: Item_GET_all = res.body;
       expect(itemsResponse.success).toBe(true);
       expect(itemsResponse.items).toHaveLength(itemsLength);
     });
@@ -55,7 +55,7 @@ describe('Item routes', () => {
       const res = await request(APP_SERVER).get(`${apiAddress}/${itemId}`);
 
       expect(res.statusCode).toEqual(200);
-      const itemResponse: Items_GET_one = res.body;
+      const itemResponse: Item_GET_one = res.body;
       expect(itemResponse.success).toBe(true);
       expect(itemResponse.item?.itemId).toBe(itemId);
     });

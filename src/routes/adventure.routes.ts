@@ -1,18 +1,18 @@
 import express, { Request, Response } from 'express';
 
-import { Request_Adventure_GET_one_params, Request_Adventure_GET_one_query, Response_Adventures_GET_all, Response_Adventures_GET_one } from '../../../shared/src';
+import { Request_Adventure_GET_all_query, Request_Adventure_GET_one_params, Response_Adventure_GET_all, Response_Adventure_GET_one, Reward } from '../../../shared/src';
 import { AdventureModel } from '../schema/adventure.schema';
 
 // import { startAdventure } from '../engine/adventure';
 export const adventuresRouter = express.Router();
 
-adventuresRouter.get('', async (req: Request<{}, {}, {}, Request_Adventure_GET_one_query>, res: Response<Response_Adventures_GET_all>) => {
+adventuresRouter.get('', async (req: Request<{}, {}, {}, Request_Adventure_GET_all_query>, res: Response<Response_Adventure_GET_all>) => {
   const { populateReward } = req.query;
 
   const query = AdventureModel.find().lean();
 
   if (populateReward) {
-    query.populate('reward');
+    query.populate<Reward>({ path: 'rewards.rewardId' });
   }
 
   const adventures = await query.exec();
@@ -21,7 +21,7 @@ adventuresRouter.get('', async (req: Request<{}, {}, {}, Request_Adventure_GET_o
   return res.status(200).json({ success: true, adventures });
 })
 
-adventuresRouter.get('/:adventureId', async (req: Request<Request_Adventure_GET_one_params>, res: Response<Response_Adventures_GET_one>) => {
+adventuresRouter.get('/:adventureId', async (req: Request<Request_Adventure_GET_one_params>, res: Response<Response_Adventure_GET_one>) => {
   const { adventureId } = req.params;
 
   const adventure = await AdventureModel.findOne({ adventureId }).lean();

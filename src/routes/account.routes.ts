@@ -1,15 +1,9 @@
 import { Request, Response, Router } from 'express';
 import { Types } from 'mongoose';
 
-import {
-  Request_Account_POST_body,
-  Request_Account_PATCH_body,
-  Request_Account_PATCH_params,
-  Response_Account_POST,
-  Response_Account_PATCH,
-} from '../../../shared/src';
 import { AccountModel } from '../schema/account.schema';
 import { validateObjectId } from '../utils/utils';
+import { Request_Account_POST_body, Response_Account_POST, Request_Account_PATCH_params, Request_Account_PATCH_body, Response_Account_PATCH } from '../../../shared/src';
 
 export const accountsRouter = Router();
 

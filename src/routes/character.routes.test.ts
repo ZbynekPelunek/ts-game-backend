@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { CharacterModel } from '../schema/character.schema';
-import { CharacterBackend, Characters_GET_All, Characters_GET_one, Characters_POST, Response_Attributes_GET_all } from '../../../shared/src';
+import { CharacterBackend, Character_GET_All, Character_GET_one, Character_POST, Response_Attribute_GET_all } from '../../../shared/src';
 import { APP_SERVER, mockedAxios, unknownID } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
 
@@ -20,7 +20,7 @@ describe('Character routes', () => {
       const res = await request(APP_SERVER).get(apiAddress);
 
       expect(res.statusCode).toEqual(200);
-      const charactersResponse: Characters_GET_All = res.body;
+      const charactersResponse: Character_GET_All = res.body;
       expect(charactersResponse.success).toBe(true);
       expect(charactersResponse.characters).toHaveLength(1);
       expect(charactersResponse.characters[0].name).toBe(characterName);
@@ -36,12 +36,13 @@ describe('Character routes', () => {
       const currentLength = await CharacterModel.countDocuments();
 
       const res = await request(APP_SERVER).post(apiAddress).send({ accountId: accountId.toString(), name: newCharName });
+      console.log('Char POST response: ', res.body);
 
       const newLength = await CharacterModel.countDocuments();
 
-      expect(newLength).toBe(currentLength + 1);
       expect(res.statusCode).toEqual(201);
-      const characterResponse: Characters_POST = res.body;
+      expect(newLength).toBe(currentLength + 1);
+      const characterResponse: Character_POST = res.body;
       expect(characterResponse.success).toBe(true);
       expect(characterResponse.character.name).toBe(newCharName);
       expect(characterResponse.character.maxExperience).toBe(200);
@@ -59,7 +60,7 @@ describe('Character routes', () => {
 
       mockedAxios.get.mockImplementationOnce((url) => {
         if (url === 'http://localhost:3000/api/v1/attributes') {
-          return Promise.resolve<{ data: Response_Attributes_GET_all }>({ data: { success: false, error: 'error' } })
+          return Promise.resolve<{ data: Response_Attribute_GET_all }>({ data: { success: false, error: 'error' } })
         }
         return Promise.resolve({ data: { success: false } })
       });
@@ -98,7 +99,7 @@ describe('Character routes', () => {
       const res = await request(APP_SERVER).get(`${apiAddress}/${addedCharacterId}`);
 
       expect(res.statusCode).toEqual(200);
-      const characterResponse: Characters_GET_one = res.body;
+      const characterResponse: Character_GET_one = res.body;
       expect(characterResponse.success).toBe(true);
       expect(characterResponse.character.name).toBe(characterName);
       expect(characterResponse.character.accountId).toBe(accountId.toString());

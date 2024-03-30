@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import { BasicAttribute, CharacterAttributeBackend, CharacterAttributeFrontend, CharacterAttributes_GET_all, CharacterAttributes_POST, MainAttributeNames } from '../../../shared/src';
+import { BasicAttribute, CharacterAttributeBackend, CharacterAttributeFrontend, CharacterAttribute_GET_all, CharacterAttribute_POST, MainAttributeNames } from '../../../shared/src';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { CharacterAttributeModel } from '../schema/characterAttribute.schema';
 import { AttributeDetailModel } from '../schema/attribute.schema';
@@ -31,7 +31,7 @@ describe('Character Attribute routes', () => {
       const res = await request(APP_SERVER).get(`${apiAddress}`);
 
       expect(res.statusCode).toEqual(200);
-      const characterAttributesResponse: CharacterAttributes_GET_all = res.body;
+      const characterAttributesResponse: CharacterAttribute_GET_all = res.body;
       expect(characterAttributesResponse.success).toBe(true);
       expect(characterAttributesResponse.characterAttributes).toHaveLength(charAttributesLength);
     });
@@ -45,7 +45,7 @@ describe('Character Attribute routes', () => {
       const res = await request(APP_SERVER).get(`${apiAddress}?characterId=${characterId}`);
 
       expect(res.statusCode).toEqual(200);
-      const characterAttributesResponse: CharacterAttributes_GET_all = res.body;
+      const characterAttributesResponse: CharacterAttribute_GET_all = res.body;
       expect(characterAttributesResponse.success).toBe(true);
       expect(characterAttributesResponse.characterAttributes).toHaveLength(charAttributesLength);
     });
@@ -71,7 +71,7 @@ describe('Character Attribute routes', () => {
       const res = await request(APP_SERVER).get(`${apiAddress}?characterId=${characterId}&populateAttribute=true`);
 
       expect(res.statusCode).toEqual(200);
-      const characterAttributesResponse: CharacterAttributes_GET_all = res.body;
+      const characterAttributesResponse: CharacterAttribute_GET_all = res.body;
       expect(characterAttributesResponse.success).toBe(true);
       expect(characterAttributesResponse.characterAttributes).toHaveLength(charAttributesLength);
       expect(characterAttributesResponse.characterAttributes[0].attribute?.attributeName).toBe(attributeName);
@@ -102,7 +102,7 @@ describe('Character Attribute routes', () => {
       const res = await request(APP_SERVER).post(`${apiAddress}`).send({ characterAttributes });
 
       expect(res.statusCode).toEqual(201);
-      const characterAttributesResponse: CharacterAttributes_POST = res.body;
+      const characterAttributesResponse: CharacterAttribute_POST = res.body;
       expect(characterAttributesResponse.success).toBe(true);
       expect(characterAttributesResponse.characterAttributes).toHaveLength(characterAttributes.length);
     });
@@ -117,7 +117,7 @@ describe('Character Attribute routes', () => {
       const res = await request(APP_SERVER).post(`${apiAddress}`).send({ characterAttributes });
 
       expect(res.statusCode).toEqual(201);
-      const characterAttributesResponse: CharacterAttributes_POST = res.body;
+      const characterAttributesResponse: CharacterAttribute_POST = res.body;
       expect(characterAttributesResponse.success).toBe(true);
       expect(characterAttributesResponse.characterAttributes).toHaveLength(1);
       expect(characterAttributesResponse.characterAttributes[0].totalValue).toBe(charAttTotalValue);

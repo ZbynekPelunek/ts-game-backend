@@ -1,6 +1,5 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-
-import { AttributeName, BasicAttribute } from '../../../shared/src';
+import { BasicAttribute, AttributeName } from '../../../shared/src';
 
 @modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'attribute-details' } })
 export class AttributeDetailSchema implements BasicAttribute {

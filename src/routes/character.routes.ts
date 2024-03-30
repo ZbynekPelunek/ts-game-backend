@@ -7,30 +7,31 @@ import {
   CharacterFrontend,
   CharacterEquipmentFrontend,
   EquipmentSlot,
-  Request_Characters_GET_one_params,
-  Request_Characters_GET_one_query,
-  Response_Characters_POST,
+  Request_Character_GET_one_params,
+  Request_Character_GET_one_query,
+  Response_Character_POST,
   UiPosition,
-  Response_CharacterAttributes_POST,
-  Response_Characters_GET_All,
-  Request_Characters_POST_body,
-  Response_Characters_GET_one,
-  Response_Attributes_GET_all,
-  Response_CharacterCurrencies_POST,
-  Request_CharacterAttributes_POST_body,
+  Response_CharacterAttribute_POST,
+  Response_Character_GET_All,
+  Request_Character_POST_body,
+  Response_Character_GET_one,
+  Response_Attribute_GET_all,
+  Response_CharacterCurrency_POST,
+  Request_CharacterAttribute_POST_body,
   Request_CharacterCurrency_POST_body,
   Response_CharacterEquipment_POST,
   Request_CharacterEquipment_POST_body,
-  Response_Inventories_POST,
+  Response_Inventory_POST,
+  InventoryActions,
 } from '../../../shared/src';
 import { CharacterModel, CharacterSchema } from '../schema/character.schema';
 import { generateDefaultCharacterAttributes } from '../defaultCharacterData/attributes';
 import { generateCharacterCurrencies } from '../defaultCharacterData/currencies';
-import { InventoryActions } from './inventoryItem.routes';
+import { PUBLIC_ROUTES } from '../server';
 
 export const charactersRouter = express.Router();
 
-charactersRouter.get('', async (_req: Request, res: Response<Response_Characters_GET_All>) => {
+charactersRouter.get('', async (_req: Request, res: Response<Response_Character_GET_All>) => {
 
   const characters = await CharacterModel.find();
 
@@ -41,7 +42,7 @@ charactersRouter.get('', async (_req: Request, res: Response<Response_Characters
   return res.status(200).json({ success: true, characters: responseCharacters });
 })
 
-charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_body>, res: Response<Response_Characters_POST>) => {
+charactersRouter.post('', async (req: Request<{}, {}, Request_Character_POST_body>, res: Response<Response_Character_POST>) => {
   try {
     const characterBody = req.body;
 
@@ -52,7 +53,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_bo
     });
 
     // ATTRIBUTES PART
-    const allAttributesResponse = await axios.get<Response_Attributes_GET_all>('http://localhost:3000/api/v1/attributes');
+    const allAttributesResponse = await axios.get<Response_Attribute_GET_all>('http://localhost:3000/api/v1/attributes');
 
     if (!allAttributesResponse.data.success) {
       return res.status(500).json({ success: false, error: 'Couldnt GET all attributes while creating character' });
@@ -62,9 +63,9 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_bo
     const defaultCharacterAttributes = generateDefaultCharacterAttributes(allAttributesResponse.data.attributes, character.id);
 
     const characterAttributesResponse = await axios.post
-      <Response_CharacterAttributes_POST,
-        AxiosResponse<Response_CharacterAttributes_POST, Request_CharacterAttributes_POST_body>,
-        Request_CharacterAttributes_POST_body>
+      <Response_CharacterAttribute_POST,
+        AxiosResponse<Response_CharacterAttribute_POST, Request_CharacterAttribute_POST_body>,
+        Request_CharacterAttribute_POST_body>
       ('http://localhost:3000/api/v1/character-attributes', { characterAttributes: defaultCharacterAttributes });
     //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
     if (!characterAttributesResponse.data.success) {
@@ -78,8 +79,8 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_bo
     const defaultCharacterCurrencies = generateCharacterCurrencies(character.id);
 
     const characterCurrenciesResponse = await axios.post
-      <Response_CharacterCurrencies_POST,
-        AxiosResponse<Response_CharacterCurrencies_POST, Request_CharacterCurrency_POST_body>,
+      <Response_CharacterCurrency_POST,
+        AxiosResponse<Response_CharacterCurrency_POST, Request_CharacterCurrency_POST_body>,
         Request_CharacterCurrency_POST_body>
       ('http://localhost:3000/api/v1/character-currencies', { characterCurrencies: defaultCharacterCurrencies });
     //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
@@ -116,14 +117,14 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_bo
     character.equipment = characterEquipmentResponse.data.characterEquipment.map(ce => new Types.ObjectId(ce.equipmentId));
 
     // INVENTORY PART
-    const inventoryItemsResponse = await axios.post<Response_Inventories_POST>(`http://localhost:3000/api/v1/inventory-items?action=${InventoryActions.NEW}`, { characterId: character.id });
+    const inventoryItemsResponse = await axios.post<Response_Inventory_POST>(`http://localhost:3000${PUBLIC_ROUTES.Inventory}?action=${InventoryActions.NEW}`, { characterId: character.id });
     console.log('Characters POST inventoryItemsResponse: ', inventoryItemsResponse.data);
     if (!inventoryItemsResponse.data.success) {
-      console.error('Something went wrong while creating character inventory: ', inventoryItemsResponse.data.error);
+      console.error('Something went wrong while creating character inventory: ', inventoryItemsResponse.data);
       return res.status(500).json({ success: false, error: 'Character inventory error' })
     }
 
-    character.inventory = inventoryItemsResponse.data.inventoryItems.map(ii => {
+    character.inventory = inventoryItemsResponse.data.inventory.map(ii => {
       return {
         slot: ii.slot,
         characterId: new Types.ObjectId(ii.characterId),
@@ -155,7 +156,7 @@ charactersRouter.post('', async (req: Request<{}, {}, Request_Characters_POST_bo
   }
 })
 
-charactersRouter.get('/:characterId', async (req: Request<Request_Characters_GET_one_params, {}, {}, Request_Characters_GET_one_query>, res: Response<Response_Characters_GET_one>) => {
+charactersRouter.get('/:characterId', async (req: Request<Request_Character_GET_one_params, {}, {}, Request_Character_GET_one_query>, res: Response<Response_Character_GET_one>) => {
   const { characterId } = req.params;
   //console.log('GET Character, characterId:', characterId);
 
@@ -219,7 +220,7 @@ const transformResponse = (databaseResponse: CharacterSchema & Document): Charac
     currencyIds: databaseResponse.currencyIds!.length > 0 ? databaseResponse.currencyIds!.map(c => c.toString()) : [],
     currentExperience: databaseResponse.currentExperience,
     equipment: databaseResponse.equipment!.length > 0 ? databaseResponse.equipment!.map(e => e.toString()) : [],
-    inventory: databaseResponse.inventory ? databaseResponse.inventory.map(i => { return { inventoryItemId: i._id!.toString(), amount: i.amount ?? 0, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
+    inventory: databaseResponse.inventory ? databaseResponse.inventory.map(i => { return { inventoryId: i._id!.toString(), amount: i.amount ?? 0, characterId: i.characterId.toString(), itemId: i.itemId, slot: i.slot } }) : [],
     level: databaseResponse.level,
     maxExperience: databaseResponse.maxExperience,
     name: databaseResponse.name

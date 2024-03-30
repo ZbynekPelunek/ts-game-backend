@@ -1,10 +1,10 @@
 import request from 'supertest';
 
-import { AttributeName, Attributes_GET_all, Attributes_GET_one, BasicAttribute, MainAttributeNames } from '../../../shared/src';
+import { AttributeName, Attribute_GET_all, Attribute_GET_one, BasicAttribute, MainAttributeNames } from '../../../shared/src';
 import { AttributeDetailModel } from '../schema/attribute.schema';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
-import { Common_Response_Error } from '../../../shared/src/interface/api-response/common';
 import { PUBLIC_ROUTES } from '../server';
+import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
 
 describe('Attribute routes', () => {
   const apiAddress = PUBLIC_ROUTES.Attributes;
@@ -23,7 +23,7 @@ describe('Attribute routes', () => {
       const res = await request(APP_SERVER).get(apiAddress);
 
       expect(res.statusCode).toEqual(200);
-      const attributesResponse: Attributes_GET_all = res.body;
+      const attributesResponse: Attribute_GET_all = res.body;
       expect(attributesResponse.success).toBe(true);
       expect(attributesResponse.attributes).toHaveLength(attributesLength);
     });
@@ -37,7 +37,7 @@ describe('Attribute routes', () => {
       const res = await request(APP_SERVER).get(`${apiAddress}/${attributeId}`);
 
       expect(res.statusCode).toEqual(200);
-      const attributeResponse: Attributes_GET_one = res.body;
+      const attributeResponse: Attribute_GET_one = res.body;
       expect(attributeResponse.success).toBe(true);
       expect(attributeResponse.attribute.attributeName).toBe(MainAttributeNames.ARMOR);
       expect(attributeResponse.attribute.label).toBe(MainAttributeNames.ARMOR.toLowerCase());

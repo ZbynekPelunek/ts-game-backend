@@ -9,8 +9,7 @@ import { characterAttributesRouter } from './routes/characterAttribute.routes';
 import { characterCurrenciesRouter } from './routes/characterCurrency.routes';
 import { charactersRouter } from './routes/character.routes';
 import { characterEquipmentRouter } from './routes/characterEquipment.routes';
-import { inventoryItemsRouter } from './routes/inventoryItem.routes';
-import { resultsRouter } from './routes/results.router';
+import { inventoryRouter } from './routes/inventory.routes';
 import { itemsRouter } from './routes/item.routes';
 import { MongoDBHandler } from './mongoDB.handler';
 import { BasePaths, ApiRoutes } from '../../shared/src';
@@ -89,7 +88,7 @@ export class AppServer {
     this.app.use(PUBLIC_ROUTES.Characters, charactersRouter);
     this.app.use(PUBLIC_ROUTES.Adventures, adventuresRouter);
     //this.app.use(PUBLIC_ROUTES.Results, resultsRouter);
-    this.app.use(PUBLIC_ROUTES.Inventory, inventoryItemsRouter);
+    this.app.use(PUBLIC_ROUTES.Inventory, inventoryRouter);
     this.app.use(PUBLIC_ROUTES.Attributes, attributesRouter);
     this.app.use(PUBLIC_ROUTES.CharacterAttributes, characterAttributesRouter);
     this.app.use(PUBLIC_ROUTES.CharacterCurrencies, characterCurrenciesRouter);

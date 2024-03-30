@@ -4,16 +4,16 @@ import { Document } from 'mongoose';
 import {
   BasicAttributeBackend,
   CharacterAttributeFrontend,
-  Request_CharacterAttributes_GET_all_query,
-  Request_CharacterAttributes_POST_body,
-  Response_CharacterAttributes_GET_all,
-  Response_CharacterAttributes_POST,
+  Request_CharacterAttribute_GET_all_query,
+  Request_CharacterAttribute_POST_body,
+  Response_CharacterAttribute_GET_all,
+  Response_CharacterAttribute_POST,
 } from '../../../shared/src';
 import { CharacterAttributeModel, CharacterAttributeSchema } from '../schema/characterAttribute.schema';
 
 export const characterAttributesRouter = express.Router();
 
-characterAttributesRouter.get('', async (req: Request<{}, {}, {}, Request_CharacterAttributes_GET_all_query>, res: Response<Response_CharacterAttributes_GET_all>) => {
+characterAttributesRouter.get('', async (req: Request<{}, {}, {}, Request_CharacterAttribute_GET_all_query>, res: Response<Response_CharacterAttribute_GET_all>) => {
   const { characterId } = req.query;
   const { populateAttribute } = req.query;
   console.log('GET characters with: ', characterId);
@@ -57,7 +57,7 @@ characterAttributesRouter.get('', async (req: Request<{}, {}, {}, Request_Charac
   return res.status(200).json({ success: true, characterAttributes: responseCharacterAttributes });
 });
 
-characterAttributesRouter.post('', async (req: Request<{}, {}, Request_CharacterAttributes_POST_body>, res: Response<Response_CharacterAttributes_POST>) => {
+characterAttributesRouter.post('', async (req: Request<{}, {}, Request_CharacterAttribute_POST_body>, res: Response<Response_CharacterAttribute_POST>) => {
   try {
     const { characterAttributes } = req.body;
 

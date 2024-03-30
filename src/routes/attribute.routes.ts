@@ -3,19 +3,17 @@ import express, { Request, Response } from 'express';
 import {
   BasicAttribute,
   BasicAttributeFrontend,
-  Response_Attributes_GET_all,
-  Response_Attributes_GET_one,
+  Request_Attribute_GET_Params,
+  Response_Attribute_GET_all,
+  Response_Attribute_GET_one,
 } from '../../../shared/src';
-import {
-  Request_Attributes_GET_Params,
-} from '../../../shared/src/interface/api-request/attributes';
 import { AttributeDetailModel } from '../schema/attribute.schema';
 
 export const attributesRouter = express.Router();
 
-attributesRouter.get('', async (_req, res: Response<Response_Attributes_GET_all>) => {
+attributesRouter.get('', async (_req, res: Response<Response_Attribute_GET_all>) => {
   try {
-    const attributes = await AttributeDetailModel.find();
+    const attributes = await AttributeDetailModel.find().lean();
 
     const responseAttributes: BasicAttributeFrontend[] = attributes.map(a => {
       return {
@@ -34,11 +32,11 @@ attributesRouter.get('', async (_req, res: Response<Response_Attributes_GET_all>
   }
 })
 
-attributesRouter.get('/:attributeId', async (req: Request<Request_Attributes_GET_Params>, res: Response<Response_Attributes_GET_one>) => {
+attributesRouter.get('/:attributeId', async (req: Request<Request_Attribute_GET_Params>, res: Response<Response_Attribute_GET_one>) => {
   try {
     const { attributeId } = req.params;
 
-    const attribute: BasicAttribute | null = await AttributeDetailModel.findById(attributeId);
+    const attribute: BasicAttribute | null = await AttributeDetailModel.findById(attributeId).lean();
     if (!attribute) {
       return res.status(404).json({ success: false, error: `Attribute with id '${attributeId}' not found` });
     }

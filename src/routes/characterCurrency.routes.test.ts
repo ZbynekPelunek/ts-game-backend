@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import { CharacterCurrencies_GET_all, CharacterCurrencyBackend, Currency, CurrencyId, CharacterCurrencies_POST, CharacterCurrencyFrontend } from '../../../shared/src';
+import { CharacterCurrency_GET_all, CharacterCurrencyBackend, Currency, CurrencyId, CharacterCurrency_POST, CharacterCurrencyFrontend } from '../../../shared/src';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { CharacterCurrencyModel } from '../schema/characterCurrency.schema';
 import { CurrencyModel } from '../schema/currency.schema';
@@ -24,7 +24,7 @@ describe('Character Currency routes', () => {
       const res = await request(APP_SERVER).get(apiAddress);
 
       expect(res.statusCode).toEqual(200);
-      const characterCurrenciesResponse: CharacterCurrencies_GET_all = res.body;
+      const characterCurrenciesResponse: CharacterCurrency_GET_all = res.body;
       expect(characterCurrenciesResponse.success).toBe(true);
       expect(characterCurrenciesResponse.characterCurrencies).toHaveLength(currenciessLength);
     });
@@ -40,7 +40,7 @@ describe('Character Currency routes', () => {
       const res = await request(APP_SERVER).get(`${apiAddress}?characterId=${characterId}`);
 
       expect(res.statusCode).toEqual(200);
-      const characterCurrenciesResponse: CharacterCurrencies_GET_all = res.body;
+      const characterCurrenciesResponse: CharacterCurrency_GET_all = res.body;
       expect(characterCurrenciesResponse.success).toBe(true);
       expect(characterCurrenciesResponse.characterCurrencies).toHaveLength(currenciessLength);
     });
@@ -65,7 +65,7 @@ describe('Character Currency routes', () => {
       const res = await request(APP_SERVER).get(`${apiAddress}?characterId=${characterId}&populateCurrency=true`);
 
       expect(res.statusCode).toEqual(200);
-      const characterCurrenciesResponse: CharacterCurrencies_GET_all = res.body;
+      const characterCurrenciesResponse: CharacterCurrency_GET_all = res.body;
       expect(characterCurrenciesResponse.success).toBe(true);
       expect(characterCurrenciesResponse.characterCurrencies).toHaveLength(charAttributesLength);
       expect(characterCurrenciesResponse.characterCurrencies[0].currency?._id).toBe(currencyId);
@@ -95,7 +95,7 @@ describe('Character Currency routes', () => {
       const res = await request(APP_SERVER).post(`${apiAddress}`).send({ characterCurrencies });
 
       expect(res.statusCode).toEqual(201);
-      const characterCurrenciesResponse: CharacterCurrencies_POST = res.body;
+      const characterCurrenciesResponse: CharacterCurrency_POST = res.body;
       expect(characterCurrenciesResponse.success).toBe(true);
       expect(characterCurrenciesResponse.characterCurrencies).toHaveLength(characterCurrencies.length);
     });
@@ -111,7 +111,7 @@ describe('Character Currency routes', () => {
       const res = await request(APP_SERVER).post(`${apiAddress}`).send({ characterCurrencies: characterCurrency });
 
       expect(res.statusCode).toEqual(201);
-      const characterCurrenciesResponse: CharacterCurrencies_POST = res.body;
+      const characterCurrenciesResponse: CharacterCurrency_POST = res.body;
       expect(characterCurrenciesResponse.success).toBe(true);
       expect(characterCurrenciesResponse.characterCurrencies).toHaveLength(1);
     });
