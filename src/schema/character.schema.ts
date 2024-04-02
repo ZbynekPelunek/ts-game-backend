@@ -2,7 +2,7 @@ import {
   Severity,
   getModelForClass,
   modelOptions,
-  prop
+  prop,
 } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
@@ -14,7 +14,7 @@ import { CharacterBackend, InventoryBackend } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'characters', allowMixed: Severity.ALLOW }
+  options: { customName: 'characters', allowMixed: Severity.ALLOW },
 })
 export class CharacterSchema implements CharacterBackend {
   @prop({ requied: true })

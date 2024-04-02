@@ -6,7 +6,7 @@ import { AccountBackend } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'accounts' }
+  options: { customName: 'accounts' },
 })
 export class AccountSchema implements AccountBackend {
   @prop({ required: true })

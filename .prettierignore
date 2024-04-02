@@ -1,5 +1,3 @@
-build
+dist
 coverage
-*.js
-README.md
-package-lock.json
+node_modules

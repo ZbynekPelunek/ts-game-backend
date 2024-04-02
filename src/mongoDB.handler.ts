@@ -65,7 +65,7 @@ export class MongoDBHandler {
       CharacterModel.deleteMany({}),
       CharacterAttributeModel.deleteMany({}),
       CharacterCurrencyModel.deleteMany({}),
-      CharacterEquipmentModel.deleteMany({})
+      CharacterEquipmentModel.deleteMany({}),
     ]);
     console.log('...cleaning database done.');
   }

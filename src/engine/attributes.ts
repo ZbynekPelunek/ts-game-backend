@@ -3,7 +3,7 @@ import {
   CommonCharacterAttributeParams,
   MainAttributeNames,
   PrimaryAttributeNames,
-  SecondaryAttributeNames
+  SecondaryAttributeNames,
 } from '../../../shared/src';
 
 export function calculateAttributes(

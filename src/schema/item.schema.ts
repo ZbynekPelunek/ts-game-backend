@@ -3,7 +3,7 @@ import {
   getDiscriminatorModelForClass,
   getModelForClass,
   modelOptions,
-  prop
+  prop,
 } from '@typegoose/typegoose';
 
 import {
@@ -14,12 +14,12 @@ import {
   ItemType,
   WeaponType,
   CommonItemsEquipmenParams,
-  CommonItemParams
+  CommonItemParams,
 } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true, discriminatorKey: 'itemType' },
-  options: { allowMixed: Severity.ALLOW }
+  options: { allowMixed: Severity.ALLOW },
 })
 class ItemSchema implements CommonItemParams {
   @prop({ required: true })

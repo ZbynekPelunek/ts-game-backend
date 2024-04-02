@@ -14,6 +14,7 @@ import { itemsRouter } from './routes/item.routes';
 import { MongoDBHandler } from './mongoDB.handler';
 import { BasePaths, ApiRoutes } from '../../shared/src';
 import { rewardsRouter } from './routes/reward.routes';
+import { enemiesRouter } from './routes/enemy.routes';
 
 export const PUBLIC_ROUTES = {
   Accounts: `/${BasePaths.PUBLIC}/${ApiRoutes.ACCOUNTS}`,
@@ -26,7 +27,8 @@ export const PUBLIC_ROUTES = {
   CharacterCurrencies: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_CURRENCIES}`,
   CharacterEquipment: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_EQUIPMENT}`,
   Items: `/${BasePaths.PUBLIC}/${ApiRoutes.ITEMS}`,
-  Rewards: `/${BasePaths.PUBLIC}/${ApiRoutes.REWARDS}`
+  Rewards: `/${BasePaths.PUBLIC}/${ApiRoutes.REWARDS}`,
+  Enemies: `/${BasePaths.PUBLIC}/${ApiRoutes.ENEMIES}`,
 };
 
 export class AppServer {
@@ -66,7 +68,7 @@ export class AppServer {
     this.app.all('*', (req: Request, res: Response) => {
       return res.status(404).json({
         success: false,
-        error: `Route ${req.url} does not exist.`
+        error: `Route ${req.url} does not exist.`,
       });
     });
 
@@ -104,12 +106,13 @@ export class AppServer {
     this.app.use(PUBLIC_ROUTES.CharacterEquipment, characterEquipmentRouter);
     this.app.use(PUBLIC_ROUTES.Items, itemsRouter);
     this.app.use(PUBLIC_ROUTES.Rewards, rewardsRouter);
+    this.app.use(PUBLIC_ROUTES.Enemies, enemiesRouter);
   }
 
   async destroy(): Promise<void> {
     await Promise.all([
       this.serverListener.close(),
-      this.mongoDbHandler.disconnect()
+      this.mongoDbHandler.disconnect(),
     ]);
   }
 }

@@ -6,11 +6,11 @@ export const defaultCurrencies: Currency[] = [
     name: 'GOLD',
     label: 'Gold',
     cap: 100000,
-    desc: 'Basic currency for everything'
+    desc: 'Basic currency for everything',
   },
   {
     _id: CurrencyId.CHEATING_CURRENCY,
     name: 'CHEATING_CURRENCY',
-    label: 'Cheating Currency'
-  }
+    label: 'Cheating Currency',
+  },
 ];

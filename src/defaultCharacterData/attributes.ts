@@ -3,7 +3,7 @@ import {
   CharacterAttributeFrontend,
   MainAttributeNames,
   PrimaryAttributeNames,
-  SecondaryAttributeNames
+  SecondaryAttributeNames,
 } from '../../../shared/src';
 import { calculateAttributes } from '../engine/attributes';
 
@@ -11,7 +11,7 @@ const commonCharAttributesValues = {
   baseValue: 0,
   addedValue: 0,
   statsAddedValue: 0,
-  totalValue: 0
+  totalValue: 0,
 };
 
 export function generateDefaultCharacterAttributes(
@@ -26,7 +26,7 @@ export function generateDefaultCharacterAttributes(
       characterId,
       attributeId: a.attributeId,
       attribute: a,
-      characterAttributeId: ''
+      characterAttributeId: '',
     };
     switch (a.attributeName) {
       case MainAttributeNames.HEALTH:

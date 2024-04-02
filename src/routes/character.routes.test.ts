@@ -7,7 +7,7 @@ import {
   Character_GET_All,
   Character_GET_one,
   Character_POST,
-  Response_Attribute_GET_all
+  Response_Attribute_GET_all,
 } from '../../../shared/src';
 import { APP_SERVER, mockedAxios, unknownID } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
@@ -75,7 +75,7 @@ describe('Character routes', () => {
           return Promise.resolve<{
             data: Response_Attribute_GET_all;
           }>({
-            data: { success: false, error: 'error' }
+            data: { success: false, error: 'error' },
           });
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -147,7 +147,7 @@ describe('Character routes', () => {
 async function addCharacterToDb(name: string, accountId = unknownID) {
   const character = new CharacterModel<CharacterBackend>({
     accountId,
-    name
+    name,
   });
   return await character.save();
 }

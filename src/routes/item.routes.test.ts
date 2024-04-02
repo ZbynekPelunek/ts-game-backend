@@ -9,7 +9,7 @@ import {
   ItemType,
   Item_GET_all,
   Item_GET_one,
-  MainAttributeNames
+  MainAttributeNames,
 } from '../../../shared/src';
 import { APP_SERVER } from '../tests/setupFile';
 import { ItemModel } from '../schema/item.schema';
@@ -35,12 +35,12 @@ describe('Item routes', () => {
             attributeName: MainAttributeNames.ARMOR,
             attributeMaxValue: 10,
             attributeMinValue: 1,
-            requiredQuality: ItemQuality.COMMON
-          }
+            requiredQuality: ItemQuality.COMMON,
+          },
         ],
         equipmentType: ArmorType.LEATHER,
         itemLevel: 15,
-        slot: EquipmentSlot.CHEST
+        slot: EquipmentSlot.CHEST,
       });
 
       const itemsLength = await ItemModel.countDocuments();
@@ -67,12 +67,12 @@ describe('Item routes', () => {
             attributeName: MainAttributeNames.ARMOR,
             attributeMaxValue: 10,
             attributeMinValue: 1,
-            requiredQuality: ItemQuality.COMMON
-          }
+            requiredQuality: ItemQuality.COMMON,
+          },
         ],
         equipmentType: ArmorType.LEATHER,
         itemLevel: 15,
-        slot: EquipmentSlot.CHEST
+        slot: EquipmentSlot.CHEST,
       });
 
       const res = await request(APP_SERVER).get(`${apiAddress}/${itemId}`);

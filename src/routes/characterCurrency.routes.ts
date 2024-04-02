@@ -6,11 +6,11 @@ import {
   Request_CharacterCurrency_GET_all_query,
   Request_CharacterCurrency_POST_body,
   Response_CharacterCurrency_GET_all,
-  Response_CharacterCurrency_POST
+  Response_CharacterCurrency_POST,
 } from '../../../shared/src';
 import {
   CharacterCurrencyModel,
-  CharacterCurrencySchema
+  CharacterCurrencySchema,
 } from '../schema/characterCurrency.schema';
 import { Document } from 'mongoose';
 
@@ -34,17 +34,17 @@ characterCurrenciesRouter.get(
 
       return res.status(200).json({
         success: true,
-        characterCurrencies: responseCharacterCurrencies
+        characterCurrencies: responseCharacterCurrencies,
       });
     }
 
     let responseCharacterCurrencies: CharacterCurrencyFrontend[] = [];
     if (populateCurrency) {
       const populatedCharacterCurrencies = await CharacterCurrencyModel.find({
-        characterId: characterId
+        characterId: characterId,
       }).populate<{ currencyId: Currency }>({
         path: 'currencyId',
-        select: '-createdAt -updatedAt -__v'
+        select: '-createdAt -updatedAt -__v',
       });
 
       responseCharacterCurrencies = populatedCharacterCurrencies.map((cc) => {
@@ -53,12 +53,12 @@ characterCurrenciesRouter.get(
           characterCurrencyId: cc.id,
           characterId: cc.characterId.toString(),
           currencyId: cc.currencyId._id,
-          currency: cc.currencyId
+          currency: cc.currencyId,
         };
       });
     } else {
       const characterCurrencies = await CharacterCurrencyModel.find({
-        characterId: characterId
+        characterId: characterId,
       });
 
       responseCharacterCurrencies = characterCurrencies.map((cc) => {
@@ -68,7 +68,7 @@ characterCurrenciesRouter.get(
 
     return res.status(200).json({
       success: true,
-      characterCurrencies: responseCharacterCurrencies
+      characterCurrencies: responseCharacterCurrencies,
     });
   }
 );
@@ -112,6 +112,6 @@ const transformResponse = (
     amount: databaseResponse.amount,
     characterCurrencyId: databaseResponse.id,
     characterId: databaseResponse.characterId.toString(),
-    currencyId: databaseResponse.currencyId
+    currencyId: databaseResponse.currencyId,
   };
 };

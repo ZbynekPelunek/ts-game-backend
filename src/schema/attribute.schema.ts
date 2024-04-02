@@ -3,7 +3,7 @@ import { BasicAttribute, AttributeName } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'attribute-details' }
+  options: { customName: 'attribute-details' },
 })
 export class AttributeDetailSchema implements BasicAttribute {
   @prop({ required: true })

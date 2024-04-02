@@ -2,7 +2,7 @@ import {
   ArraySubDocumentType,
   getModelForClass,
   modelOptions,
-  prop
+  prop,
 } from '@typegoose/typegoose';
 import { IRewardSchema, RewardCurrency, RewardItem } from '../../../shared/src';
 import { CurrencySchema } from './currency.schema';
@@ -10,7 +10,7 @@ import { EquipmentSchema } from './item.schema';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'rewards' }
+  options: { customName: 'rewards' },
 })
 export class RewardSchema implements IRewardSchema {
   @prop({ required: true, alias: 'rewardId' })
@@ -20,7 +20,7 @@ export class RewardSchema implements IRewardSchema {
   @prop({ default: [], type: () => RewardCurrencySchema, _id: false })
   public currencies?: [
     ArraySubDocumentType<RewardCurrencySchema>,
-    ...ArraySubDocumentType<RewardCurrencySchema>[]
+    ...ArraySubDocumentType<RewardCurrencySchema>[],
   ];
 
   @prop({ default: 0 })
@@ -29,7 +29,7 @@ export class RewardSchema implements IRewardSchema {
   @prop({ default: [], type: () => RewardItemSchema, _id: false })
   public items?: [
     ArraySubDocumentType<RewardItemSchema>,
-    ...ArraySubDocumentType<RewardItemSchema>[]
+    ...ArraySubDocumentType<RewardItemSchema>[],
   ];
 }
 

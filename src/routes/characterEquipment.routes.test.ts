@@ -8,7 +8,7 @@ import {
   CharacterEquipment_GET_all,
   CharacterEquipment_POST,
   EquipmentSlot,
-  UiPosition
+  UiPosition,
 } from '../../../shared/src';
 import { CharacterEquipmentModel } from '../schema/characterEquipment.schema';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
@@ -106,20 +106,20 @@ describe('Character Equipment routes', () => {
           characterId: unknownID.toString(),
           equipmentId: '',
           slot: EquipmentSlot.CHEST,
-          uiPosition: UiPosition.RIGHT
+          uiPosition: UiPosition.RIGHT,
         },
         {
           characterId: unknownID.toString(),
           equipmentId: '',
           slot: EquipmentSlot.ONE_HAND,
-          uiPosition: UiPosition.LEFT
+          uiPosition: UiPosition.LEFT,
         },
         {
           characterId: unknownID.toString(),
           equipmentId: '',
           slot: EquipmentSlot.SHOULDER,
-          uiPosition: UiPosition.BOTTOM
-        }
+          uiPosition: UiPosition.BOTTOM,
+        },
       ];
 
       const res = await request(APP_SERVER)
@@ -139,7 +139,7 @@ describe('Character Equipment routes', () => {
         characterId: unknownID.toString(),
         equipmentId: '',
         slot: EquipmentSlot.ONE_HAND,
-        uiPosition: UiPosition.LEFT
+        uiPosition: UiPosition.LEFT,
       };
 
       const res = await request(APP_SERVER)
@@ -165,7 +165,7 @@ async function addCharacterEquipmentToDb(
       characterId,
       slot,
       uiPosition,
-      itemId
+      itemId,
     });
 
   return await characterEquipment.save();

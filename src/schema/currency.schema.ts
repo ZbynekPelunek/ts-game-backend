@@ -4,7 +4,7 @@ import { Currency, CurrencyId } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'currencies' }
+  options: { customName: 'currencies' },
 })
 export class CurrencySchema implements Currency {
   @prop({ required: true })

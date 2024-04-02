@@ -7,7 +7,7 @@ import {
   CharacterAttributeFrontend,
   CharacterAttribute_GET_all,
   CharacterAttribute_POST,
-  MainAttributeNames
+  MainAttributeNames,
 } from '../../../shared/src';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { CharacterAttributeModel } from '../schema/characterAttribute.schema';
@@ -23,7 +23,7 @@ describe('Character Attribute routes', () => {
     totalValue: 0,
     attributeId: unknownID.toString(),
     characterId: unknownID.toString(),
-    characterAttributeId: unknownID.toString()
+    characterAttributeId: unknownID.toString(),
   };
 
   afterEach(async () => {
@@ -74,7 +74,7 @@ describe('Character Attribute routes', () => {
         attributeName,
         isPercent: false,
         label: attributeLabel,
-        desc: ''
+        desc: '',
       });
 
       await attribute.save();
@@ -117,16 +117,16 @@ describe('Character Attribute routes', () => {
       const characterAttributes: CharacterAttributeFrontend[] = [
         {
           ...commonCharAttributesValues,
-          totalValue: 1
+          totalValue: 1,
         },
         {
           ...commonCharAttributesValues,
-          addedValue: 5
+          addedValue: 5,
         },
         {
           ...commonCharAttributesValues,
-          baseValue: 10
-        }
+          baseValue: 10,
+        },
       ];
 
       const res = await request(APP_SERVER)
@@ -145,7 +145,7 @@ describe('Character Attribute routes', () => {
       const charAttTotalValue = 15;
       const characterAttributes: CharacterAttributeFrontend = {
         ...commonCharAttributesValues,
-        totalValue: charAttTotalValue
+        totalValue: charAttTotalValue,
       };
 
       const res = await request(APP_SERVER)
@@ -177,7 +177,7 @@ async function addCharacterAttributeToDb(
     baseValue,
     addedValue,
     statsAddedValue,
-    totalValue
+    totalValue,
   });
 
   return await charAttribute.save();

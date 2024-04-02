@@ -5,7 +5,7 @@ import { InventoryBackend } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'inventory' }
+  options: { customName: 'inventory' },
 })
 export class InventorySchema implements InventoryBackend {
   @prop({ required: true })

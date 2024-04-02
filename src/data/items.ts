@@ -8,7 +8,7 @@ import {
   PrimaryAttributeNames,
   SecondaryAttributeNames,
   Weapon,
-  WeaponType
+  WeaponType,
 } from '../../../shared/src';
 
 const commonStarterArmorParams = {
@@ -16,7 +16,7 @@ const commonStarterArmorParams = {
   itemType: ItemType.EQUIPMENT,
   sellValue: 1,
   maxItemLevel: 5,
-  maxAmount: 1
+  maxAmount: 1,
 };
 
 export const starterArmor: Armor[] = [
@@ -32,39 +32,39 @@ export const starterArmor: Armor[] = [
         attributeName: MainAttributeNames.ARMOR,
         attributeMaxValue: 9,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 5,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 2,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.RARE
+        requiredQuality: ItemQuality.RARE,
       },
       {
         attributeName: SecondaryAttributeNames.MULTISTRIKE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.EPIC
-      }
-    ]
+        requiredQuality: ItemQuality.EPIC,
+      },
+    ],
   },
   {
     ...commonStarterArmorParams,
@@ -78,33 +78,33 @@ export const starterArmor: Armor[] = [
         attributeName: MainAttributeNames.ARMOR,
         attributeMaxValue: 7,
         attributeMinValue: 4,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 4,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.RARE
-      }
-    ]
+        requiredQuality: ItemQuality.RARE,
+      },
+    ],
   },
   {
     ...commonStarterArmorParams,
@@ -118,39 +118,39 @@ export const starterArmor: Armor[] = [
         attributeName: MainAttributeNames.ARMOR,
         attributeMaxValue: 11,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 6,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 2,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.RARE
+        requiredQuality: ItemQuality.RARE,
       },
       {
         attributeName: SecondaryAttributeNames.MULTISTRIKE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.EPIC
-      }
-    ]
+        requiredQuality: ItemQuality.EPIC,
+      },
+    ],
   },
   {
     ...commonStarterArmorParams,
@@ -164,33 +164,33 @@ export const starterArmor: Armor[] = [
         attributeName: MainAttributeNames.ARMOR,
         attributeMaxValue: 8,
         attributeMinValue: 4,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 4,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.RARE
-      }
-    ]
+        requiredQuality: ItemQuality.RARE,
+      },
+    ],
   },
   {
     ...commonStarterArmorParams,
@@ -204,33 +204,33 @@ export const starterArmor: Armor[] = [
         attributeName: MainAttributeNames.ARMOR,
         attributeMaxValue: 10,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 4,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.RARE
-      }
-    ]
+        requiredQuality: ItemQuality.RARE,
+      },
+    ],
   },
   {
     ...commonStarterArmorParams,
@@ -244,34 +244,34 @@ export const starterArmor: Armor[] = [
         attributeName: MainAttributeNames.ARMOR,
         attributeMaxValue: 10,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.INTELLECT,
         attributeMaxValue: 4,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 1,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.RARE
-      }
-    ]
-  }
+        requiredQuality: ItemQuality.RARE,
+      },
+    ],
+  },
 ];
 
 const commonStarterWeaponParams = {
@@ -279,7 +279,7 @@ const commonStarterWeaponParams = {
   itemType: ItemType.EQUIPMENT,
   sellValue: 1,
   maxItemLevel: 5,
-  maxAmount: 1
+  maxAmount: 1,
 };
 
 export const starterWeapons: Weapon[] = [
@@ -295,45 +295,45 @@ export const starterWeapons: Weapon[] = [
         attributeName: MainAttributeNames.MIN_DAMAGE,
         attributeMaxValue: 4,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: MainAttributeNames.MAX_DAMAGE,
         attributeMaxValue: 8,
         attributeMinValue: 4,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 3,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 5,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 2,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 5,
         attributeMinValue: 1,
-        requiredQuality: ItemQuality.RARE
+        requiredQuality: ItemQuality.RARE,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 2,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.EPIC
-      }
-    ]
+        requiredQuality: ItemQuality.EPIC,
+      },
+    ],
   },
   {
     ...commonStarterWeaponParams,
@@ -347,45 +347,45 @@ export const starterWeapons: Weapon[] = [
         attributeName: MainAttributeNames.MIN_DAMAGE,
         attributeMaxValue: 7,
         attributeMinValue: 3,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: MainAttributeNames.MAX_DAMAGE,
         attributeMaxValue: 15,
         attributeMinValue: 7,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
-        requiredQuality: ItemQuality.RARE
+        requiredQuality: ItemQuality.RARE,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.EPIC
-      }
-    ]
+        requiredQuality: ItemQuality.EPIC,
+      },
+    ],
   },
   {
     ...commonStarterWeaponParams,
@@ -399,45 +399,45 @@ export const starterWeapons: Weapon[] = [
         attributeName: MainAttributeNames.MIN_DAMAGE,
         attributeMaxValue: 7,
         attributeMinValue: 3,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: MainAttributeNames.MAX_DAMAGE,
         attributeMaxValue: 15,
         attributeMinValue: 7,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
-        requiredQuality: ItemQuality.RARE
+        requiredQuality: ItemQuality.RARE,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.EPIC
-      }
-    ]
+        requiredQuality: ItemQuality.EPIC,
+      },
+    ],
   },
   {
     ...commonStarterWeaponParams,
@@ -451,45 +451,45 @@ export const starterWeapons: Weapon[] = [
         attributeName: MainAttributeNames.MIN_DAMAGE,
         attributeMaxValue: 7,
         attributeMinValue: 3,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: MainAttributeNames.MAX_DAMAGE,
         attributeMaxValue: 15,
         attributeMinValue: 7,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
-        requiredQuality: ItemQuality.RARE
+        requiredQuality: ItemQuality.RARE,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.EPIC
-      }
-    ]
+        requiredQuality: ItemQuality.EPIC,
+      },
+    ],
   },
   {
     ...commonStarterWeaponParams,
@@ -503,45 +503,45 @@ export const starterWeapons: Weapon[] = [
         attributeName: MainAttributeNames.MIN_DAMAGE,
         attributeMaxValue: 7,
         attributeMinValue: 3,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: MainAttributeNames.MAX_DAMAGE,
         attributeMaxValue: 15,
         attributeMinValue: 7,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
-        requiredQuality: ItemQuality.RARE
+        requiredQuality: ItemQuality.RARE,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.EPIC
-      }
-    ]
+        requiredQuality: ItemQuality.EPIC,
+      },
+    ],
   },
   {
     ...commonStarterWeaponParams,
@@ -555,44 +555,44 @@ export const starterWeapons: Weapon[] = [
         attributeName: MainAttributeNames.MIN_DAMAGE,
         attributeMaxValue: 7,
         attributeMinValue: 3,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: MainAttributeNames.MAX_DAMAGE,
         attributeMaxValue: 15,
         attributeMinValue: 7,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.AGILITY,
         attributeMaxValue: 6,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STRENGTH,
         attributeMaxValue: 10,
         attributeMinValue: 5,
-        requiredQuality: ItemQuality.COMMON
+        requiredQuality: ItemQuality.COMMON,
       },
       {
         attributeName: PrimaryAttributeNames.STAMINA,
         attributeMaxValue: 5,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.UNCOMMON
+        requiredQuality: ItemQuality.UNCOMMON,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_CHANCE_RATING,
         attributeMaxValue: 10,
         attributeMinValue: 6,
-        requiredQuality: ItemQuality.RARE
+        requiredQuality: ItemQuality.RARE,
       },
       {
         attributeName: SecondaryAttributeNames.CRIT_DAMAGE_RATING,
         attributeMaxValue: 4,
         attributeMinValue: 0,
-        requiredQuality: ItemQuality.EPIC
-      }
-    ]
-  }
+        requiredQuality: ItemQuality.EPIC,
+      },
+    ],
+  },
 ];

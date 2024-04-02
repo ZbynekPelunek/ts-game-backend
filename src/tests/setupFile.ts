@@ -9,7 +9,7 @@ import {
   Response_CharacterEquipment_POST,
   InventoryActions,
   Response_CharacterAttribute_POST,
-  Response_Inventory_POST
+  Response_Inventory_POST,
 } from '../../../shared/src';
 
 jest.mock('axios');
@@ -32,7 +32,7 @@ beforeAll(() => {
   mockedAxios.get.mockImplementation((url: string) => {
     if (url === 'http://localhost:3000/api/v1/attributes') {
       return Promise.resolve<{ data: Response_Attribute_GET_all }>({
-        data: { success: true, attributes: [] }
+        data: { success: true, attributes: [] },
       });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,21 +44,21 @@ beforeAll(() => {
     switch (url) {
       case `http://localhost:3000${PUBLIC_ROUTES.CharacterAttributes}`:
         return Promise.resolve<{ data: Response_CharacterAttribute_POST }>({
-          data: { success: true, characterAttributes: [] }
+          data: { success: true, characterAttributes: [] },
         });
       case `http://localhost:3000${PUBLIC_ROUTES.CharacterCurrencies}`:
         return Promise.resolve({
-          data: { success: true, characterCurrencies: [] }
+          data: { success: true, characterCurrencies: [] },
         });
       case `http://localhost:3000${PUBLIC_ROUTES.CharacterEquipment}`:
         return Promise.resolve<{
           data: Response_CharacterEquipment_POST;
         }>({
-          data: { success: true, characterEquipment: [] }
+          data: { success: true, characterEquipment: [] },
         });
       case `http://localhost:3000${PUBLIC_ROUTES.Inventory}?action=${InventoryActions.NEW}`:
         return Promise.resolve<{ data: Response_Inventory_POST }>({
-          data: { success: true, inventory: [] }
+          data: { success: true, inventory: [] },
         });
       default:
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

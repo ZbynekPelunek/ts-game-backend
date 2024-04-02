@@ -7,7 +7,7 @@ import {
   Currency,
   CurrencyId,
   CharacterCurrency_POST,
-  CharacterCurrencyFrontend
+  CharacterCurrencyFrontend,
 } from '../../../shared/src';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { CharacterCurrencyModel } from '../schema/characterCurrency.schema';
@@ -67,7 +67,7 @@ describe('Character Currency routes', () => {
       const currency = new CurrencyModel<Currency>({
         _id: currencyId,
         label: currencyLabel,
-        name: currencyName
+        name: currencyName,
       });
 
       await currency.save();
@@ -107,14 +107,14 @@ describe('Character Currency routes', () => {
           characterId: unknownID.toString(),
           currencyId: CurrencyId.CHEATING_CURRENCY,
           amount: 0,
-          characterCurrencyId: ''
+          characterCurrencyId: '',
         },
         {
           characterId: unknownID.toString(),
           currencyId: CurrencyId.GOLD,
           amount: 10,
-          characterCurrencyId: ''
-        }
+          characterCurrencyId: '',
+        },
       ];
 
       const res = await request(APP_SERVER)
@@ -134,7 +134,7 @@ describe('Character Currency routes', () => {
         characterId: unknownID.toString(),
         currencyId: CurrencyId.CHEATING_CURRENCY,
         amount: 0,
-        characterCurrencyId: ''
+        characterCurrencyId: '',
       };
 
       const res = await request(APP_SERVER)
@@ -157,7 +157,7 @@ async function addCharCurrencyToDb(
   const currency = new CharacterCurrencyModel<CharacterCurrencyBackend>({
     amount,
     characterId,
-    currencyId
+    currencyId,
   });
 
   return await currency.save();

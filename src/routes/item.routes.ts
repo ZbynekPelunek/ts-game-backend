@@ -3,7 +3,7 @@ import { ItemModel } from '../schema/item.schema';
 import {
   Request_Item_GET_one_params,
   Response_Item_GET_all,
-  Response_Item_GET_one
+  Response_Item_GET_one,
 } from '../../../shared/src';
 
 export const itemsRouter = express.Router();
@@ -30,7 +30,7 @@ itemsRouter.get(
     if (!item) {
       return res.status(404).json({
         success: false,
-        error: `Item with id '${itemId}' not found`
+        error: `Item with id '${itemId}' not found`,
       });
     }
 

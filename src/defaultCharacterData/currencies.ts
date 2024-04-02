@@ -8,13 +8,13 @@ export function generateCharacterCurrencies(
       amount: 100,
       currencyId: CurrencyId.CHEATING_CURRENCY,
       characterId,
-      characterCurrencyId: ''
+      characterCurrencyId: '',
     },
     {
       amount: 10,
       currencyId: CurrencyId.GOLD,
       characterId,
-      characterCurrencyId: ''
-    }
+      characterCurrencyId: '',
+    },
   ];
 }

@@ -7,7 +7,7 @@ import {
   Response_Account_POST,
   Request_Account_PATCH_params,
   Request_Account_PATCH_body,
-  Response_Account_PATCH
+  Response_Account_PATCH,
 } from '../../../shared/src';
 
 export const accountsRouter = Router();
@@ -23,7 +23,7 @@ accountsRouter.post(
     const account = new AccountModel({
       email,
       password,
-      username
+      username,
     });
 
     await account.save();
@@ -33,8 +33,8 @@ accountsRouter.post(
       account: {
         accountId: account.id,
         email: account.email,
-        username: account.username
-      }
+        username: account.username,
+      },
     });
   }
 );
@@ -70,7 +70,7 @@ accountsRouter.patch(
       //throw new NotFoundError(`Account with id '${accountId}' not found`);
       return res.status(404).json({
         success: false,
-        error: `Account with id '${accountId}' not found`
+        error: `Account with id '${accountId}' not found`,
       });
     }
 
@@ -81,7 +81,7 @@ accountsRouter.patch(
 
     return res.status(200).json({
       success: true,
-      account: { accountId: account.id }
+      account: { accountId: account.id },
     });
   }
 );

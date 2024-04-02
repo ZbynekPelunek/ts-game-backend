@@ -16,7 +16,7 @@ import {
   Response_Inventory_PATCH,
   Response_Item_GET_one,
   InventoryFrontend,
-  InventoryActions
+  InventoryActions,
 } from '../../../shared/src';
 
 export const inventoryRouter = express.Router();
@@ -57,7 +57,7 @@ inventoryRouter.get(
     if (!inventory) {
       return res.status(404).json({
         success: false,
-        error: `Inventory with id '${inventoryId}' not found`
+        error: `Inventory with id '${inventoryId}' not found`,
       });
     }
 
@@ -96,7 +96,7 @@ inventoryRouter.post(
         const inventoryDbResponse = await InventoryModel.create({
           characterId,
           slot,
-          itemId
+          itemId,
         });
         response = [transformResponse(inventoryDbResponse)];
       }
@@ -130,7 +130,7 @@ inventoryRouter.patch(
       if (!item.data.success) {
         return res.status(500).json({
           success: false,
-          error: 'Error while retrieving item data'
+          error: 'Error while retrieving item data',
         });
       }
 
@@ -149,7 +149,7 @@ inventoryRouter.patch(
       if (!inventorySlotItem) {
         return res.status(404).json({
           success: false,
-          error: `Inventory item with id '${inventoryId}' does not exist`
+          error: `Inventory item with id '${inventoryId}' does not exist`,
         });
       }
 
@@ -158,7 +158,7 @@ inventoryRouter.patch(
         if (inventorySlotItem.amount! + amount! > item.data.item.maxAmount!) {
           return res.status(400).json({
             success: false,
-            error: `Max amount reached ${inventorySlotItem.amount! + amount!}/${item.data.item.maxAmount}`
+            error: `Max amount reached ${inventorySlotItem.amount! + amount!}/${item.data.item.maxAmount}`,
           });
         }
 
@@ -202,7 +202,7 @@ inventoryRouter.patch(
             { slot: previousItemSlot },
             {
               itemId: inventorySlotItem.itemId,
-              amount: inventorySlotItem.amount
+              amount: inventorySlotItem.amount,
             }
           );
 
@@ -212,13 +212,13 @@ inventoryRouter.patch(
         } else {
           //const allCharacterItemSlots = await axios.get<Response_Inventories_GET_all>(`http://localhost:3000/api/v1/inventory-items?characterId=${characterId}`);
           const allCharacterItemSlots = await InventoryModel.find({
-            characterId
+            characterId,
           });
 
           if (!allCharacterItemSlots) {
             return res.status(500).json({
               success: false,
-              error: 'No character inventory data found'
+              error: 'No character inventory data found',
             });
           }
 
@@ -230,7 +230,7 @@ inventoryRouter.patch(
           if (freeCharacterItemSlots.length === 0) {
             return res.status(500).json({
               success: false,
-              error: 'Inventory is full'
+              error: 'Inventory is full',
             });
           }
 
@@ -262,6 +262,6 @@ const transformResponse = (
     characterId: databaseResponse.characterId.toString(),
     amount: databaseResponse.amount ?? 0,
     itemId: databaseResponse.itemId,
-    slot: databaseResponse.slot
+    slot: databaseResponse.slot,
   };
 };

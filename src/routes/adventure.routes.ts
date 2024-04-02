@@ -5,7 +5,7 @@ import {
   Request_Adventure_GET_one_params,
   Response_Adventure_GET_all,
   Response_Adventure_GET_one,
-  Reward
+  Reward,
 } from '../../../shared/src';
 import { AdventureModel } from '../schema/adventure.schema';
 
@@ -41,14 +41,14 @@ adventuresRouter.get(
   ) => {
     const { adventureId } = req.params;
 
-    const adventure = await AdventureModel.findOne({ adventureId }).lean();
+    const adventure = await AdventureModel.findById(adventureId).lean();
 
     //console.log('Adventure One lean response: ', adventure);
 
     if (!adventure) {
       return res.status(404).json({
         success: false,
-        error: `Adventure with id '${adventureId}' not found.`
+        error: `Adventure with id '${adventureId}' not found.`,
       });
     }
 

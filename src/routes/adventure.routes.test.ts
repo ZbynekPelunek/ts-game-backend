@@ -6,7 +6,7 @@ import {
   Adventure_GET_all,
   Adventure_GET_one,
   Request_Adventure_GET_all_query,
-  Reward
+  Reward,
 } from '../../../shared/src';
 import { AdventureModel } from '../schema/adventure.schema';
 import { APP_SERVER } from '../tests/setupFile';
@@ -45,7 +45,7 @@ describe('Adventure routes', () => {
 
     it('returns status code 200 with all available adventures and papulated reward', async () => {
       const queryString: Request_Adventure_GET_all_query = {
-        populateReward: true
+        populateReward: true,
       };
       const reward1Id = REWARDS_MOCK[0]._id;
       await RewardModel.create(REWARDS_MOCK);
@@ -75,7 +75,7 @@ describe('Adventure routes', () => {
   describe(`GET ${apiAddress}/<ADVENTURE_ID>`, () => {
     it('returns status code 200 with correct adventure', async () => {
       await addAdventureToDb(ADVENTURES_MOCK);
-      const adventure2Id = ADVENTURES_MOCK[1].adventureId;
+      const adventure2Id = ADVENTURES_MOCK[1]._id;
       const adventure2Name = ADVENTURES_MOCK[1].name;
 
       const res = await request(APP_SERVER).get(
@@ -85,7 +85,7 @@ describe('Adventure routes', () => {
       expect(res.statusCode).toEqual(200);
       const adventureResponse: Adventure_GET_one = res.body;
       expect(adventureResponse.success).toBe(true);
-      expect(adventureResponse.adventure.adventureId).toBe(adventure2Id);
+      expect(adventureResponse.adventure._id).toBe(adventure2Id);
       expect(adventureResponse.adventure.name).toBe(adventure2Name);
     });
 

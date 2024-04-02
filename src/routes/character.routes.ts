@@ -25,7 +25,7 @@ import {
   Request_Character_GET_one_params,
   Request_Character_GET_one_query,
   Response_Character_GET_one,
-  UiPosition
+  UiPosition,
 } from '../../../shared/src';
 
 export const charactersRouter = express.Router();
@@ -59,7 +59,7 @@ charactersRouter.post(
       const character = new CharacterModel({
         accountId: characterBody.accountId,
         name: characterBody.name,
-        maxInventorySlot: 20
+        maxInventorySlot: 20,
       });
 
       // ATTRIBUTES PART
@@ -70,7 +70,7 @@ charactersRouter.post(
       if (!allAttributesResponse.data.success) {
         return res.status(500).json({
           success: false,
-          error: 'Couldnt GET all attributes while creating character'
+          error: 'Couldnt GET all attributes while creating character',
         });
       }
 
@@ -89,7 +89,7 @@ charactersRouter.post(
         >,
         Request_CharacterAttribute_POST_body
       >('http://localhost:3000/api/v1/character-attributes', {
-        characterAttributes: defaultCharacterAttributes
+        characterAttributes: defaultCharacterAttributes,
       });
 
       //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
@@ -99,7 +99,7 @@ charactersRouter.post(
         );
         return res.status(500).json({
           success: false,
-          error: 'Character attributes error'
+          error: 'Character attributes error',
         });
       }
 
@@ -121,7 +121,7 @@ charactersRouter.post(
         >,
         Request_CharacterCurrency_POST_body
       >('http://localhost:3000/api/v1/character-currencies', {
-        characterCurrencies: defaultCharacterCurrencies
+        characterCurrencies: defaultCharacterCurrencies,
       });
 
       //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
@@ -131,7 +131,7 @@ charactersRouter.post(
         );
         return res.status(500).json({
           success: false,
-          error: 'Character currencies error'
+          error: 'Character currencies error',
         });
       }
 
@@ -147,7 +147,7 @@ charactersRouter.post(
           slot: e as EquipmentSlot,
           characterId: character.id,
           uiPosition: setUiPosition(e as EquipmentSlot),
-          equipmentId: ''
+          equipmentId: '',
         };
         equipmentArr.push(equipmentObj);
       }
@@ -160,7 +160,7 @@ charactersRouter.post(
         >,
         Request_CharacterEquipment_POST_body
       >('http://localhost:3000/api/v1/character-equipment', {
-        characterEquipment: equipmentArr
+        characterEquipment: equipmentArr,
       });
 
       if (!characterEquipmentResponse.data.success) {
@@ -169,7 +169,7 @@ charactersRouter.post(
         );
         return res.status(500).json({
           success: false,
-          error: 'Character equipment error'
+          error: 'Character equipment error',
         });
       }
 
@@ -194,7 +194,7 @@ charactersRouter.post(
         );
         return res.status(500).json({
           success: false,
-          error: 'Character inventory error'
+          error: 'Character inventory error',
         });
       }
 
@@ -203,7 +203,7 @@ charactersRouter.post(
           slot: ii.slot,
           characterId: new Types.ObjectId(ii.characterId),
           amount: ii.amount,
-          itemId: ii.itemId
+          itemId: ii.itemId,
         };
       });
 
@@ -222,7 +222,7 @@ charactersRouter.post(
 
       return res.status(201).json({
         success: true,
-        character: responseCharacter
+        character: responseCharacter,
       });
     } catch (error) {
       if (isAxiosError(error)) {
@@ -254,7 +254,7 @@ charactersRouter.get(
     if (!character) {
       return res.status(404).json({
         success: false,
-        error: `Character with id '${characterId}' not found`
+        error: `Character with id '${characterId}' not found`,
       });
     }
 
@@ -338,13 +338,13 @@ const transformResponse = (
             amount: i.amount ?? 0,
             characterId: i.characterId.toString(),
             itemId: i.itemId,
-            slot: i.slot
+            slot: i.slot,
           };
         })
       : [],
     level: databaseResponse.level,
     maxExperience: databaseResponse.maxExperience,
-    name: databaseResponse.name
+    name: databaseResponse.name,
   };
 };
 

@@ -19,7 +19,7 @@ import {
   MainAttributeNames,
   Request_Inventory_PATCH_body,
   Request_Inventory_POST_body,
-  Response_Item_GET_one
+  Response_Item_GET_one,
 } from '../../../shared/src';
 import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
 
@@ -36,7 +36,7 @@ describe('Inventory routes', () => {
         itemId: 1,
         amount: 2,
         characterId: unknownID,
-        slot: 6
+        slot: 6,
       });
 
       const inventoryLength = await InventoryModel.countDocuments();
@@ -56,7 +56,7 @@ describe('Inventory routes', () => {
         itemId: 1,
         amount: 2,
         characterId: unknownID,
-        slot: 6
+        slot: 6,
       });
       const inventoryId = inventory.id;
 
@@ -90,11 +90,11 @@ describe('Inventory routes', () => {
         itemId: 1,
         amount: 2,
         characterId: unknownID,
-        slot: 6
+        slot: 6,
       });
       const newInventory: Request_Inventory_POST_body = {
         characterId: characterId.toString(),
-        slot: 5
+        slot: 5,
       };
 
       const currentInventoryLength = await InventoryModel.countDocuments();
@@ -118,11 +118,11 @@ describe('Inventory routes', () => {
         itemId: 1,
         amount: 2,
         characterId: unknownID,
-        slot: 6
+        slot: 6,
       });
       const newInventory: Request_Inventory_POST_body = {
         characterId: characterId.toString(),
-        slot: 5
+        slot: 5,
       };
 
       const currentInventoryLength = await InventoryModel.countDocuments();
@@ -167,15 +167,15 @@ describe('Inventory routes', () => {
                     attributeName: MainAttributeNames.ARMOR,
                     attributeMaxValue: 10,
                     attributeMinValue: 1,
-                    requiredQuality: ItemQuality.COMMON
-                  }
+                    requiredQuality: ItemQuality.COMMON,
+                  },
                 ],
                 equipmentType: ArmorType.LEATHER,
                 itemLevel: 15,
                 slot: EquipmentSlot.CHEST,
-                maxAmount: maxItemAmount
-              }
-            }
+                maxAmount: maxItemAmount,
+              },
+            },
           });
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,13 +188,13 @@ describe('Inventory routes', () => {
         characterId: unknownID,
         slot: 4,
         itemId: newItemId,
-        amount: 1
+        amount: 1,
       });
       const inventoryId = inventory.id;
 
       const newInventory: Request_Inventory_PATCH_body = {
         itemId: inventory.itemId,
-        amount: 1
+        amount: 1,
       };
       const res = await request(APP_SERVER)
         .patch(`${apiAddress}/${inventoryId}`)
@@ -214,13 +214,13 @@ describe('Inventory routes', () => {
         characterId: unknownID,
         slot: 4,
         itemId: newItemId,
-        amount: 1
+        amount: 1,
       });
       const inventoryId = inventory.id;
 
       const newInventory: Request_Inventory_PATCH_body = {
         itemId: inventory.itemId,
-        amount: 2
+        amount: 2,
       };
       const res = await request(APP_SERVER)
         .patch(`${apiAddress}/${inventoryId}`)
@@ -237,12 +237,12 @@ describe('Inventory routes', () => {
     it('returns status code 200 when new item is received to specific empty slot', async () => {
       const inventory = await addInventoryToDb({
         characterId: unknownID,
-        slot: 6
+        slot: 6,
       });
       const inventoryId = inventory.id;
 
       const newInventory: Request_Inventory_PATCH_body = {
-        itemId: newItemId
+        itemId: newItemId,
       };
 
       const res = await request(APP_SERVER)
@@ -261,13 +261,13 @@ describe('Inventory routes', () => {
         characterId: unknownID,
         slot: 6,
         itemId: currentInventorySlotItemId,
-        amount: 1
+        amount: 1,
       });
       const inventorySlot_2 = await addInventoryToDb({
         characterId: unknownID,
         slot: 1,
         itemId: newItemId,
-        amount: 1
+        amount: 1,
       });
       const inventorySlot1Id = inventorySlot_1.id;
       const inventorySlot2Id = inventorySlot_2.id;
@@ -275,7 +275,7 @@ describe('Inventory routes', () => {
       const updatedInventory: Request_Inventory_PATCH_body = {
         itemId: inventorySlot_2.itemId,
         previousItemSlot: inventorySlot_2.slot,
-        amount: inventorySlot_2.amount
+        amount: inventorySlot_2.amount,
       };
 
       const res = await request(APP_SERVER)
@@ -300,24 +300,24 @@ describe('Inventory routes', () => {
         characterId,
         slot: 1,
         itemId: invSlot1ItemId,
-        amount: 1
+        amount: 1,
       });
       const inventorySlot_2 = await addInventoryToDb({
         characterId: unknownID,
-        slot: 2
+        slot: 2,
       });
       const inventorySlot_3 = await addInventoryToDb({
         characterId: unknownID,
         slot: 3,
         itemId: invSlot3ItemId,
-        amount: 1
+        amount: 1,
       });
       const inventorySlot1Id = inventorySlot_1.id;
 
       const updatedInventory: Request_Inventory_PATCH_body = {
         itemId: newItemId,
         amount: 2,
-        characterId: characterId.toString()
+        characterId: characterId.toString(),
       };
 
       const res = await request(APP_SERVER)
@@ -347,26 +347,26 @@ describe('Inventory routes', () => {
         characterId,
         slot: 1,
         itemId: invSlot1ItemId,
-        amount: 1
+        amount: 1,
       });
       await addInventoryToDb({
         characterId: unknownID,
         slot: 2,
         itemId: invSlot2ItemId,
-        amount: 1
+        amount: 1,
       });
       await addInventoryToDb({
         characterId: unknownID,
         slot: 3,
         itemId: invSlot3ItemId,
-        amount: 1
+        amount: 1,
       });
       const inventorySlot1Id = inventorySlot_1.id;
 
       const updatedInventory: Request_Inventory_PATCH_body = {
         itemId: newItemId,
         amount: 2,
-        characterId: characterId.toString()
+        characterId: characterId.toString(),
       };
 
       const res = await request(APP_SERVER)

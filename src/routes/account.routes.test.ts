@@ -8,7 +8,7 @@ import {
   Request_Account_POST_body,
   Request_Account_PATCH_body,
   Account_PATCH,
-  Account_POST
+  Account_POST,
 } from '../../../shared/src';
 import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
 
@@ -33,7 +33,7 @@ describe('Account routes', () => {
         .send(<Request_Account_POST_body>{
           email: newAccEmail,
           username: newAccUsername,
-          password: newAccPassword
+          password: newAccPassword,
         });
 
       const newLength = await AccountModel.countDocuments();
@@ -62,7 +62,7 @@ describe('Account routes', () => {
       const res = await request(APP_SERVER)
         .patch(`${apiAddress}/${addedAccountId}`)
         .send(<Request_Account_PATCH_body>{
-          characterId: newCharId.toString()
+          characterId: newCharId.toString(),
         });
 
       const account = await AccountModel.findById(addedAccountId);
@@ -77,7 +77,7 @@ describe('Account routes', () => {
 
     it('returns 404 when account ID doesnt exists in database', async () => {
       const requestBody: Request_Account_PATCH_body = {
-        characterId: unknownID.toString()
+        characterId: unknownID.toString(),
       };
 
       const res = await request(APP_SERVER)
@@ -102,7 +102,7 @@ async function addAccountToDb(
   const account = new AccountModel({
     email,
     password,
-    username
+    username,
   });
 
   return await account.save();

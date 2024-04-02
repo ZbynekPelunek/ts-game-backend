@@ -6,7 +6,7 @@ import { CharacterAttributeBackend } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'character-attributes' }
+  options: { customName: 'character-attributes' },
 })
 export class CharacterAttributeSchema implements CharacterAttributeBackend {
   @prop({ required: true })

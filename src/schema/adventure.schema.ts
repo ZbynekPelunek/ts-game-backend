@@ -3,14 +3,14 @@ import {
   getModelForClass,
   modelOptions,
   prop,
-  Severity
+  Severity,
 } from '@typegoose/typegoose';
 import { Adventure, AdventureReward } from '../../../shared/src';
 import { RewardSchema } from './reward.schema';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'adventures', allowMixed: Severity.ALLOW }
+  options: { customName: 'adventures', allowMixed: Severity.ALLOW },
 })
 export class AdventureSchema implements Adventure {
   @prop({ required: true, alias: 'adventureId' })
@@ -29,7 +29,7 @@ export class AdventureSchema implements Adventure {
   @prop({ required: true, type: () => AdventureRewardSchema, _id: false })
   public rewards!: [
     ArraySubDocumentType<AdventureRewardSchema>,
-    ...ArraySubDocumentType<AdventureRewardSchema>[]
+    ...ArraySubDocumentType<AdventureRewardSchema>[],
   ];
 
   @prop({ default: [] })

@@ -5,7 +5,7 @@ import {
   BasicAttributeFrontend,
   Request_Attribute_GET_Params,
   Response_Attribute_GET_all,
-  Response_Attribute_GET_one
+  Response_Attribute_GET_one,
 } from '../../../shared/src';
 import { AttributeDetailModel } from '../schema/attribute.schema';
 
@@ -24,7 +24,7 @@ attributesRouter.get(
             attributeName: a.attributeName,
             isPercent: a.isPercent,
             label: a.label,
-            desc: a.desc
+            desc: a.desc,
           };
         }
       );
@@ -52,7 +52,7 @@ attributesRouter.get(
       if (!attribute) {
         return res.status(404).json({
           success: false,
-          error: `Attribute with id '${attributeId}' not found`
+          error: `Attribute with id '${attributeId}' not found`,
         });
       }
 

@@ -3,14 +3,14 @@ import { Document } from 'mongoose';
 
 import {
   CharacterEquipmentModel,
-  CharacterEquipmentSchema
+  CharacterEquipmentSchema,
 } from '../schema/characterEquipment.schema';
 import {
   CharacterEquipmentFrontend,
   Request_CharacterEquipment_GET_all_query,
   Request_CharacterEquipment_POST_body,
   Response_CharacterEquipment_GET_all,
-  Response_CharacterEquipment_POST
+  Response_CharacterEquipment_POST,
 } from '../../../shared/src';
 
 export const characterEquipmentRouter = express.Router();
@@ -27,7 +27,7 @@ characterEquipmentRouter.get(
       let charEquipDbResponse;
       if (characterId) {
         charEquipDbResponse = await CharacterEquipmentModel.find({
-          characterId
+          characterId,
         });
       } else {
         charEquipDbResponse = await CharacterEquipmentModel.find();
@@ -86,6 +86,6 @@ const transformResponse = (
     equipmentId: databaseResponse.id,
     itemId: databaseResponse.itemId,
     uiPosition: databaseResponse.uiPosition,
-    slot: databaseResponse.slot
+    slot: databaseResponse.slot,
   };
 };

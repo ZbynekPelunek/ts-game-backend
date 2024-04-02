@@ -1,10 +1,11 @@
 import express, { Request, Response } from 'express';
+
 import { RewardModel } from '../schema/reward.schema';
 import {
   Request_Reward_GET_one_params,
   Response_Reward_GET_all,
   Response_Reward_GET_one,
-  Reward
+  Reward,
 } from '../../../shared/src';
 
 export const rewardsRouter = express.Router();
@@ -30,7 +31,7 @@ rewardsRouter.get(
     if (!reward) {
       return res.status(404).json({
         success: false,
-        error: `Reward with id '${rewardId}' not found.`
+        error: `Reward with id '${rewardId}' not found.`,
       });
     }
 

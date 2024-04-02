@@ -7,11 +7,11 @@ import {
   Request_CharacterAttribute_GET_all_query,
   Request_CharacterAttribute_POST_body,
   Response_CharacterAttribute_GET_all,
-  Response_CharacterAttribute_POST
+  Response_CharacterAttribute_POST,
 } from '../../../shared/src';
 import {
   CharacterAttributeModel,
-  CharacterAttributeSchema
+  CharacterAttributeSchema,
 } from '../schema/characterAttribute.schema';
 
 export const characterAttributesRouter = express.Router();
@@ -35,17 +35,17 @@ characterAttributesRouter.get(
 
       return res.status(200).json({
         success: true,
-        characterAttributes: responseCharacterAttributesArr
+        characterAttributes: responseCharacterAttributesArr,
       });
     }
 
     let responseCharacterAttributes: CharacterAttributeFrontend[] = [];
     if (populateAttribute) {
       const populatedCharacterAttributes = await CharacterAttributeModel.find({
-        characterId: characterId
+        characterId: characterId,
       }).populate<{ attributeId: BasicAttributeBackend }>({
         path: 'attributeId',
-        select: '-createdAt -updatedAt -__v'
+        select: '-createdAt -updatedAt -__v',
       });
 
       responseCharacterAttributes = populatedCharacterAttributes.map((ca) => {
@@ -57,12 +57,12 @@ characterAttributesRouter.get(
           statsAddedValue: ca.statsAddedValue,
           totalValue: ca.totalValue,
           attributeId: ca.attributeId._id.toString(),
-          attribute: ca.attributeId
+          attribute: ca.attributeId,
         };
       });
     } else {
       const characterAttributes = await CharacterAttributeModel.find({
-        characterId: characterId
+        characterId: characterId,
       });
 
       responseCharacterAttributes = characterAttributes.map((ca) => {
@@ -74,7 +74,7 @@ characterAttributesRouter.get(
 
     return res.status(200).json({
       success: true,
-      characterAttributes: responseCharacterAttributes
+      characterAttributes: responseCharacterAttributes,
     });
   }
 );
@@ -124,6 +124,6 @@ const transformResponse = (
     characterAttributeId: databaseResponse.id,
     characterId: characterId ?? databaseResponse.characterId.toString(),
     statsAddedValue: databaseResponse.statsAddedValue,
-    totalValue: databaseResponse.totalValue
+    totalValue: databaseResponse.totalValue,
   };
 };

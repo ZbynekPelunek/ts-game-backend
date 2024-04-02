@@ -6,7 +6,7 @@ import {
   Attribute_GET_all,
   Attribute_GET_one,
   BasicAttribute,
-  MainAttributeNames
+  MainAttributeNames,
 } from '../../../shared/src';
 import { AttributeDetailModel } from '../schema/attribute.schema';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
@@ -92,7 +92,7 @@ async function addAttributeToDb(
     attributeName,
     isPercent,
     label,
-    desc
+    desc,
   });
 
   return await attribute.save();

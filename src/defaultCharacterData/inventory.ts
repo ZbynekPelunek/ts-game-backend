@@ -19,7 +19,7 @@ export const generateCharacterInventory = (
       slot: i + 1,
       itemId: itemId ?? null,
       characterId: convertCharacterId,
-      amount: amount ?? 0
+      amount: amount ?? 0,
     });
   }
 
