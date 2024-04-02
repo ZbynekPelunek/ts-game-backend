@@ -6,9 +6,9 @@ import { CharacterCurrencyModel } from './schema/characterCurrency.schema';
 import { CharacterEquipmentModel } from './schema/characterEquipment.schema';
 
 export class MongoDBHandler {
-  connection: Mongoose | undefined
+  connection: Mongoose | undefined;
 
-  constructor() { }
+  constructor() {}
 
   public async connect(nodeEnv: string) {
     let uri = 'mongodb://127.0.0.1:27017';
@@ -39,6 +39,7 @@ export class MongoDBHandler {
 
   private async cleanUpCollections() {
     console.log('Cleaning database...');
+
     // console.log('cleaning accounts...');
     // await AccountModel.deleteMany({});
     // console.log('...accounts cleaned.');
@@ -59,15 +60,13 @@ export class MongoDBHandler {
     // await CharacterEquipmentModel.deleteMany({});
     // console.log('...character equipment items cleaned.');
 
-    await Promise.all(
-      [
-        AccountModel.deleteMany({}),
-        CharacterModel.deleteMany({}),
-        CharacterAttributeModel.deleteMany({}),
-        CharacterCurrencyModel.deleteMany({}),
-        CharacterEquipmentModel.deleteMany({})
-      ]
-    )
+    await Promise.all([
+      AccountModel.deleteMany({}),
+      CharacterModel.deleteMany({}),
+      CharacterAttributeModel.deleteMany({}),
+      CharacterCurrencyModel.deleteMany({}),
+      CharacterEquipmentModel.deleteMany({})
+    ]);
     console.log('...cleaning database done.');
   }
 }

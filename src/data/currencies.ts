@@ -11,6 +11,6 @@ export const defaultCurrencies: Currency[] = [
   {
     _id: CurrencyId.CHEATING_CURRENCY,
     name: 'CHEATING_CURRENCY',
-    label: 'Cheating Currency',
+    label: 'Cheating Currency'
   }
-]
+];

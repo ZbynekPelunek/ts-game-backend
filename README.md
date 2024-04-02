@@ -20,24 +20,28 @@ This project also contains a lot of commented code for now because at first, I t
 
 ## Technologies
 
-* Typescript
-* MongoDB
-* Node
-* Express
+- Typescript
+- MongoDB
+- Node
+- Express
 
 ## Features
 
-* Account API
-* Characters API
-  * Attributes API
-  * Currencies API
-* Items API
-  * Equipment API
-  * Inventory API
+- Account API
+- Adventure API
+- Attribute API
+- Character API
+  - Attribute API
+  - Currency API
+  - Inventory API
+- Item API
+  - Equipment API
+- Reward API
 
 ## Instalation
 
 To be able to make it run, you need to
+
 - Have MongoDb running locally on mongodb://127.0.0.1:27017
 - Seed the database with seed scripts (seedItems, ...)
 - Have Shared folder in the same folder as Backend and Frontend

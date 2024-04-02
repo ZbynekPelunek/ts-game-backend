@@ -1,16 +1,3 @@
-import * as _ from 'lodash';
-
-import {
-  AdventureResult,
-  AdventureState,
-  AdventureTimer,
-  CharacterBackend,
-  IAdventure,
-} from '../../../shared/src';
-import { AttackerTarget } from '../interface/combat.interface';
-import { adventureResults } from '../routes/results.router';
-import { Combat } from './combat';
-
 // export async function startAdventure(adventure: IAdventure, character: ICharacter): Promise<{ resultId: string; timeStarted: string; timeFinished: string; adventure: IAdventure }> {
 //   const now = new Date();
 //   const timeStarted = now.toISOString();

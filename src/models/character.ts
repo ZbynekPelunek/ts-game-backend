@@ -1,8 +1,3 @@
-import * as _ from 'lodash';
-
-import { IAdventure } from '../../../shared/src';
-import { characterAvailableAdventures } from '../mockData/testAdventures';
-
 export class Character {
   constructor(
     public accountId: string,
@@ -14,9 +9,11 @@ export class Character {
     public maxExperience: number = 200,
     public maxInventorySlots: number = 8,
     public currencies = [],
-    public adventures: IAdventure[] = characterAvailableAdventures,
+
+    //public adventures: IAdventure[] = characterAvailableAdventures,
     public createdAt: string = new Date().toISOString(),
-    public updatedAt: string = new Date().toISOString()) {
+    public updatedAt: string = new Date().toISOString()
+  ) {
     //this.generateInventory();
     //this.checkCharacterEquipmentSlots();
     //this.updateStatsTotalValue();

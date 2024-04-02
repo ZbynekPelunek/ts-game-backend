@@ -3,12 +3,12 @@ import {
   MainAttributeNames,
   MiscAttributeNames,
   PrimaryAttributeNames,
-  SecondaryAttributeNames,
+  SecondaryAttributeNames
 } from '../../../shared/src';
 
 const commonAttributeParams = {
-  isPercent: false,
-}
+  isPercent: false
+};
 
 export const generateAttributes = (): BasicAttribute[] => {
   let allAttributes: BasicAttribute[] = [];
@@ -22,7 +22,7 @@ export const generateAttributes = (): BasicAttribute[] => {
   allAttributes = allAttributes.concat(generateMiscAttributes());
 
   return allAttributes;
-}
+};
 
 const generateMainAttributes = (): BasicAttribute[] => {
   const allMainAttributes: BasicAttribute[] = [];
@@ -68,7 +68,7 @@ const generateMainAttributes = (): BasicAttribute[] => {
   }
 
   return allMainAttributes;
-}
+};
 
 const generatePrimaryAttributes = (): BasicAttribute[] => {
   const allPrimaryAttributes: BasicAttribute[] = [];
@@ -104,11 +104,13 @@ const generatePrimaryAttributes = (): BasicAttribute[] => {
         });
         break;
       default:
-        throw new Error(`Missing generator for attribute type ${attributeName}`);
+        throw new Error(
+          `Missing generator for attribute type ${attributeName}`
+        );
     }
   }
   return allPrimaryAttributes;
-}
+};
 
 const generateSecondaryAttributes = (): BasicAttribute[] => {
   const allSecondaryAttributes: BasicAttribute[] = [];
@@ -159,12 +161,14 @@ const generateSecondaryAttributes = (): BasicAttribute[] => {
         });
         break;
       default:
-        throw new Error(`Missing generator for attribute type ${attributeName}`);
+        throw new Error(
+          `Missing generator for attribute type ${attributeName}`
+        );
     }
   }
 
   return allSecondaryAttributes;
-}
+};
 
 const generateMiscAttributes = (): BasicAttribute[] => {
   const allMiscAttributes: BasicAttribute[] = [];
@@ -204,9 +208,11 @@ const generateMiscAttributes = (): BasicAttribute[] => {
         });
         break;
       default:
-        throw new Error(`Missing generator for attribute type ${attributeName}`);
+        throw new Error(
+          `Missing generator for attribute type ${attributeName}`
+        );
     }
   }
 
   return allMiscAttributes;
-}
+};

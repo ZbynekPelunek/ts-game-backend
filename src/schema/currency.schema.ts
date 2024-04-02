@@ -2,7 +2,10 @@ import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 
 import { Currency, CurrencyId } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'currencies' } })
+@modelOptions({
+  schemaOptions: { timestamps: true },
+  options: { customName: 'currencies' }
+})
 export class CurrencySchema implements Currency {
   @prop({ required: true })
   public _id!: CurrencyId;

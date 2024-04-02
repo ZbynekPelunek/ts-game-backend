@@ -1,4 +1,6 @@
 import request from 'supertest';
+import { describe, afterEach, it, expect } from '@jest/globals';
+
 import { Reward, Reward_GET_one, Reward_GET_all } from '../../../shared/src';
 import { RewardModel } from '../schema/reward.schema';
 import { PUBLIC_ROUTES } from '../server';
@@ -8,7 +10,6 @@ import { Common_Response_Error } from '../../../shared/src/interface/API/commonR
 
 describe('Reward routes', () => {
   const apiAddress = PUBLIC_ROUTES.Rewards;
-
 
   afterEach(async () => {
     await RewardModel.deleteMany();
@@ -27,7 +28,7 @@ describe('Reward routes', () => {
       expect(rewardsResponse.success).toStrictEqual(true);
       expect(rewardsResponse.rewards).toHaveLength(rewardsLength);
     });
-  })
+  });
 
   describe(`GET ${apiAddress}/<REWARD_ID>`, () => {
     it('returns status code 200 with correct reward', async () => {
@@ -45,16 +46,18 @@ describe('Reward routes', () => {
     });
 
     it('returns status code 404 when reward ID is unknown', async () => {
-      const unknownID = 199999
+      const unknownID = 199999;
       const res = await request(APP_SERVER).get(`${apiAddress}/${unknownID}`);
 
       expect(res.statusCode).toStrictEqual(404);
       const rewardResponse: Common_Response_Error = res.body;
       expect(rewardResponse.success).toStrictEqual(false);
-      expect(rewardResponse.error).toStrictEqual(`Reward with id '${unknownID}' not found.`);
+      expect(rewardResponse.error).toStrictEqual(
+        `Reward with id '${unknownID}' not found.`
+      );
     });
-  })
-})
+  });
+});
 
 async function addRewardToDb(input: Reward | Reward[]) {
   return await RewardModel.create(input);

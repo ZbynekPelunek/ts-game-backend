@@ -1,8 +1,6 @@
-import express, { Request, Response } from 'express';
+// import express, { Request, Response } from 'express';
 
-export const resultsRouter = express.Router();
-
-export const adventureResults = [];
+// export const resultsRouter = express.Router();
 
 // resultsRouter.get('/:resultId', (req: Request, res: Response) => {
 //   const { resultId } = req.params;

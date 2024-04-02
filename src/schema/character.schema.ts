@@ -1,4 +1,9 @@
-import { Severity, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import {
+  Severity,
+  getModelForClass,
+  modelOptions,
+  prop
+} from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
@@ -7,7 +12,10 @@ import { CharacterCurrencySchema } from './characterCurrency.schema';
 import { CharacterEquipmentSchema } from './characterEquipment.schema';
 import { CharacterBackend, InventoryBackend } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'characters', allowMixed: Severity.ALLOW } })
+@modelOptions({
+  schemaOptions: { timestamps: true },
+  options: { customName: 'characters', allowMixed: Severity.ALLOW }
+})
 export class CharacterSchema implements CharacterBackend {
   @prop({ requied: true })
   public accountId!: Types.ObjectId;

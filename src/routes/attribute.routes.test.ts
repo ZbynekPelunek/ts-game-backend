@@ -1,6 +1,13 @@
 import request from 'supertest';
+import { describe, afterEach, it, expect } from '@jest/globals';
 
-import { AttributeName, Attribute_GET_all, Attribute_GET_one, BasicAttribute, MainAttributeNames } from '../../../shared/src';
+import {
+  AttributeName,
+  Attribute_GET_all,
+  Attribute_GET_one,
+  BasicAttribute,
+  MainAttributeNames
+} from '../../../shared/src';
 import { AttributeDetailModel } from '../schema/attribute.schema';
 import { APP_SERVER, unknownID } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
@@ -27,11 +34,14 @@ describe('Attribute routes', () => {
       expect(attributesResponse.success).toBe(true);
       expect(attributesResponse.attributes).toHaveLength(attributesLength);
     });
-  })
+  });
 
   describe(`GET ${apiAddress}/<ATTRIBUTE_ID>`, () => {
     it('returns status code 200 with correct attribute', async () => {
-      const attribute = await addAttributeToDb(MainAttributeNames.ARMOR, MainAttributeNames.ARMOR.toLowerCase());
+      const attribute = await addAttributeToDb(
+        MainAttributeNames.ARMOR,
+        MainAttributeNames.ARMOR.toLowerCase()
+      );
       const attributeId = attribute.id;
 
       const res = await request(APP_SERVER).get(`${apiAddress}/${attributeId}`);
@@ -39,8 +49,12 @@ describe('Attribute routes', () => {
       expect(res.statusCode).toEqual(200);
       const attributeResponse: Attribute_GET_one = res.body;
       expect(attributeResponse.success).toBe(true);
-      expect(attributeResponse.attribute.attributeName).toBe(MainAttributeNames.ARMOR);
-      expect(attributeResponse.attribute.label).toBe(MainAttributeNames.ARMOR.toLowerCase());
+      expect(attributeResponse.attribute.attributeName).toBe(
+        MainAttributeNames.ARMOR
+      );
+      expect(attributeResponse.attribute.label).toBe(
+        MainAttributeNames.ARMOR.toLowerCase()
+      );
       expect(attributeResponse.attribute.isPercent).toBe(false);
       expect(attributeResponse.attribute.desc).toBe('');
     });
@@ -51,7 +65,9 @@ describe('Attribute routes', () => {
       expect(res.statusCode).toEqual(404);
       const attributeResponse: Common_Response_Error = res.body;
       expect(attributeResponse.success).toBe(false);
-      expect(attributeResponse.error).toBe(`Attribute with id '${unknownID}' not found`);
+      expect(attributeResponse.error).toBe(
+        `Attribute with id '${unknownID}' not found`
+      );
     });
 
     it('returns status code 500 when attribute ID is wrong type', async () => {
@@ -63,16 +79,21 @@ describe('Attribute routes', () => {
       const attributeResponse: Common_Response_Error = res.body;
       expect(attributeResponse.success).toBe(false);
     });
-  })
-})
+  });
+});
 
-async function addAttributeToDb(attributeName: AttributeName, label: string, isPercent = false, desc = '') {
+async function addAttributeToDb(
+  attributeName: AttributeName,
+  label: string,
+  isPercent = false,
+  desc = ''
+) {
   const attribute = new AttributeDetailModel<BasicAttribute>({
     attributeName,
     isPercent,
     label,
     desc
-  })
+  });
 
   return await attribute.save();
 }

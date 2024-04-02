@@ -1,5 +1,1 @@
-
-
-export const defaultEquipmentSlots = [
-
-];
+export const defaultEquipmentSlots = [];

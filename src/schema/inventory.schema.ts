@@ -1,8 +1,12 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
+
 import { InventoryBackend } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'inventory-items' } })
+@modelOptions({
+  schemaOptions: { timestamps: true },
+  options: { customName: 'inventory' }
+})
 export class InventorySchema implements InventoryBackend {
   @prop({ required: true })
   public characterId!: Types.ObjectId;

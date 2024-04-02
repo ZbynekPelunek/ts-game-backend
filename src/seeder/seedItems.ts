@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import mongoose from 'mongoose';
 
 import { Armor, Weapon } from '../../../shared/src';

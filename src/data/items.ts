@@ -1,4 +1,15 @@
-import { EquipmentSlot, ItemQuality, ItemType, MainAttributeNames, ArmorType, Armor, PrimaryAttributeNames, SecondaryAttributeNames, Weapon, WeaponType } from '../../../shared/src';
+import {
+  EquipmentSlot,
+  ItemQuality,
+  ItemType,
+  MainAttributeNames,
+  ArmorType,
+  Armor,
+  PrimaryAttributeNames,
+  SecondaryAttributeNames,
+  Weapon,
+  WeaponType
+} from '../../../shared/src';
 
 const commonStarterArmorParams = {
   itemLevel: 1,
@@ -6,7 +17,7 @@ const commonStarterArmorParams = {
   sellValue: 1,
   maxItemLevel: 5,
   maxAmount: 1
-}
+};
 
 export const starterArmor: Armor[] = [
   {
@@ -269,7 +280,7 @@ const commonStarterWeaponParams = {
   sellValue: 1,
   maxItemLevel: 5,
   maxAmount: 1
-}
+};
 
 export const starterWeapons: Weapon[] = [
   {
@@ -584,4 +595,4 @@ export const starterWeapons: Weapon[] = [
       }
     ]
   }
-]
+];

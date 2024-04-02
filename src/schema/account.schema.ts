@@ -4,7 +4,10 @@ import { Types } from 'mongoose';
 import { CharacterSchema } from './character.schema';
 import { AccountBackend } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'accounts' } })
+@modelOptions({
+  schemaOptions: { timestamps: true },
+  options: { customName: 'accounts' }
+})
 export class AccountSchema implements AccountBackend {
   @prop({ required: true })
   public username!: string;

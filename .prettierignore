@@ -1,0 +1,5 @@
+build
+coverage
+*.js
+README.md
+package-lock.json

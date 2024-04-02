@@ -1,8 +1,26 @@
-import { Severity, getDiscriminatorModelForClass, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import {
+  Severity,
+  getDiscriminatorModelForClass,
+  getModelForClass,
+  modelOptions,
+  prop
+} from '@typegoose/typegoose';
 
-import { ArmorType, EquipmentSlot, ItemAttribute, ItemQuality, ItemType, WeaponType, CommonItemsEquipmenParams, CommonItemParams } from '../../../shared/src';
+import {
+  ArmorType,
+  EquipmentSlot,
+  ItemAttribute,
+  ItemQuality,
+  ItemType,
+  WeaponType,
+  CommonItemsEquipmenParams,
+  CommonItemParams
+} from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true, discriminatorKey: "itemType" }, options: { allowMixed: Severity.ALLOW } })
+@modelOptions({
+  schemaOptions: { timestamps: true, discriminatorKey: 'itemType' },
+  options: { allowMixed: Severity.ALLOW }
+})
 class ItemSchema implements CommonItemParams {
   @prop({ required: true })
   public itemId!: number;
@@ -26,8 +44,10 @@ class ItemSchema implements CommonItemParams {
   public icon?: string;
 }
 
-
-export class EquipmentSchema extends ItemSchema implements CommonItemsEquipmenParams {
+export class EquipmentSchema
+  extends ItemSchema
+  implements CommonItemsEquipmenParams
+{
   @prop({ required: true, default: 1 })
   public itemLevel!: number;
 
@@ -54,4 +74,8 @@ export class EquipmentSchema extends ItemSchema implements CommonItemsEquipmenPa
 }
 
 export const ItemModel = getModelForClass(ItemSchema);
-export const ItemsEquipmentModel = getDiscriminatorModelForClass(ItemModel, EquipmentSchema, ItemType.EQUIPMENT);
+export const ItemsEquipmentModel = getDiscriminatorModelForClass(
+  ItemModel,
+  EquipmentSchema,
+  ItemType.EQUIPMENT
+);

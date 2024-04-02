@@ -1,6 +1,8 @@
 import { CharacterCurrencyFrontend, CurrencyId } from '../../../shared/src';
 
-export function generateCharacterCurrencies(characterId: string): CharacterCurrencyFrontend[] {
+export function generateCharacterCurrencies(
+  characterId: string
+): CharacterCurrencyFrontend[] {
   return [
     {
       amount: 100,
@@ -14,5 +16,5 @@ export function generateCharacterCurrencies(characterId: string): CharacterCurre
       characterId,
       characterCurrencyId: ''
     }
-  ]
+  ];
 }

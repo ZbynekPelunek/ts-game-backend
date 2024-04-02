@@ -6,7 +6,7 @@ export const validateObjectId = (id: string): boolean => {
     console.log('checking id: ', id);
     return id.toString() === new Types.ObjectId(id).toString();
   } catch (error) {
-    console.log(`ID: ${id} is not correct OBject ID`)
+    console.log(`ID: ${id} is not correct OBject ID`);
     return false;
   }
-}
+};

@@ -15,7 +15,6 @@ import { MongoDBHandler } from './mongoDB.handler';
 import { BasePaths, ApiRoutes } from '../../shared/src';
 import { rewardsRouter } from './routes/reward.routes';
 
-
 export const PUBLIC_ROUTES = {
   Accounts: `/${BasePaths.PUBLIC}/${ApiRoutes.ACCOUNTS}`,
   Characters: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTERS}`,
@@ -28,7 +27,7 @@ export const PUBLIC_ROUTES = {
   CharacterEquipment: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_EQUIPMENT}`,
   Items: `/${BasePaths.PUBLIC}/${ApiRoutes.ITEMS}`,
   Rewards: `/${BasePaths.PUBLIC}/${ApiRoutes.REWARDS}`
-}
+};
 
 export class AppServer {
   mongoDbHandler: MongoDBHandler;
@@ -50,8 +49,14 @@ export class AppServer {
 
     this.app.use((_req, res, next) => {
       res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-      res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-      res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, PUT, DELETE, POST');
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+      );
+      res.setHeader(
+        'Access-Control-Allow-Methods',
+        'OPTIONS, PUT, DELETE, POST'
+      );
 
       next();
     });
@@ -59,7 +64,10 @@ export class AppServer {
     this.setupPublicRouters();
 
     this.app.all('*', (req: Request, res: Response) => {
-      return res.status(404).json({ success: false, error: `Route ${req.url} does not exist.` });
+      return res.status(404).json({
+        success: false,
+        error: `Route ${req.url} does not exist.`
+      });
     });
 
     this.app.use(errorHandler);
@@ -67,15 +75,17 @@ export class AppServer {
     await this.connectDb();
 
     this.serverListener = this.app.listen(this.port, () => {
-      console.log('The application is listening on port http://localhost:' + this.port);
-    })
+      console.log(
+        'The application is listening on port http://localhost:' + this.port
+      );
+    });
 
     process.on('SIGINT', () => {
       this.destroy().then(() => {
         console.log('Closing application');
-        process.exit(2)
+        process.exit(2);
       });
-    })
+    });
   }
 
   async connectDb() {
@@ -87,7 +97,6 @@ export class AppServer {
     this.app.use(PUBLIC_ROUTES.Accounts, accountsRouter);
     this.app.use(PUBLIC_ROUTES.Characters, charactersRouter);
     this.app.use(PUBLIC_ROUTES.Adventures, adventuresRouter);
-    //this.app.use(PUBLIC_ROUTES.Results, resultsRouter);
     this.app.use(PUBLIC_ROUTES.Inventory, inventoryRouter);
     this.app.use(PUBLIC_ROUTES.Attributes, attributesRouter);
     this.app.use(PUBLIC_ROUTES.CharacterAttributes, characterAttributesRouter);
@@ -98,7 +107,10 @@ export class AppServer {
   }
 
   async destroy(): Promise<void> {
-    await Promise.all([this.serverListener.close(), this.mongoDbHandler.disconnect()])
+    await Promise.all([
+      this.serverListener.close(),
+      this.mongoDbHandler.disconnect()
+    ]);
   }
 }
 

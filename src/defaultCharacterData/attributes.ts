@@ -3,7 +3,7 @@ import {
   CharacterAttributeFrontend,
   MainAttributeNames,
   PrimaryAttributeNames,
-  SecondaryAttributeNames,
+  SecondaryAttributeNames
 } from '../../../shared/src';
 import { calculateAttributes } from '../engine/attributes';
 
@@ -12,19 +12,22 @@ const commonCharAttributesValues = {
   addedValue: 0,
   statsAddedValue: 0,
   totalValue: 0
-}
+};
 
-export function generateDefaultCharacterAttributes(allAttributes: BasicAttributeFrontend[], characterId: string): CharacterAttributeFrontend[] {
+export function generateDefaultCharacterAttributes(
+  allAttributes: BasicAttributeFrontend[],
+  characterId: string
+): CharacterAttributeFrontend[] {
   const defaultAttributes: CharacterAttributeFrontend[] = [];
 
-  allAttributes.forEach(a => {
+  allAttributes.forEach((a) => {
     const attribute: CharacterAttributeFrontend = {
       ...commonCharAttributesValues,
       characterId,
       attributeId: a.attributeId,
       attribute: a,
       characterAttributeId: ''
-    }
+    };
     switch (a.attributeName) {
       case MainAttributeNames.HEALTH:
         attribute.baseValue = 20;

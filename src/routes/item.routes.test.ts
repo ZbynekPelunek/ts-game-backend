@@ -1,6 +1,16 @@
 import request from 'supertest';
+import { describe, afterEach, it, expect } from '@jest/globals';
 
-import { ArmorType, CommonItemsEquipmenParams, EquipmentSlot, ItemQuality, ItemType, Item_GET_all, Item_GET_one, MainAttributeNames } from '../../../shared/src';
+import {
+  ArmorType,
+  CommonItemsEquipmenParams,
+  EquipmentSlot,
+  ItemQuality,
+  ItemType,
+  Item_GET_all,
+  Item_GET_one,
+  MainAttributeNames
+} from '../../../shared/src';
 import { APP_SERVER } from '../tests/setupFile';
 import { ItemModel } from '../schema/item.schema';
 import { PUBLIC_ROUTES } from '../server';
@@ -15,13 +25,19 @@ describe('Item routes', () => {
 
   describe(`GET ${apiAddress}`, () => {
     it('returns status code 200 with all available items', async () => {
-
       await addItemToDb({
         itemId: 1,
         itemType: ItemType.EQUIPMENT,
         name: 'Equipment1',
         quality: ItemQuality.LEGENDARY,
-        attributes: [{ attributeName: MainAttributeNames.ARMOR, attributeMaxValue: 10, attributeMinValue: 1, requiredQuality: ItemQuality.COMMON }],
+        attributes: [
+          {
+            attributeName: MainAttributeNames.ARMOR,
+            attributeMaxValue: 10,
+            attributeMinValue: 1,
+            requiredQuality: ItemQuality.COMMON
+          }
+        ],
         equipmentType: ArmorType.LEATHER,
         itemLevel: 15,
         slot: EquipmentSlot.CHEST
@@ -36,7 +52,7 @@ describe('Item routes', () => {
       expect(itemsResponse.success).toBe(true);
       expect(itemsResponse.items).toHaveLength(itemsLength);
     });
-  })
+  });
 
   describe(`GET ${apiAddress}/<ITEM_ID>`, () => {
     it('returns status code 200 with correct item', async () => {
@@ -46,7 +62,14 @@ describe('Item routes', () => {
         itemType: ItemType.EQUIPMENT,
         name: 'Equipment1',
         quality: ItemQuality.LEGENDARY,
-        attributes: [{ attributeName: MainAttributeNames.ARMOR, attributeMaxValue: 10, attributeMinValue: 1, requiredQuality: ItemQuality.COMMON }],
+        attributes: [
+          {
+            attributeName: MainAttributeNames.ARMOR,
+            attributeMaxValue: 10,
+            attributeMinValue: 1,
+            requiredQuality: ItemQuality.COMMON
+          }
+        ],
         equipmentType: ArmorType.LEATHER,
         itemLevel: 15,
         slot: EquipmentSlot.CHEST
@@ -62,15 +85,19 @@ describe('Item routes', () => {
 
     it('returns status code 404 when item ID is unknown', async () => {
       const notExistingItemId = 5;
-      const res = await request(APP_SERVER).get(`${apiAddress}/${notExistingItemId}`);
+      const res = await request(APP_SERVER).get(
+        `${apiAddress}/${notExistingItemId}`
+      );
 
       expect(res.statusCode).toEqual(404);
       const attributeResponse: Common_Response_Error = res.body;
       expect(attributeResponse.success).toBe(false);
-      expect(attributeResponse.error).toBe(`Item with id '${notExistingItemId}' not found`);
+      expect(attributeResponse.error).toBe(
+        `Item with id '${notExistingItemId}' not found`
+      );
     });
-  })
-})
+  });
+});
 
 async function addItemToDb(input: CommonItemsEquipmenParams) {
   const item = new ItemModel<CommonItemsEquipmenParams>(input);

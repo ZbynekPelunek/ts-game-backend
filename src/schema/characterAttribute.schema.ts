@@ -1,11 +1,13 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
-
 import { AttributeDetailSchema } from './attribute.schema';
 import { CharacterAttributeBackend } from '../../../shared/src';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'character-attributes' } })
+@modelOptions({
+  schemaOptions: { timestamps: true },
+  options: { customName: 'character-attributes' }
+})
 export class CharacterAttributeSchema implements CharacterAttributeBackend {
   @prop({ required: true })
   public characterId!: Types.ObjectId;
@@ -26,4 +28,6 @@ export class CharacterAttributeSchema implements CharacterAttributeBackend {
   public totalValue!: number;
 }
 
-export const CharacterAttributeModel = getModelForClass(CharacterAttributeSchema);
+export const CharacterAttributeModel = getModelForClass(
+  CharacterAttributeSchema
+);

@@ -1,22 +1,36 @@
-import { ArraySubDocumentType, getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import {
+  ArraySubDocumentType,
+  getModelForClass,
+  modelOptions,
+  prop
+} from '@typegoose/typegoose';
 import { IRewardSchema, RewardCurrency, RewardItem } from '../../../shared/src';
 import { CurrencySchema } from './currency.schema';
 import { EquipmentSchema } from './item.schema';
 
-@modelOptions({ schemaOptions: { timestamps: true }, options: { customName: 'rewards' } })
+@modelOptions({
+  schemaOptions: { timestamps: true },
+  options: { customName: 'rewards' }
+})
 export class RewardSchema implements IRewardSchema {
   @prop({ required: true, alias: 'rewardId' })
   public _id!: number;
   public rewardId!: number;
 
   @prop({ default: [], type: () => RewardCurrencySchema, _id: false })
-  public currencies?: [ArraySubDocumentType<RewardCurrencySchema>, ...ArraySubDocumentType<RewardCurrencySchema>[]];
+  public currencies?: [
+    ArraySubDocumentType<RewardCurrencySchema>,
+    ...ArraySubDocumentType<RewardCurrencySchema>[]
+  ];
 
   @prop({ default: 0 })
   public experience?: number;
 
   @prop({ default: [], type: () => RewardItemSchema, _id: false })
-  public items?: [ArraySubDocumentType<RewardItemSchema>, ...ArraySubDocumentType<RewardItemSchema>[]];
+  public items?: [
+    ArraySubDocumentType<RewardItemSchema>,
+    ...ArraySubDocumentType<RewardItemSchema>[]
+  ];
 }
 
 class RewardCurrencySchema implements RewardCurrency {

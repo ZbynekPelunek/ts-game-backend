@@ -1,10 +1,26 @@
 import request from 'supertest';
+import { describe, afterEach, it, expect, beforeAll } from '@jest/globals';
 
 import { APP_SERVER, mockedAxios, unknownID } from '../tests/setupFile';
 import { InventoryModel } from '../schema/inventory.schema';
 import { PUBLIC_ROUTES } from '../server';
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
-import { ArmorType, EquipmentSlot, Inventory_GET_all, Inventory_GET_one, Inventory_PATCH, Inventory_POST, InventoryActions, InventoryBackend, ItemQuality, ItemType, MainAttributeNames, Request_Inventory_PATCH_body, Request_Inventory_POST_body, Response_Item_GET_one } from '../../../shared/src';
+import {
+  ArmorType,
+  EquipmentSlot,
+  Inventory_GET_all,
+  Inventory_GET_one,
+  Inventory_PATCH,
+  Inventory_POST,
+  InventoryActions,
+  InventoryBackend,
+  ItemQuality,
+  ItemType,
+  MainAttributeNames,
+  Request_Inventory_PATCH_body,
+  Request_Inventory_POST_body,
+  Response_Item_GET_one
+} from '../../../shared/src';
 import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
 
 describe('Inventory routes', () => {
@@ -32,7 +48,7 @@ describe('Inventory routes', () => {
       expect(inventoryResponse.success).toBe(true);
       expect(inventoryResponse.inventory).toHaveLength(inventoryLength);
     });
-  })
+  });
 
   describe(`GET ${apiAddress}/<INVENTORY_ID>`, () => {
     it('returns status code 200 with correct inventory slot', async () => {
@@ -54,12 +70,16 @@ describe('Inventory routes', () => {
 
     it('returns status code 404 when inventory ID is unknown', async () => {
       const unknownInventoryId = unknownID.toString();
-      const res = await request(APP_SERVER).get(`${apiAddress}/${unknownInventoryId}`);
+      const res = await request(APP_SERVER).get(
+        `${apiAddress}/${unknownInventoryId}`
+      );
 
       expect(res.statusCode).toEqual(404);
       const inventoryResponse: Common_Response_Error = res.body;
       expect(inventoryResponse.success).toBe(false);
-      expect(inventoryResponse.error).toBe(`Inventory with id '${unknownInventoryId}' not found`);
+      expect(inventoryResponse.error).toBe(
+        `Inventory with id '${unknownInventoryId}' not found`
+      );
     });
   });
 
@@ -75,11 +95,13 @@ describe('Inventory routes', () => {
       const newInventory: Request_Inventory_POST_body = {
         characterId: characterId.toString(),
         slot: 5
-      }
+      };
 
       const currentInventoryLength = await InventoryModel.countDocuments();
 
-      const res = await request(APP_SERVER).post(`${apiAddress}`).send(newInventory);
+      const res = await request(APP_SERVER)
+        .post(`${apiAddress}`)
+        .send(newInventory);
 
       const newInventoryLength = await InventoryModel.countDocuments();
 
@@ -88,7 +110,7 @@ describe('Inventory routes', () => {
       const inventoryResponse: Inventory_POST = res.body;
       expect(inventoryResponse.success).toEqual(true);
       expect(inventoryResponse.inventory).toHaveLength(1);
-    })
+    });
 
     it('returns status code 201 with added new character inventory', async () => {
       const characterId = unknownID;
@@ -101,51 +123,65 @@ describe('Inventory routes', () => {
       const newInventory: Request_Inventory_POST_body = {
         characterId: characterId.toString(),
         slot: 5
-      }
+      };
 
       const currentInventoryLength = await InventoryModel.countDocuments();
 
-      const res = await request(APP_SERVER).post(`${apiAddress}?action=${InventoryActions.NEW}`).send(newInventory);
+      const res = await request(APP_SERVER)
+        .post(`${apiAddress}?action=${InventoryActions.NEW}`)
+        .send(newInventory);
 
       const newInventoryLength = await InventoryModel.countDocuments();
 
       expect(res.statusCode).toEqual(201);
-      expect(newInventoryLength).toEqual(currentInventoryLength + defaultMaxInventorySlots);
+      expect(newInventoryLength).toEqual(
+        currentInventoryLength + defaultMaxInventorySlots
+      );
       const inventoryResponse: Inventory_POST = res.body;
       expect(inventoryResponse.success).toEqual(true);
-      expect(inventoryResponse.inventory).toHaveLength(defaultMaxInventorySlots);
-    })
-  })
+      expect(inventoryResponse.inventory).toHaveLength(
+        defaultMaxInventorySlots
+      );
+    });
+  });
 
   describe(`PATCH ${apiAddress}/<INVENTORY_ID>`, () => {
-    let newItemId = 5;
-    let maxItemAmount = 2;
+    const newItemId = 5;
+    const maxItemAmount = 2;
 
     beforeAll(() => {
-      mockedAxios.get.mockImplementation((url) => {
-        if (url === `http://localhost:3000${PUBLIC_ROUTES.Items}/${newItemId}`) {
-          return Promise.resolve<{ data: Response_Item_GET_one }>(
-            {
-              data:
-              {
-                success: true, item: {
-                  itemId: newItemId,
-                  itemType: ItemType.EQUIPMENT,
-                  name: 'Equipment1',
-                  quality: ItemQuality.LEGENDARY,
-                  attributes: [{ attributeName: MainAttributeNames.ARMOR, attributeMaxValue: 10, attributeMinValue: 1, requiredQuality: ItemQuality.COMMON }],
-                  equipmentType: ArmorType.LEATHER,
-                  itemLevel: 15,
-                  slot: EquipmentSlot.CHEST,
-                  maxAmount: maxItemAmount
-                }
+      mockedAxios.get.mockImplementation((url: string) => {
+        if (
+          url === `http://localhost:3000${PUBLIC_ROUTES.Items}/${newItemId}`
+        ) {
+          return Promise.resolve<{ data: Response_Item_GET_one }>({
+            data: {
+              success: true,
+              item: {
+                itemId: newItemId,
+                itemType: ItemType.EQUIPMENT,
+                name: 'Equipment1',
+                quality: ItemQuality.LEGENDARY,
+                attributes: [
+                  {
+                    attributeName: MainAttributeNames.ARMOR,
+                    attributeMaxValue: 10,
+                    attributeMinValue: 1,
+                    requiredQuality: ItemQuality.COMMON
+                  }
+                ],
+                equipmentType: ArmorType.LEATHER,
+                itemLevel: 15,
+                slot: EquipmentSlot.CHEST,
+                maxAmount: maxItemAmount
               }
             }
-          )
+          });
         }
-        return Promise.resolve({ data: [] })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return Promise.resolve<any>({ data: [] });
       });
-    })
+    });
 
     it('returns status code 200 when inventory ID is the same but NOT max amount reached', async () => {
       const inventory = await addInventoryToDb({
@@ -159,15 +195,19 @@ describe('Inventory routes', () => {
       const newInventory: Request_Inventory_PATCH_body = {
         itemId: inventory.itemId,
         amount: 1
-      }
-      const res = await request(APP_SERVER).patch(`${apiAddress}/${inventoryId}`).send(newInventory);
+      };
+      const res = await request(APP_SERVER)
+        .patch(`${apiAddress}/${inventoryId}`)
+        .send(newInventory);
 
       expect(res.statusCode).toEqual(200);
       const inventoryResponse: Inventory_PATCH = res.body;
       expect(inventoryResponse.success).toEqual(true);
       expect(inventoryResponse.inventory.itemId).toBe(newItemId);
-      expect(inventoryResponse.inventory.amount).toBe(inventory.amount! + newInventory.amount!);
-    })
+      expect(inventoryResponse.inventory.amount).toBe(
+        inventory.amount! + newInventory.amount!
+      );
+    });
 
     it('returns status code 400 when inventory ID is the same but max amount reached', async () => {
       const inventory = await addInventoryToDb({
@@ -181,14 +221,18 @@ describe('Inventory routes', () => {
       const newInventory: Request_Inventory_PATCH_body = {
         itemId: inventory.itemId,
         amount: 2
-      }
-      const res = await request(APP_SERVER).patch(`${apiAddress}/${inventoryId}`).send(newInventory);
+      };
+      const res = await request(APP_SERVER)
+        .patch(`${apiAddress}/${inventoryId}`)
+        .send(newInventory);
 
       expect(res.statusCode).toEqual(400);
       const inventoryResponse: Common_Response_Error = res.body;
       expect(inventoryResponse.success).toEqual(false);
-      expect(inventoryResponse.error).toBe(`Max amount reached ${inventory.amount! + newInventory.amount!}/${maxItemAmount}`);
-    })
+      expect(inventoryResponse.error).toBe(
+        `Max amount reached ${inventory.amount! + newInventory.amount!}/${maxItemAmount}`
+      );
+    });
 
     it('returns status code 200 when new item is received to specific empty slot', async () => {
       const inventory = await addInventoryToDb({
@@ -199,15 +243,17 @@ describe('Inventory routes', () => {
 
       const newInventory: Request_Inventory_PATCH_body = {
         itemId: newItemId
-      }
+      };
 
-      const res = await request(APP_SERVER).patch(`${apiAddress}/${inventoryId}`).send(newInventory);
+      const res = await request(APP_SERVER)
+        .patch(`${apiAddress}/${inventoryId}`)
+        .send(newInventory);
 
       expect(res.statusCode).toEqual(200);
       const inventoryResponse: Inventory_PATCH = res.body;
       expect(inventoryResponse.success).toEqual(true);
       expect(inventoryResponse.inventory.itemId).toBe(newItemId);
-    })
+    });
 
     it('returns status code 200 when item is successfully switched with another', async () => {
       const currentInventorySlotItemId = 10;
@@ -230,18 +276,21 @@ describe('Inventory routes', () => {
         itemId: inventorySlot_2.itemId,
         previousItemSlot: inventorySlot_2.slot,
         amount: inventorySlot_2.amount
-      }
+      };
 
-      const res = await request(APP_SERVER).patch(`${apiAddress}/${inventorySlot1Id}`).send(updatedInventory);
+      const res = await request(APP_SERVER)
+        .patch(`${apiAddress}/${inventorySlot1Id}`)
+        .send(updatedInventory);
 
-      const previousInventorySlot = await InventoryModel.findById(inventorySlot2Id);
+      const previousInventorySlot =
+        await InventoryModel.findById(inventorySlot2Id);
 
       expect(res.statusCode).toEqual(200);
       const inventoryResponse: Inventory_PATCH = res.body;
       expect(inventoryResponse.success).toEqual(true);
       expect(inventoryResponse.inventory.itemId).toBe(inventorySlot_2.itemId);
       expect(previousInventorySlot?.itemId).toBe(inventorySlot_1.itemId);
-    })
+    });
 
     it('returns status code 200 when new item is received and added to inventory', async () => {
       const characterId = unknownID;
@@ -255,7 +304,7 @@ describe('Inventory routes', () => {
       });
       const inventorySlot_2 = await addInventoryToDb({
         characterId: unknownID,
-        slot: 2,
+        slot: 2
       });
       const inventorySlot_3 = await addInventoryToDb({
         characterId: unknownID,
@@ -269,12 +318,16 @@ describe('Inventory routes', () => {
         itemId: newItemId,
         amount: 2,
         characterId: characterId.toString()
-      }
+      };
 
-      const res = await request(APP_SERVER).patch(`${apiAddress}/${inventorySlot1Id}`).send(updatedInventory);
+      const res = await request(APP_SERVER)
+        .patch(`${apiAddress}/${inventorySlot1Id}`)
+        .send(updatedInventory);
 
-      const inventorySlot_1_Updated = await InventoryModel.findById(inventorySlot1Id);
-      const inventorySlot_3_Updated = await InventoryModel.findById(inventorySlot_3);
+      const inventorySlot_1_Updated =
+        await InventoryModel.findById(inventorySlot1Id);
+      const inventorySlot_3_Updated =
+        await InventoryModel.findById(inventorySlot_3);
 
       expect(res.statusCode).toEqual(200);
       const inventoryResponse: Inventory_PATCH = res.body;
@@ -283,7 +336,7 @@ describe('Inventory routes', () => {
       expect(inventoryResponse.inventory.itemId).toBe(newItemId);
       expect(inventorySlot_1_Updated?.itemId).toBe(invSlot1ItemId);
       expect(inventorySlot_3_Updated?.itemId).toBe(invSlot3ItemId);
-    })
+    });
 
     it('returns status code 500 when new item is received but inventory is full', async () => {
       const characterId = unknownID;
@@ -314,17 +367,19 @@ describe('Inventory routes', () => {
         itemId: newItemId,
         amount: 2,
         characterId: characterId.toString()
-      }
+      };
 
-      const res = await request(APP_SERVER).patch(`${apiAddress}/${inventorySlot1Id}`).send(updatedInventory);
+      const res = await request(APP_SERVER)
+        .patch(`${apiAddress}/${inventorySlot1Id}`)
+        .send(updatedInventory);
 
       expect(res.statusCode).toEqual(500);
       const inventoryResponse: Common_Response_Error = res.body;
       expect(inventoryResponse.success).toEqual(false);
       expect(inventoryResponse.error).toBe('Inventory is full');
-    })
-  })
-})
+    });
+  });
+});
 
 async function addInventoryToDb(input: InventoryBackend) {
   const item = new InventoryModel<InventoryBackend>(input);
