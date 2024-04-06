@@ -26,14 +26,30 @@ import {
   Request_Character_GET_one_query,
   Response_Character_GET_one,
   UiPosition,
+  Response_Adventure_GET_all,
+  Request_Adventure_GET_all_query,
+  AdventureTypes,
+  Request_Inventory_POST_query,
+  Request_Inventory_POST_body,
+  Request_Character_GET_all_query,
+  CharacterBackend,
 } from '../../../shared/src';
 
 export const charactersRouter = express.Router();
 
 charactersRouter.get(
   '',
-  async (_req: Request, res: Response<Response_Character_GET_All>) => {
-    const characters = await CharacterModel.find();
+  async (
+    req: Request<{}, {}, {}, Request_Character_GET_all_query>,
+    res: Response<Response_Character_GET_All>
+  ) => {
+    const { accountId } = req.query;
+
+    const query = CharacterModel.find().lean();
+
+    if (accountId) query.where({ accountId });
+
+    const characters = await query.exec();
 
     const responseCharacters: CharacterFrontend[] = characters.map(
       (character) => {
@@ -179,9 +195,17 @@ charactersRouter.post(
         );
 
       // INVENTORY PART
-      const inventoryItemsResponse = await axios.post<Response_Inventory_POST>(
-        `http://localhost:3000${PUBLIC_ROUTES.Inventory}?action=${InventoryActions.NEW}`,
-        { characterId: character.id }
+      const inventoryQuery: Request_Inventory_POST_query = {
+        action: InventoryActions.NEW,
+      };
+      const inventoryItemsResponse = await axios.post<
+        Response_Inventory_POST,
+        AxiosResponse<Response_Inventory_POST, Request_Inventory_POST_body>,
+        Request_Inventory_POST_body
+      >(
+        `http://localhost:3000${PUBLIC_ROUTES.Inventory}`,
+        { characterId: character.id },
+        { params: inventoryQuery }
       );
       console.log(
         'Characters POST inventoryItemsResponse: ',
@@ -198,27 +222,56 @@ charactersRouter.post(
         });
       }
 
-      character.inventory = inventoryItemsResponse.data.inventory.map((ii) => {
+      character.inventory = inventoryItemsResponse.data.inventory.map((inv) => {
         return {
-          slot: ii.slot,
-          characterId: new Types.ObjectId(ii.characterId),
-          amount: ii.amount,
-          itemId: ii.itemId,
+          slot: inv.slot,
+          characterId: new Types.ObjectId(inv.characterId),
+          amount: inv.amount,
+          itemId: inv.itemId,
         };
       });
 
       //console.log('saving character: ', character);
 
+      const adventuresQuery: Request_Adventure_GET_all_query = {
+        type: AdventureTypes.TUTORIAL,
+      };
+      const adventuresDataResponse =
+        await axios.get<Response_Adventure_GET_all>(
+          `http://localhost:3000${PUBLIC_ROUTES.Adventures}`,
+          { params: adventuresQuery }
+        );
+
+      if (!adventuresDataResponse.data.success) {
+        console.error(
+          'Something went wrong while creating adding adventures: ',
+          adventuresDataResponse.data
+        );
+        return res.status(500).json({
+          success: false,
+          error: 'Character adventures error',
+        });
+      }
+
+      character.adventures = adventuresDataResponse.data.adventures.map(
+        (a) => a._id
+      );
+
       await character.save();
 
-      await axios.post(
-        `http://localhost:3000/api/v1/accounts/${characterBody.accountId}/characters`,
-        { characterId: character._id }
-      );
+      // ACCOUNT PART (Not neccessary?)
+      // await axios.patch<
+      //   Response_Account_PATCH,
+      //   AxiosResponse<Response_Account_PATCH, Request_Account_PATCH_body>,
+      //   Request_Account_PATCH_body
+      // >(
+      //   `http://localhost:3000/api/v1/accounts/${characterBody.accountId}/characters`,
+      //   { characterId: character.id }
+      // );
 
       //console.log('axios response: ', response);
 
-      const responseCharacter: CharacterFrontend = transformResponse(character);
+      const responseCharacter = transformResponse(character);
 
       return res.status(201).json({
         success: true,
@@ -226,7 +279,7 @@ charactersRouter.post(
       });
     } catch (error) {
       if (isAxiosError(error)) {
-        console.error(error.message);
+        console.error('Axios error: ', error.message);
       }
       return res
         .status(500)
@@ -309,15 +362,12 @@ function setUiPosition(equipSlot: EquipmentSlot): UiPosition {
 }
 
 const transformResponse = (
-  databaseResponse: CharacterSchema & Document
+  databaseResponse: CharacterBackend
 ): CharacterFrontend => {
   return {
-    characterId: databaseResponse.id,
+    characterId: databaseResponse._id!.toString(),
     accountId: databaseResponse.accountId.toString(),
-    adventures:
-      databaseResponse.adventures!.length > 0
-        ? databaseResponse.adventures!.map((a) => a.toString())
-        : [],
+    adventures: databaseResponse.adventures,
     characterAttributes:
       databaseResponse.characterAttributes!.length > 0
         ? databaseResponse.characterAttributes!.map((ca) => ca.toString())

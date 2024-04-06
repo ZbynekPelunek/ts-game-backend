@@ -9,7 +9,7 @@ import {
   MainAttributeNames,
 } from '../../../shared/src';
 import { AttributeDetailModel } from '../schema/attribute.schema';
-import { APP_SERVER, unknownID } from '../tests/setupFile';
+import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
 import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
 
@@ -60,13 +60,15 @@ describe('Attribute routes', () => {
     });
 
     it('returns status code 404 when attribute ID is unknown', async () => {
-      const res = await request(APP_SERVER).get(`${apiAddress}/${unknownID}`);
+      const res = await request(APP_SERVER).get(
+        `${apiAddress}/${UNKNOWN_OBJECT_ID}`
+      );
 
       expect(res.statusCode).toEqual(404);
       const attributeResponse: Common_Response_Error = res.body;
       expect(attributeResponse.success).toBe(false);
       expect(attributeResponse.error).toBe(
-        `Attribute with id '${unknownID}' not found`
+        `Attribute with id '${UNKNOWN_OBJECT_ID}' not found`
       );
     });
 

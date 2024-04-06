@@ -3,6 +3,7 @@ import {
   getModelForClass,
   modelOptions,
   prop,
+  Severity,
 } from '@typegoose/typegoose';
 
 import {
@@ -14,7 +15,7 @@ import {
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'enemies' },
+  options: { customName: 'enemies', allowMixed: Severity.ALLOW },
 })
 export class EnemySchema implements Enemy {
   @prop({ required: true })

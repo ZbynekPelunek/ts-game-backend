@@ -9,7 +9,7 @@ import {
   CharacterAttribute_POST,
   MainAttributeNames,
 } from '../../../shared/src';
-import { APP_SERVER, unknownID } from '../tests/setupFile';
+import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
 import { CharacterAttributeModel } from '../schema/characterAttribute.schema';
 import { AttributeDetailModel } from '../schema/attribute.schema';
 import { PUBLIC_ROUTES } from '../server';
@@ -21,9 +21,9 @@ describe('Character Attribute routes', () => {
     addedValue: 0,
     statsAddedValue: 0,
     totalValue: 0,
-    attributeId: unknownID.toString(),
-    characterId: unknownID.toString(),
-    characterAttributeId: unknownID.toString(),
+    attributeId: UNKNOWN_OBJECT_ID.toString(),
+    characterId: UNKNOWN_OBJECT_ID.toString(),
+    characterAttributeId: UNKNOWN_OBJECT_ID.toString(),
   };
 
   afterEach(async () => {
@@ -48,7 +48,7 @@ describe('Character Attribute routes', () => {
     });
 
     it('returns status code 200 with all available attributes for specific character', async () => {
-      const characterId = unknownID;
+      const characterId = UNKNOWN_OBJECT_ID;
       await addCharacterAttributeToDb(characterId);
 
       const charAttributesLength =
@@ -67,7 +67,7 @@ describe('Character Attribute routes', () => {
     });
 
     it('returns status code 200 with all available attributes for specific character and populates Attribute details', async () => {
-      const characterId = unknownID;
+      const characterId = UNKNOWN_OBJECT_ID;
       const attributeName = MainAttributeNames.HEALTH;
       const attributeLabel = attributeName.toLowerCase();
       const attribute = new AttributeDetailModel<BasicAttribute>({
@@ -164,8 +164,8 @@ describe('Character Attribute routes', () => {
 });
 
 async function addCharacterAttributeToDb(
-  characterId = unknownID,
-  attributeId = unknownID,
+  characterId = UNKNOWN_OBJECT_ID,
+  attributeId = UNKNOWN_OBJECT_ID,
   baseValue = 0,
   addedValue = 0,
   statsAddedValue = 0,

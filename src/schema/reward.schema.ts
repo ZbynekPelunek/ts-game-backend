@@ -13,9 +13,8 @@ import { EquipmentSchema } from './item.schema';
   options: { customName: 'rewards' },
 })
 export class RewardSchema implements IRewardSchema {
-  @prop({ required: true, alias: 'rewardId' })
+  @prop({ required: true })
   public _id!: number;
-  public rewardId!: number;
 
   @prop({ default: [], type: () => RewardCurrencySchema, _id: false })
   public currencies?: [

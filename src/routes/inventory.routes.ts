@@ -17,6 +17,7 @@ import {
   Response_Item_GET_one,
   InventoryFrontend,
   InventoryActions,
+  Request_Inventory_POST_query,
 } from '../../../shared/src';
 
 export const inventoryRouter = express.Router();
@@ -70,7 +71,12 @@ inventoryRouter.get(
 inventoryRouter.post(
   '',
   async (
-    req: Request<{}, {}, Request_Inventory_POST_body, { action: string }>,
+    req: Request<
+      {},
+      {},
+      Request_Inventory_POST_body,
+      Request_Inventory_POST_query
+    >,
     res: Response<Response_Inventory_POST>
   ) => {
     try {

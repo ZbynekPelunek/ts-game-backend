@@ -11,6 +11,7 @@ import { CharacterAttributeSchema } from './characterAttribute.schema';
 import { CharacterCurrencySchema } from './characterCurrency.schema';
 import { CharacterEquipmentSchema } from './characterEquipment.schema';
 import { CharacterBackend, InventoryBackend } from '../../../shared/src';
+import { AdventureSchema } from './adventure.schema';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
@@ -20,11 +21,11 @@ export class CharacterSchema implements CharacterBackend {
   @prop({ requied: true })
   public accountId!: Types.ObjectId;
 
-  @prop({ required: true })
+  @prop({ required: true, unique: true })
   public name!: string;
 
-  @prop({ default: [] })
-  public adventures?: Types.ObjectId[];
+  @prop({ default: [], ref: () => AdventureSchema, type: () => Number })
+  public adventures?: number[];
 
   @prop({ default: [], ref: () => CharacterAttributeSchema })
   public characterAttributes?: Types.ObjectId[];

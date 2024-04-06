@@ -2,15 +2,13 @@ import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
 import { AccountModel } from '../schema/account.schema';
-import { APP_SERVER, unknownID } from '../tests/setupFile';
+import { APP_SERVER } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
 import {
   Request_Account_POST_body,
-  Request_Account_PATCH_body,
-  Account_PATCH,
   Account_POST,
+  IAccountSchema,
 } from '../../../shared/src';
-import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
 
 describe('Account routes', () => {
   const apiAddress = PUBLIC_ROUTES.Accounts;
@@ -25,16 +23,22 @@ describe('Account routes', () => {
       const newAccUsername = 'Test_Username';
       const newAccPassword = '123';
 
-      await addAccountToDb('acc2@test.test', 'testAccount2', '12345');
+      await addAccountToDb({
+        email: 'acc@test.test',
+        username: 'testAccount',
+        password: '12345',
+      });
       const currentLength = await AccountModel.countDocuments();
+
+      const requestNewAccountBody: Request_Account_POST_body = {
+        email: newAccEmail,
+        username: newAccUsername,
+        password: newAccPassword,
+      };
 
       const res = await request(APP_SERVER)
         .post(apiAddress)
-        .send(<Request_Account_POST_body>{
-          email: newAccEmail,
-          username: newAccUsername,
-          password: newAccPassword,
-        });
+        .send(requestNewAccountBody);
 
       const newLength = await AccountModel.countDocuments();
 
@@ -42,68 +46,61 @@ describe('Account routes', () => {
       expect(res.statusCode).toEqual(201);
       const accountResponse: Account_POST = res.body;
       expect(accountResponse.success).toBe(true);
-      expect(accountResponse.account.accountId).toBeDefined();
+      expect(accountResponse.account.id).toBeDefined();
       expect(accountResponse.account.email).toBe(newAccEmail);
       expect(accountResponse.account.username).toBe(newAccUsername);
     });
   });
 
-  describe(`PATCH ${apiAddress}/<ACCOUNT_ID>`, () => {
+  // TODO: refactor to update account information
+  /*   describe(`PATCH ${apiAddress}/<ACCOUNT_ID>`, () => {
     it('adds character to the account and returns 200', async () => {
-      const addedAccount = await addAccountToDb(
-        'acc@test.test',
-        'testAccount',
-        '12345'
-      );
-      const addedAccountId: string = addedAccount.id;
-      const newCharId = unknownID;
-      const currentAccCharsLength = addedAccount.characters.length;
+      const addedAccount = await addAccountToDb({
+        email: 'acc@test.test',
+        username: 'testAccount',
+        password: '12345',
+      });
+      const addedAccountId = addedAccount.id;
+      const newCharId = UNKNOWN_OBJECT_ID.toString();
+      const currentAccCharsLength = addedAccount.characters!.length;
+
+      const requestAccountBody: Request_Account_PATCH_body = {
+        characterId: newCharId,
+      };
 
       const res = await request(APP_SERVER)
         .patch(`${apiAddress}/${addedAccountId}`)
-        .send(<Request_Account_PATCH_body>{
-          characterId: newCharId.toString(),
-        });
+        .send(requestAccountBody);
 
       const account = await AccountModel.findById(addedAccountId);
-      const newAccCharsLength = account!.characters.length;
+      const newAccCharsLength = account!.characters!.length;
 
       expect(res.statusCode).toEqual(200);
       const accountResponse: Account_PATCH = res.body;
       expect(accountResponse.success).toBe(true);
       expect(newAccCharsLength).toBe(currentAccCharsLength + 1);
-      expect(accountResponse.account.accountId).toBe(addedAccountId);
+      expect(accountResponse.account.id).toBe(addedAccountId);
     });
 
     it('returns 404 when account ID doesnt exists in database', async () => {
-      const requestBody: Request_Account_PATCH_body = {
-        characterId: unknownID.toString(),
+      const requestAccountBody: Request_Account_PATCH_body = {
+        characterId: UNKNOWN_OBJECT_ID.toString(),
       };
 
       const res = await request(APP_SERVER)
-        .patch(`${apiAddress}/${unknownID}`)
-        .send(requestBody);
+        .patch(`${apiAddress}/${UNKNOWN_OBJECT_ID}`)
+        .send(requestAccountBody);
 
       expect(res.statusCode).toEqual(404);
       const characterResponse: Common_Response_Error = res.body;
       expect(characterResponse.success).toBe(false);
       expect(characterResponse.error).toBe(
-        `Account with id '${unknownID}' not found`
+        `Account with id '${UNKNOWN_OBJECT_ID}' not found`
       );
     });
-  });
+  }); */
 });
 
-async function addAccountToDb(
-  email: string,
-  username: string,
-  password: string
-) {
-  const account = new AccountModel({
-    email,
-    password,
-    username,
-  });
-
-  return await account.save();
+async function addAccountToDb(input: IAccountSchema | IAccountSchema[]) {
+  return await AccountModel.create(input);
 }

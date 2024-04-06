@@ -1,13 +1,9 @@
 import { Request, Response, Router } from 'express';
-import { Types } from 'mongoose';
 
 import { AccountModel } from '../schema/account.schema';
 import {
   Request_Account_POST_body,
   Response_Account_POST,
-  Request_Account_PATCH_params,
-  Request_Account_PATCH_body,
-  Response_Account_PATCH,
 } from '../../../shared/src';
 
 export const accountsRouter = Router();
@@ -31,15 +27,17 @@ accountsRouter.post(
     return res.status(201).json({
       success: true,
       account: {
-        accountId: account.id,
+        id: account.id,
         email: account.email,
         username: account.username,
+        level: account.level!,
       },
     });
   }
 );
 
-accountsRouter.patch(
+// TODO: refactor to update account information
+/* accountsRouter.patch(
   '/:accountId',
   async (
     req: Request<
@@ -51,15 +49,6 @@ accountsRouter.patch(
   ) => {
     const { accountId } = req.params;
     const { characterId } = req.body;
-
-    // TODO: Object ID validator
-    // if (validateObjectId(accountId)) {
-    //   return res.status(400).json({ success: false, error: 'Account ID is invalid' });
-    // }
-
-    // if (validateObjectId(characterId)) {
-    //   return res.status(400).json({ success: false, error: 'Character ID is invalid' });
-    // }
 
     const account = await AccountModel.findById(accountId);
 
@@ -73,15 +62,21 @@ accountsRouter.patch(
         error: `Account with id '${accountId}' not found`,
       });
     }
-
     const convertCharacterId = new Types.ObjectId(characterId);
 
-    account.characters.push(convertCharacterId);
+    account.characters!.push(convertCharacterId);
+
     await account.save();
 
     return res.status(200).json({
       success: true,
-      account: { accountId: account.id },
+      account: {
+        id: account.id,
+        email: account.email,
+        username: account.username,
+        level: account.level!,
+        characters: account.characters!.map((c) => c.toString()),
+      },
     });
   }
-);
+); */

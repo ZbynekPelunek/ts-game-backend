@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect, beforeAll } from '@jest/globals';
 
-import { APP_SERVER, mockedAxios, unknownID } from '../tests/setupFile';
+import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
 import { InventoryModel } from '../schema/inventory.schema';
 import { PUBLIC_ROUTES } from '../server';
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
@@ -35,7 +35,7 @@ describe('Inventory routes', () => {
       await addInventoryToDb({
         itemId: 1,
         amount: 2,
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
 
@@ -55,7 +55,7 @@ describe('Inventory routes', () => {
       const inventory = await addInventoryToDb({
         itemId: 1,
         amount: 2,
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
       const inventoryId = inventory.id;
@@ -69,7 +69,7 @@ describe('Inventory routes', () => {
     });
 
     it('returns status code 404 when inventory ID is unknown', async () => {
-      const unknownInventoryId = unknownID.toString();
+      const unknownInventoryId = UNKNOWN_OBJECT_ID.toString();
       const res = await request(APP_SERVER).get(
         `${apiAddress}/${unknownInventoryId}`
       );
@@ -85,11 +85,11 @@ describe('Inventory routes', () => {
 
   describe(`POST ${apiAddress}`, () => {
     it('returns status code 201 with added inventory', async () => {
-      const characterId = unknownID;
+      const characterId = UNKNOWN_OBJECT_ID;
       await addInventoryToDb({
         itemId: 1,
         amount: 2,
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
       const newInventory: Request_Inventory_POST_body = {
@@ -113,11 +113,11 @@ describe('Inventory routes', () => {
     });
 
     it('returns status code 201 with added new character inventory', async () => {
-      const characterId = unknownID;
+      const characterId = UNKNOWN_OBJECT_ID;
       await addInventoryToDb({
         itemId: 1,
         amount: 2,
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
       const newInventory: Request_Inventory_POST_body = {
@@ -185,7 +185,7 @@ describe('Inventory routes', () => {
 
     it('returns status code 200 when inventory ID is the same but NOT max amount reached', async () => {
       const inventory = await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 4,
         itemId: newItemId,
         amount: 1,
@@ -211,7 +211,7 @@ describe('Inventory routes', () => {
 
     it('returns status code 400 when inventory ID is the same but max amount reached', async () => {
       const inventory = await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 4,
         itemId: newItemId,
         amount: 1,
@@ -236,7 +236,7 @@ describe('Inventory routes', () => {
 
     it('returns status code 200 when new item is received to specific empty slot', async () => {
       const inventory = await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
       const inventoryId = inventory.id;
@@ -258,13 +258,13 @@ describe('Inventory routes', () => {
     it('returns status code 200 when item is successfully switched with another', async () => {
       const currentInventorySlotItemId = 10;
       const inventorySlot_1 = await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
         itemId: currentInventorySlotItemId,
         amount: 1,
       });
       const inventorySlot_2 = await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 1,
         itemId: newItemId,
         amount: 1,
@@ -293,7 +293,7 @@ describe('Inventory routes', () => {
     });
 
     it('returns status code 200 when new item is received and added to inventory', async () => {
-      const characterId = unknownID;
+      const characterId = UNKNOWN_OBJECT_ID;
       const invSlot1ItemId = 10;
       const invSlot3ItemId = 7;
       const inventorySlot_1 = await addInventoryToDb({
@@ -303,11 +303,11 @@ describe('Inventory routes', () => {
         amount: 1,
       });
       const inventorySlot_2 = await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 2,
       });
       const inventorySlot_3 = await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 3,
         itemId: invSlot3ItemId,
         amount: 1,
@@ -339,7 +339,7 @@ describe('Inventory routes', () => {
     });
 
     it('returns status code 500 when new item is received but inventory is full', async () => {
-      const characterId = unknownID;
+      const characterId = UNKNOWN_OBJECT_ID;
       const invSlot1ItemId = 10;
       const invSlot2ItemId = 15;
       const invSlot3ItemId = 7;
@@ -350,13 +350,13 @@ describe('Inventory routes', () => {
         amount: 1,
       });
       await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 2,
         itemId: invSlot2ItemId,
         amount: 1,
       });
       await addInventoryToDb({
-        characterId: unknownID,
+        characterId: UNKNOWN_OBJECT_ID,
         slot: 3,
         itemId: invSlot3ItemId,
         amount: 1,

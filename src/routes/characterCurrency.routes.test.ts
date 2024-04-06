@@ -9,7 +9,7 @@ import {
   CharacterCurrency_POST,
   CharacterCurrencyFrontend,
 } from '../../../shared/src';
-import { APP_SERVER, unknownID } from '../tests/setupFile';
+import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
 import { CharacterCurrencyModel } from '../schema/characterCurrency.schema';
 import { CurrencyModel } from '../schema/currency.schema';
 import { PUBLIC_ROUTES } from '../server';
@@ -41,7 +41,7 @@ describe('Character Currency routes', () => {
 
     it('returns status code 200 with all available character currencies for specific character', async () => {
       const currencyId = CurrencyId.GOLD;
-      const characterId = unknownID;
+      const characterId = UNKNOWN_OBJECT_ID;
 
       await addCharCurrencyToDb(currencyId, 15, characterId);
 
@@ -60,7 +60,7 @@ describe('Character Currency routes', () => {
     });
 
     it('returns status code 200 with all available character currencies for specific character and populates Currency details', async () => {
-      const characterId = unknownID;
+      const characterId = UNKNOWN_OBJECT_ID;
       const currencyId = CurrencyId.GOLD;
       const currencyName = 'GOLD';
       const currencyLabel = 'Gold';
@@ -104,13 +104,13 @@ describe('Character Currency routes', () => {
     it('returns status code 201 with multiple created character currencies', async () => {
       const characterCurrencies: CharacterCurrencyFrontend[] = [
         {
-          characterId: unknownID.toString(),
+          characterId: UNKNOWN_OBJECT_ID.toString(),
           currencyId: CurrencyId.CHEATING_CURRENCY,
           amount: 0,
           characterCurrencyId: '',
         },
         {
-          characterId: unknownID.toString(),
+          characterId: UNKNOWN_OBJECT_ID.toString(),
           currencyId: CurrencyId.GOLD,
           amount: 10,
           characterCurrencyId: '',
@@ -131,7 +131,7 @@ describe('Character Currency routes', () => {
 
     it('returns status code 201 with single created character currency', async () => {
       const characterCurrency: CharacterCurrencyFrontend = {
-        characterId: unknownID.toString(),
+        characterId: UNKNOWN_OBJECT_ID.toString(),
         currencyId: CurrencyId.CHEATING_CURRENCY,
         amount: 0,
         characterCurrencyId: '',
@@ -152,7 +152,7 @@ describe('Character Currency routes', () => {
 async function addCharCurrencyToDb(
   currencyId: CurrencyId,
   amount = 0,
-  characterId = unknownID
+  characterId = UNKNOWN_OBJECT_ID
 ) {
   const currency = new CharacterCurrencyModel<CharacterCurrencyBackend>({
     amount,

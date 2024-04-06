@@ -11,7 +11,7 @@ import {
   UiPosition,
 } from '../../../shared/src';
 import { CharacterEquipmentModel } from '../schema/characterEquipment.schema';
-import { APP_SERVER, unknownID } from '../tests/setupFile';
+import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
 
 describe('Character Equipment routes', () => {
@@ -45,7 +45,7 @@ describe('Character Equipment routes', () => {
         addedCharacterEquipmentId
       );
       expect(characterResponse.characterEquipment[0].characterId).toBe(
-        unknownID.toString()
+        UNKNOWN_OBJECT_ID.toString()
       );
       expect(characterResponse.characterEquipment[0].itemId).toBe(0);
       expect(characterResponse.characterEquipment[0].slot).toBe(equipmentSlot);
@@ -55,7 +55,7 @@ describe('Character Equipment routes', () => {
     });
 
     it('returns 200 with all character equipment for specific character', async () => {
-      const characterId = unknownID.toString();
+      const characterId = UNKNOWN_OBJECT_ID.toString();
       const equipmentSlot_1 = EquipmentSlot.LEGS;
       const uiPosition_1 = UiPosition.LEFT;
       const addedCharacterEquipment_1 = await addCharacterEquipmentToDb(
@@ -103,19 +103,19 @@ describe('Character Equipment routes', () => {
     it('returns status code 201 with multiple created character equipment', async () => {
       const characterEquipment: CharacterEquipmentFrontend[] = [
         {
-          characterId: unknownID.toString(),
+          characterId: UNKNOWN_OBJECT_ID.toString(),
           equipmentId: '',
           slot: EquipmentSlot.CHEST,
           uiPosition: UiPosition.RIGHT,
         },
         {
-          characterId: unknownID.toString(),
+          characterId: UNKNOWN_OBJECT_ID.toString(),
           equipmentId: '',
           slot: EquipmentSlot.ONE_HAND,
           uiPosition: UiPosition.LEFT,
         },
         {
-          characterId: unknownID.toString(),
+          characterId: UNKNOWN_OBJECT_ID.toString(),
           equipmentId: '',
           slot: EquipmentSlot.SHOULDER,
           uiPosition: UiPosition.BOTTOM,
@@ -136,7 +136,7 @@ describe('Character Equipment routes', () => {
 
     it('returns status code 201 with single created character equipment', async () => {
       const characterEquipment: CharacterEquipmentFrontend = {
-        characterId: unknownID.toString(),
+        characterId: UNKNOWN_OBJECT_ID.toString(),
         equipmentId: '',
         slot: EquipmentSlot.ONE_HAND,
         uiPosition: UiPosition.LEFT,
@@ -157,7 +157,7 @@ describe('Character Equipment routes', () => {
 async function addCharacterEquipmentToDb(
   slot: EquipmentSlot,
   uiPosition: UiPosition,
-  characterId = unknownID,
+  characterId = UNKNOWN_OBJECT_ID,
   itemId = undefined
 ) {
   const characterEquipment =

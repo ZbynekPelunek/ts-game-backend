@@ -5,6 +5,7 @@ import {
   Adventure,
   Adventure_GET_all,
   Adventure_GET_one,
+  AdventureTypes,
   Request_Adventure_GET_all_query,
   Reward,
 } from '../../../shared/src';
@@ -43,7 +44,7 @@ describe('Adventure routes', () => {
       expect(adventuresResponse.adventures).toHaveLength(adventuresLength);
     });
 
-    it('returns status code 200 with all available adventures and papulated reward', async () => {
+    it('returns status code 200 with all available adventures and populated reward', async () => {
       const queryString: Request_Adventure_GET_all_query = {
         populateReward: true,
       };
@@ -64,11 +65,62 @@ describe('Adventure routes', () => {
       expect(adventuresResponse.adventures).toHaveLength(adventuresLength);
       const adventure1RewardPopulated = adventuresResponse.adventures[0]
         .rewards[0].rewardId as Reward;
-      console.log(
-        'adventuresResponse.adventures[0].rewards values: ',
-        adventuresResponse.adventures[0].rewards
-      );
       expect(adventure1RewardPopulated._id).toStrictEqual(reward1Id);
+    });
+
+    it('returns status code 200 with all available adventures with adventure level 2', async () => {
+      const queryString: Request_Adventure_GET_all_query = {
+        adventureLevel: 2,
+      };
+      await addAdventureToDb(ADVENTURES_MOCK);
+
+      const adventuresLength = await AdventureModel.countDocuments({
+        adventureLevel: 2,
+      });
+
+      const res = await request(APP_SERVER).get(apiAddress).query(queryString);
+
+      expect(res.statusCode).toEqual(200);
+      const adventuresResponse: Adventure_GET_all = res.body;
+      expect(adventuresResponse.success).toBe(true);
+      expect(adventuresResponse.adventures).toHaveLength(adventuresLength);
+    });
+
+    it(`returns status code 200 with all available adventures with adventure type ${AdventureTypes.TUTORIAL}`, async () => {
+      const queryString: Request_Adventure_GET_all_query = {
+        type: AdventureTypes.TUTORIAL,
+      };
+      await addAdventureToDb(ADVENTURES_MOCK);
+
+      const adventuresLength = await AdventureModel.countDocuments({
+        type: AdventureTypes.TUTORIAL,
+      });
+
+      const res = await request(APP_SERVER).get(apiAddress).query(queryString);
+
+      expect(res.statusCode).toEqual(200);
+      const adventuresResponse: Adventure_GET_all = res.body;
+      expect(adventuresResponse.success).toBe(true);
+      expect(adventuresResponse.adventures).toHaveLength(adventuresLength);
+    });
+
+    it('returns status code 200 with adventures limited to 3', async () => {
+      const limit = 3;
+      const queryString: Request_Adventure_GET_all_query = {
+        limit,
+      };
+      await addAdventureToDb(ADVENTURES_MOCK);
+
+      const adventuresLength = await AdventureModel.countDocuments(undefined, {
+        limit,
+      });
+
+      const res = await request(APP_SERVER).get(apiAddress).query(queryString);
+
+      expect(res.statusCode).toEqual(200);
+      const adventuresResponse: Adventure_GET_all = res.body;
+      expect(adventuresResponse.success).toBe(true);
+      expect(adventuresResponse.adventures).toHaveLength(adventuresLength);
     });
   });
 
