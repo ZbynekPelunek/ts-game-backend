@@ -60,5 +60,5 @@ describe('Reward routes', () => {
 });
 
 async function addRewardToDb(input: Reward | Reward[]) {
-  return await RewardModel.create(input);
+  return RewardModel.create(input);
 }

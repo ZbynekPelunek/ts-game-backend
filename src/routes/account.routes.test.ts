@@ -102,5 +102,5 @@ describe('Account routes', () => {
 });
 
 async function addAccountToDb(input: IAccountSchema | IAccountSchema[]) {
-  return await AccountModel.create(input);
+  return AccountModel.create(input);
 }

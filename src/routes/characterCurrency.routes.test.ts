@@ -160,5 +160,5 @@ async function addCharCurrencyToDb(
     currencyId,
   });
 
-  return await currency.save();
+  return currency.save();
 }

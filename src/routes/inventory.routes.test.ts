@@ -382,7 +382,7 @@ describe('Inventory routes', () => {
 });
 
 async function addInventoryToDb(input: InventoryBackend) {
-  const item = new InventoryModel<InventoryBackend>(input);
+  const inventory = new InventoryModel<InventoryBackend>(input);
 
-  return await item.save();
+  return inventory.save();
 }

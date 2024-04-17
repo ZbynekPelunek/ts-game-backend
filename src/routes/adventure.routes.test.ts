@@ -156,5 +156,5 @@ describe('Adventure routes', () => {
 });
 
 async function addAdventureToDb(input: Adventure | Adventure[]) {
-  return await AdventureModel.create(input);
+  return AdventureModel.create(input);
 }

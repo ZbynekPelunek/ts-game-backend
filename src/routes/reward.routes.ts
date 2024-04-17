@@ -12,7 +12,7 @@ export const rewardsRouter = express.Router();
 
 rewardsRouter.get('', async (_req, res: Response<Response_Reward_GET_all>) => {
   const rewards: Reward[] = await RewardModel.find().lean();
-  console.log('Rewards All lean response: ', rewards);
+  //console.log('Rewards All lean response: ', rewards);
 
   return res.status(200).json({ success: true, rewards });
 });
@@ -26,7 +26,7 @@ rewardsRouter.get(
     const { rewardId } = req.params;
 
     const reward: Reward | null = await RewardModel.findById(rewardId).lean();
-    console.log('Reward One lean response: ', reward);
+    //console.log('Reward One lean response: ', reward);
 
     if (!reward) {
       return res.status(404).json({

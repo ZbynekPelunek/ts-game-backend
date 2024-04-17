@@ -1,8 +1,8 @@
 import axios, { AxiosResponse, isAxiosError } from 'axios';
 import express, { Request, Response } from 'express';
-import { Types, Document } from 'mongoose';
+import { Types } from 'mongoose';
 
-import { CharacterModel, CharacterSchema } from '../schema/character.schema';
+import { CharacterModel } from '../schema/character.schema';
 import { generateDefaultCharacterAttributes } from '../defaultCharacterData/attributes';
 import { generateCharacterCurrencies } from '../defaultCharacterData/currencies';
 import { PUBLIC_ROUTES } from '../server';
@@ -119,11 +119,6 @@ charactersRouter.post(
         });
       }
 
-      character.characterAttributes =
-        characterAttributesResponse.data.characterAttributes.map(
-          (ca) => new Types.ObjectId(ca.characterAttributeId)
-        );
-
       // CURRENCY PART
       const defaultCharacterCurrencies = generateCharacterCurrencies(
         character.id
@@ -150,11 +145,6 @@ charactersRouter.post(
           error: 'Character currencies error',
         });
       }
-
-      character.currencyIds =
-        characterCurrenciesResponse.data.characterCurrencies.map(
-          (cc) => new Types.ObjectId(cc.characterCurrencyId)
-        );
 
       // EQUIPMENT PART
       const equipmentArr: CharacterEquipmentFrontend[] = [];
@@ -189,11 +179,6 @@ charactersRouter.post(
         });
       }
 
-      character.equipment =
-        characterEquipmentResponse.data.characterEquipment.map(
-          (ce) => new Types.ObjectId(ce.equipmentId)
-        );
-
       // INVENTORY PART
       const inventoryQuery: Request_Inventory_POST_query = {
         action: InventoryActions.NEW,
@@ -221,15 +206,6 @@ charactersRouter.post(
           error: 'Character inventory error',
         });
       }
-
-      character.inventory = inventoryItemsResponse.data.inventory.map((inv) => {
-        return {
-          slot: inv.slot,
-          characterId: new Types.ObjectId(inv.characterId),
-          amount: inv.amount,
-          itemId: inv.itemId,
-        };
-      });
 
       //console.log('saving character: ', character);
 
@@ -368,30 +344,7 @@ const transformResponse = (
     characterId: databaseResponse._id!.toString(),
     accountId: databaseResponse.accountId.toString(),
     adventures: databaseResponse.adventures,
-    characterAttributes:
-      databaseResponse.characterAttributes!.length > 0
-        ? databaseResponse.characterAttributes!.map((ca) => ca.toString())
-        : [],
-    currencyIds:
-      databaseResponse.currencyIds!.length > 0
-        ? databaseResponse.currencyIds!.map((c) => c.toString())
-        : [],
     currentExperience: databaseResponse.currentExperience,
-    equipment:
-      databaseResponse.equipment!.length > 0
-        ? databaseResponse.equipment!.map((e) => e.toString())
-        : [],
-    inventory: databaseResponse.inventory
-      ? databaseResponse.inventory.map((i) => {
-          return {
-            inventoryId: i._id!.toString(),
-            amount: i.amount ?? 0,
-            characterId: i.characterId.toString(),
-            itemId: i.itemId,
-            slot: i.slot,
-          };
-        })
-      : [],
     level: databaseResponse.level,
     maxExperience: databaseResponse.maxExperience,
     name: databaseResponse.name,

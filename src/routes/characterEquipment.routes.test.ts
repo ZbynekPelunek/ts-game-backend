@@ -168,5 +168,5 @@ async function addCharacterEquipmentToDb(
       itemId,
     });
 
-  return await characterEquipment.save();
+  return characterEquipment.save();
 }

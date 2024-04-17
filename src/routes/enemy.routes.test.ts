@@ -60,5 +60,5 @@ describe('Enemy routes', () => {
 });
 
 async function addEnemyToDb(input: Enemy | Enemy[]) {
-  return await EnemyModel.create(input);
+  return EnemyModel.create(input);
 }

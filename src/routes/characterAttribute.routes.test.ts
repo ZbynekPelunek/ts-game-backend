@@ -180,5 +180,5 @@ async function addCharacterAttributeToDb(
     totalValue,
   });
 
-  return await charAttribute.save();
+  return charAttribute.save();
 }

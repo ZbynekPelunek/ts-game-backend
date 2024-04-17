@@ -97,5 +97,5 @@ async function addAttributeToDb(
     desc,
   });
 
-  return await attribute.save();
+  return attribute.save();
 }

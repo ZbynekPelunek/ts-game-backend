@@ -15,6 +15,7 @@ import { MongoDBHandler } from './mongoDB.handler';
 import { BasePaths, ApiRoutes } from '../../shared/src';
 import { rewardsRouter } from './routes/reward.routes';
 import { enemiesRouter } from './routes/enemy.routes';
+import { resultsRouter } from './routes/result.routes';
 
 export const PUBLIC_ROUTES = {
   Accounts: `/${BasePaths.PUBLIC}/${ApiRoutes.ACCOUNTS}`,
@@ -107,6 +108,7 @@ export class AppServer {
     this.app.use(PUBLIC_ROUTES.Items, itemsRouter);
     this.app.use(PUBLIC_ROUTES.Rewards, rewardsRouter);
     this.app.use(PUBLIC_ROUTES.Enemies, enemiesRouter);
+    this.app.use(PUBLIC_ROUTES.Results, resultsRouter);
   }
 
   async destroy(): Promise<void> {

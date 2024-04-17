@@ -82,10 +82,6 @@ describe('Character routes', () => {
       expect(characterResponse.character.level).toBe(1);
       expect(characterResponse.character.currentExperience).toBe(0);
       expect(characterResponse.character.adventures).toEqual([]);
-      expect(characterResponse.character.characterAttributes).toEqual([]);
-      expect(characterResponse.character.currencyIds).toEqual([]);
-      expect(characterResponse.character.equipment).toEqual([]);
-      expect(characterResponse.character.inventory).toEqual([]);
     });
 
     it('returns status code 500 when getting attributes fails', async () => {
@@ -177,5 +173,5 @@ describe('Character routes', () => {
 });
 
 async function addCharacterToDb(input: CharacterBackend | CharacterBackend[]) {
-  return await CharacterModel.create(input);
+  return CharacterModel.create(input);
 }

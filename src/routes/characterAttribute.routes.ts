@@ -24,7 +24,6 @@ characterAttributesRouter.get(
   ) => {
     const { characterId } = req.query;
     const { populateAttribute } = req.query;
-    console.log('GET characters with: ', characterId);
 
     if (!characterId) {
       const characterAttributes = await CharacterAttributeModel.find();
@@ -70,7 +69,10 @@ characterAttributesRouter.get(
       });
     }
 
-    // console.log('GET character Attributes response: ', responseCharacterAttributes[0]);
+    // console.log(
+    //   'GET character Attributes response: ',
+    //   responseCharacterAttributes
+    // );
 
     return res.status(200).json({
       success: true,

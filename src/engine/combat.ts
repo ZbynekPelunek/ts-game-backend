@@ -1,11 +1,37 @@
-import { AttackerTarget } from '../interface/combat.interface';
+import {
+  CharacterAttributeBackend,
+  CharacterAttributeFrontendPopulated,
+  Enemy,
+  EnemyAttribute,
+  MainAttributeNames,
+} from '../../../shared/src';
+
+export interface AttackerTarget {
+  name: string;
+  health: number;
+  damage: number;
+}
 
 export class Combat {
   round: number = 0;
   log: string = '';
   playerWon: boolean = false;
 
-  attack = (
+  start = (
+    characterName: string,
+    characterAttributes: CharacterAttributeFrontendPopulated[],
+    enemy: Enemy
+  ) => {
+    const attacker = this.transformCharacterToAttacker(
+      characterName,
+      characterAttributes
+    );
+    const target = this.transformEnemyToTarget(enemy.name, enemy.attributes);
+
+    this.attack(attacker, target, true);
+  };
+
+  private attack = (
     attacker: AttackerTarget,
     target: AttackerTarget,
     playerAttacking: boolean
@@ -25,4 +51,42 @@ export class Combat {
       }
     }
   };
+
+  private transformCharacterToAttacker = (
+    characterName: string,
+    characterAttributes: CharacterAttributeFrontendPopulated[]
+  ): AttackerTarget => {
+    const transformedAttributes = characterAttributes.reduce(
+      (obj: { [key: string]: number }, item) => ({
+        ...obj,
+        [item.attribute.attributeName]: item.totalValue,
+      }),
+      {}
+    );
+
+    return {
+      name: characterName,
+      damage: transformedAttributes[MainAttributeNames.MAX_DAMAGE],
+      health: transformedAttributes[MainAttributeNames.HEALTH],
+    };
+  };
+
+  private transformEnemyToTarget(
+    enemyName: string,
+    enemyAttributes: EnemyAttribute[]
+  ) {
+    const transformedAttributes = enemyAttributes.reduce(
+      (obj: { [key: string]: number }, item) => ({
+        ...obj,
+        [item.attributeName]: item.value,
+      }),
+      {}
+    );
+
+    return {
+      name: enemyName,
+      damage: transformedAttributes[MainAttributeNames.MAX_DAMAGE],
+      health: transformedAttributes[MainAttributeNames.HEALTH],
+    };
+  }
 }

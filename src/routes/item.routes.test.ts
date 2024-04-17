@@ -102,5 +102,5 @@ describe('Item routes', () => {
 async function addItemToDb(input: CommonItemsEquipmenParams) {
   const item = new ItemModel<CommonItemsEquipmenParams>(input);
 
-  return await item.save();
+  return item.save();
 }
