@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
-import { AccountModel } from '../schema/account.schema';
 import { APP_SERVER } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
 import {
@@ -9,6 +8,7 @@ import {
   Account_POST,
   IAccountSchema,
 } from '../../../shared/src';
+import { AccountModel } from '../models/account.model';
 
 describe('Account routes', () => {
   const apiAddress = PUBLIC_ROUTES.Accounts;

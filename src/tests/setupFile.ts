@@ -7,7 +7,6 @@ import { AppServer, PUBLIC_ROUTES } from '../server';
 import {
   Response_Attribute_GET_all,
   Response_CharacterEquipment_POST,
-  InventoryActions,
   Response_CharacterAttribute_POST,
   Response_Inventory_POST,
   Response_CharacterCurrency_POST,
@@ -16,7 +15,6 @@ import {
   Response_CharacterEquipment_GET_all,
   Response_Inventory_GET_all,
   Response_Adventure_GET_all,
-  Result,
 } from '../../../shared/src';
 
 jest.mock('axios');

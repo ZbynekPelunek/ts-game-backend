@@ -1,7 +1,7 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
-import { AttributeDetailSchema } from './attribute.schema';
+import { AttributeDetailSchema } from './attribute.model';
 import { CharacterAttributeBackend } from '../../../shared/src';
 
 @modelOptions({

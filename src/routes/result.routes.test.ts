@@ -2,7 +2,6 @@ import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
 import { PUBLIC_ROUTES } from '../server';
-import { ResultModel } from '../schema/result.schema';
 import {
   Adventure,
   Enemy,
@@ -13,14 +12,14 @@ import {
   Result,
   Result_POST,
 } from '../../../shared/src';
-import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
 import { RESULTS_MOCK } from '../mockData/results';
 import { APP_SERVER, mockedAxios } from '../tests/setupFile';
-import { CharacterModel } from '../schema/character.schema';
 import { CHARACTERS_MOCK_ACCOUNT_1_ID } from '../mockData/characters';
-import { AdventureModel } from '../schema/adventure.schema';
 import { ADVENTURES_MOCK } from '../mockData/adventures';
-import { EnemyModel } from '../schema/enemy.schema';
+import { AdventureModel } from '../models/adventure.model';
+import { CharacterModel } from '../models/character.model';
+import { EnemyModel } from '../models/enemy.model';
+import { ResultModel } from '../models/result.model';
 
 describe('Result routes', () => {
   const apiAddress = PUBLIC_ROUTES.Results;

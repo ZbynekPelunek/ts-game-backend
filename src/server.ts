@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { Server } from 'http';
 
-import { errorHandler } from './middleware/errorHandler';
 import { accountsRouter } from './routes/account.routes';
 import { adventuresRouter } from './routes/adventure.routes';
 import { attributesRouter } from './routes/attribute.routes';
@@ -34,7 +33,7 @@ export const PUBLIC_ROUTES = {
 
 export class AppServer {
   mongoDbHandler: MongoDBHandler;
-  port = process.env.SERVER_PORT;
+  port = 3000;
   app = express();
   serverListener: Server;
 
@@ -73,7 +72,8 @@ export class AppServer {
       });
     });
 
-    this.app.use(errorHandler);
+    // TODO - error middleware
+    //this.app.use(errorHandler);
 
     await this.connectDb();
 

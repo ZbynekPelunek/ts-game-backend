@@ -2,7 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 
 import { generateAttributes } from '../data/attributes';
-import { AttributeDetailModel } from '../schema/attribute.schema';
+import { AttributeDetailModel } from '../models/attribute.model';
 
 const uri = process.env.MONGOOSE_URI_DEV;
 

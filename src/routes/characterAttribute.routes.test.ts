@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { describe, afterEach, it, expect } from '@jest/globals';
+import { describe, afterEach, it, expect, xit } from '@jest/globals';
 
 import {
   BasicAttribute,
@@ -10,9 +10,9 @@ import {
   MainAttributeNames,
 } from '../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
-import { CharacterAttributeModel } from '../schema/characterAttribute.schema';
-import { AttributeDetailModel } from '../schema/attribute.schema';
 import { PUBLIC_ROUTES } from '../server';
+import { AttributeDetailModel } from '../models/attribute.model';
+import { CharacterAttributeModel } from '../models/characterAttribute.model';
 
 describe('Character Attribute routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterAttributes;

@@ -2,7 +2,6 @@ import request from 'supertest';
 import { describe, afterEach, it, expect, beforeAll } from '@jest/globals';
 
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
-import { InventoryModel } from '../schema/inventory.schema';
 import { PUBLIC_ROUTES } from '../server';
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 import {
@@ -22,6 +21,7 @@ import {
   Response_Item_GET_one,
 } from '../../../shared/src';
 import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
+import { InventoryModel } from '../models/inventory.model';
 
 describe('Inventory routes', () => {
   const apiAddress = PUBLIC_ROUTES.Inventory;

@@ -10,8 +10,8 @@ import {
   AdventureReward,
   AdventureTypes,
 } from '../../../shared/src';
-import { RewardSchema } from './reward.schema';
-import { EnemySchema } from './enemy.schema';
+import { RewardSchema } from './reward.model';
+import { EnemySchema } from './enemy.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },

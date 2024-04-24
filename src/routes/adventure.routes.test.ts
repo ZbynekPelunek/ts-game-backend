@@ -9,13 +9,13 @@ import {
   Request_Adventure_GET_all_query,
   Reward,
 } from '../../../shared/src';
-import { AdventureModel } from '../schema/adventure.schema';
 import { APP_SERVER } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
-import { RewardModel } from '../schema/reward.schema';
 import { REWARDS_MOCK } from '../mockData/rewards';
 import { ADVENTURES_MOCK } from '../mockData/adventures';
 import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
+import { AdventureModel } from '../models/adventure.model';
+import { RewardModel } from '../models/reward.model';
 
 describe('Adventure routes', () => {
   const apiAddress = PUBLIC_ROUTES.Adventures;

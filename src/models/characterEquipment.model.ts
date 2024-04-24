@@ -11,7 +11,7 @@ import {
   EquipmentSlot,
   UiPosition,
 } from '../../../shared/src';
-import { EquipmentSchema } from './item.schema';
+import { EquipmentSchema } from './item.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },

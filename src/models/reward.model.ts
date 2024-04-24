@@ -4,9 +4,10 @@ import {
   modelOptions,
   prop,
 } from '@typegoose/typegoose';
+
 import { IRewardSchema, RewardCurrency, RewardItem } from '../../../shared/src';
-import { CurrencySchema } from './currency.schema';
-import { EquipmentSchema } from './item.schema';
+import { CurrencySchema } from './currency.model';
+import { EquipmentSchema } from './item.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },

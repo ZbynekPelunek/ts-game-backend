@@ -10,9 +10,9 @@ import {
   CharacterCurrencyFrontend,
 } from '../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
-import { CharacterCurrencyModel } from '../schema/characterCurrency.schema';
-import { CurrencyModel } from '../schema/currency.schema';
 import { PUBLIC_ROUTES } from '../server';
+import { CharacterCurrencyModel } from '../models/characterCurrency.model';
+import { CurrencyModel } from '../models/currency.model';
 
 describe('Character Currency routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterCurrencies;

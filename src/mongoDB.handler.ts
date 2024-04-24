@@ -1,9 +1,10 @@
-import mongoose, { Mongoose } from 'mongoose';
-import { AccountModel } from './schema/account.schema';
-import { CharacterModel } from './schema/character.schema';
-import { CharacterAttributeModel } from './schema/characterAttribute.schema';
-import { CharacterCurrencyModel } from './schema/characterCurrency.schema';
-import { CharacterEquipmentModel } from './schema/characterEquipment.schema';
+import { connect, Mongoose } from 'mongoose';
+
+import { AccountModel } from './models/account.model';
+import { CharacterModel } from './models/character.model';
+import { CharacterAttributeModel } from './models/characterAttribute.model';
+import { CharacterCurrencyModel } from './models/characterCurrency.model';
+import { CharacterEquipmentModel } from './models/characterEquipment.model';
 
 export class MongoDBHandler {
   connection: Mongoose | undefined;
@@ -23,7 +24,7 @@ export class MongoDBHandler {
         default:
           uri = process.env.MONGOOSE_URI ?? uri + '/unknown';
       }
-      this.connection = await mongoose.connect(uri);
+      this.connection = await connect(uri);
       console.log('Connected to MongoDB');
       return this.connection;
     } catch (error) {

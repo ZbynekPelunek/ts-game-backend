@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect, xit } from '@jest/globals';
 
-import { CharacterModel } from '../schema/character.schema';
 import {
   CharacterBackend,
   Character_GET_All,
@@ -14,6 +13,7 @@ import {
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
 import { CHARACTERS_MOCK } from '../mockData/characters';
+import { CharacterModel } from '../models/character.model';
 
 describe('Character routes', () => {
   const accountId = UNKNOWN_OBJECT_ID;

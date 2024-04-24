@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 import { Armor, Weapon } from '../../../shared/src';
 import { starterArmor, starterWeapons } from '../data/items';
-import { ItemsEquipmentModel } from '../schema/item.schema';
+import { ItemsEquipmentModel } from '../models/item.model';
 
 const uri = process.env.MONGOOSE_URI_DEV;
 

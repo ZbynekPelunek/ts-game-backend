@@ -8,7 +8,7 @@ import { Types } from 'mongoose';
 
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 import { CharacterBackend } from '../../../shared/src';
-import { AdventureSchema } from './adventure.schema';
+import { AdventureSchema } from './adventure.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },

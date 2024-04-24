@@ -10,9 +10,9 @@ import {
   EquipmentSlot,
   UiPosition,
 } from '../../../shared/src';
-import { CharacterEquipmentModel } from '../schema/characterEquipment.schema';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
 import { PUBLIC_ROUTES } from '../server';
+import { CharacterEquipmentModel } from '../models/characterEquipment.model';
 
 describe('Character Equipment routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterEquipment;
