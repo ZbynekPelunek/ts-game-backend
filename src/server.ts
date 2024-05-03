@@ -17,6 +17,7 @@ import { resultsRouter } from './routes/result.routes';
 import { readConfigFile } from './utils/setupConfig';
 import { corsMiddleware } from './middleware/corsMiddleware';
 import { PUBLIC_ROUTES } from './services/api.service';
+import { errorHandler } from './middleware/errorHandler';
 
 export class AppServer {
   private mongoDbHandler: MongoDBHandler;
@@ -67,6 +68,7 @@ export class AppServer {
   private async initServer(): Promise<void> {
     this.app.use(express.json());
     this.app.use(corsMiddleware);
+
     this.initPublicRouters();
     this.app.all('*', (req: Request, res: Response) => {
       return res.status(404).json({
@@ -74,6 +76,7 @@ export class AppServer {
         error: `Route ${req.url} does not exist.`,
       });
     });
+    this.app.use(errorHandler);
     this.server = this.app.listen(this.serverPort, () => {
       console.log(`The application is listening on ${process.env.SERVER_URL}`);
     });

@@ -13,6 +13,7 @@ import {
   CharacterCurrencyModel,
   CharacterCurrencySchema,
 } from '../models/characterCurrency.model';
+import { errorHandler } from '../middleware/errorHandler';
 
 export class CharacterCurrencyController {
   async getAll(
@@ -69,10 +70,7 @@ export class CharacterCurrencyController {
         characterCurrencies: responseCharacterCurrencies,
       });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Character Currency Get All Error [TBI]',
-      });
+      errorHandler(error, req, res);
     }
   }
 
@@ -101,9 +99,7 @@ export class CharacterCurrencyController {
         .status(201)
         .json({ success: true, characterCurrencies: responseArr });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Character Currency Post Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 

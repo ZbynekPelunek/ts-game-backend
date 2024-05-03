@@ -20,6 +20,7 @@ import {
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
 import { InventoryModel, InventorySchema } from '../models/inventory.model';
 import { FULL_PUBLIC_ROUTES } from '../services/api.service';
+import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class InventoryController {
   async getAll(
@@ -48,9 +49,7 @@ export class InventoryController {
         .status(200)
         .json({ success: true, inventory: transformedInventory });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Inventory Get All Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 
@@ -64,19 +63,17 @@ export class InventoryController {
       const inventory = await InventoryModel.findById(inventoryId);
 
       if (!inventory) {
-        return res.status(404).json({
-          success: false,
-          error: `Inventory with id '${inventoryId}' not found`,
-        });
+        throw new CustomError(
+          `Inventory with id '${inventoryId}' not found`,
+          404
+        );
       }
 
       return res
         .status(200)
         .json({ success: true, inventory: this.transformResponse(inventory) });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Inventory Get One Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 
@@ -119,9 +116,7 @@ export class InventoryController {
 
       return res.status(201).json({ success: true, inventory: response });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Inventory Post Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 
@@ -142,16 +137,11 @@ export class InventoryController {
         `${FULL_PUBLIC_ROUTES.Items}/${itemId}`
       );
       if (!item.data.success) {
-        return res.status(500).json({
-          success: false,
-          error: 'Error while retrieving item data',
-        });
+        throw new CustomError('Error while retrieving item data', 500);
       }
 
       if (!item.data.item) {
-        return res
-          .status(500)
-          .json({ success: false, error: 'Item not found' });
+        throw new CustomError('Item not found', 500);
       }
       console.log('...found item data: ', item.data.item);
 
@@ -160,19 +150,19 @@ export class InventoryController {
       const inventorySlotItem = await InventoryModel.findById(inventoryId);
       console.log('...found inventory slots data: ', inventorySlotItem);
       if (!inventorySlotItem) {
-        return res.status(404).json({
-          success: false,
-          error: `Inventory item with id '${inventoryId}' does not exist`,
-        });
+        throw new CustomError(
+          `Inventory item with id '${inventoryId}' does not exist`,
+          404
+        );
       }
 
       let updateRes;
       if (inventorySlotItem.itemId === item.data.item.itemId) {
         if (inventorySlotItem.amount! + amount! > item.data.item.maxAmount!) {
-          return res.status(400).json({
-            success: false,
-            error: `Max amount reached ${inventorySlotItem.amount! + amount!}/${item.data.item.maxAmount}`,
-          });
+          throw new CustomError(
+            `Max amount reached ${inventorySlotItem.amount! + amount!}/${item.data.item.maxAmount}`,
+            400
+          );
         }
 
         updateRes = await InventoryModel.findByIdAndUpdate(
@@ -228,10 +218,7 @@ export class InventoryController {
           });
 
           if (!allCharacterItemSlots) {
-            return res.status(500).json({
-              success: false,
-              error: 'No character inventory data found',
-            });
+            throw new CustomError('No character inventory data found', 500);
           }
 
           const freeCharacterItemSlots = allCharacterItemSlots.filter(
@@ -240,10 +227,7 @@ export class InventoryController {
           console.log('freeCharacterItemSlots: ', freeCharacterItemSlots);
 
           if (freeCharacterItemSlots.length === 0) {
-            return res.status(500).json({
-              success: false,
-              error: 'Inventory is full',
-            });
+            throw new CustomError('Inventory is full', 500);
           }
 
           const firstFreeSlot = freeCharacterItemSlots[0];
@@ -261,9 +245,7 @@ export class InventoryController {
         }
       }
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Inventory Patch Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 

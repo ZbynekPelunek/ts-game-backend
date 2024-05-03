@@ -8,6 +8,7 @@ import {
   Reward,
 } from '../../../shared/src';
 import { AdventureModel } from '../models/adventure.model';
+import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class AdventureController {
   async getAll(
@@ -29,9 +30,7 @@ export class AdventureController {
 
       return res.status(200).json({ success: true, adventures });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Adventure Get All Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 
@@ -47,17 +46,15 @@ export class AdventureController {
       //console.log('Adventure One lean response: ', adventure);
 
       if (!adventure) {
-        return res.status(404).json({
-          success: false,
-          error: `Adventure with id '${adventureId}' not found.`,
-        });
+        throw new CustomError(
+          `Adventure with id '${adventureId}' not found.`,
+          404
+        );
       }
 
       return res.status(200).json({ success: true, adventure });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Adventure Get One Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 }

@@ -13,6 +13,7 @@ import {
   CharacterAttributeModel,
   CharacterAttributeSchema,
 } from '../models/characterAttribute.model';
+import { errorHandler } from '../middleware/errorHandler';
 
 export class CharacterAttributeController {
   async getAll(
@@ -79,11 +80,7 @@ export class CharacterAttributeController {
         characterAttributes: responseCharacterAttributes,
       });
     } catch (error) {
-      console.log('Character Attribute GET ALL err:', error);
-      return res.status(500).json({
-        success: false,
-        error: 'Character Attribute Get All Error [TBI]',
-      });
+      errorHandler(error, req, res);
     }
   }
 
@@ -114,10 +111,7 @@ export class CharacterAttributeController {
         .status(201)
         .json({ success: true, characterAttributes: responseArr });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Character Attribute Post Error [TBI]',
-      });
+      errorHandler(error, req, res);
     }
   }
 

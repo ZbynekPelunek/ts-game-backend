@@ -6,6 +6,7 @@ import {
   Response_Enemy_GET_one,
 } from '../../../shared/src';
 import { EnemyModel } from '../models/enemy.model';
+import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class EnemyController {
   async getAll(_req: Request, res: Response<Response_Enemy_GET_all>) {
@@ -15,9 +16,7 @@ export class EnemyController {
 
       return res.status(200).json({ success: true, enemies });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Enemy Get All Error [TBI]' });
+      errorHandler(error, _req, res);
     }
   }
 
@@ -32,17 +31,12 @@ export class EnemyController {
       //console.log('Enemy One lean response: ', enemy);
 
       if (!enemy) {
-        return res.status(404).json({
-          success: false,
-          error: `Enemy with id '${enemyId}' not found.`,
-        });
+        throw new CustomError(`Enemy with id '${enemyId}' not found.`, 404);
       }
 
       return res.status(200).json({ success: true, enemy });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Enemy Get One Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 }

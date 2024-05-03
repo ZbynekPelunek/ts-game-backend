@@ -30,6 +30,7 @@ import { CharacterModel } from '../models/character.model';
 import { generateDefaultCharacterAttributes } from '../defaultCharacterData/attributes';
 import { generateCharacterCurrencies } from '../defaultCharacterData/currencies';
 import { ApiService, FULL_PUBLIC_ROUTES } from '../services/api.service';
+import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class CharacterController {
   private apiService: ApiService;
@@ -61,9 +62,7 @@ export class CharacterController {
         .status(200)
         .json({ success: true, characters: responseCharacters });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Character Get All Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 
@@ -83,10 +82,10 @@ export class CharacterController {
 
       const character = await CharacterModel.findById(characterId);
       if (!character) {
-        return res.status(404).json({
-          success: false,
-          error: `Character with id '${characterId}' not found`,
-        });
+        throw new CustomError(
+          `Character with id '${characterId}' not found`,
+          404
+        );
       }
 
       //console.log('GET character db response: ', character);
@@ -98,9 +97,7 @@ export class CharacterController {
         .status(200)
         .json({ success: true, character: responseCharacter });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Character Get One Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 
@@ -135,10 +132,7 @@ export class CharacterController {
         character: responseCharacter,
       });
     } catch (error) {
-      console.error(error);
-      return res
-        .status(500)
-        .json({ success: false, error: 'Character Post Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 

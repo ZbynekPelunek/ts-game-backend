@@ -6,6 +6,7 @@ import {
   Response_Item_GET_one,
 } from '../../../shared/src';
 import { ItemModel } from '../models/item.model';
+import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class ItemController {
   async getAll(_req: Request, res: Response<Response_Item_GET_all>) {
@@ -14,9 +15,7 @@ export class ItemController {
 
       return res.status(200).json({ success: true, items });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Item Get All Error [TBI]' });
+      errorHandler(error, _req, res);
     }
   }
 
@@ -30,17 +29,12 @@ export class ItemController {
       const item = await ItemModel.findOne({ itemId });
       console.log(`Found item with id: ${itemId}: `, item);
       if (!item) {
-        return res.status(404).json({
-          success: false,
-          error: `Item with id '${itemId}' not found`,
-        });
+        throw new CustomError(`Item with id '${itemId}' not found`, 404);
       }
 
       return res.status(200).json({ success: true, item });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Item Get One Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 }

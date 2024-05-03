@@ -7,6 +7,7 @@ import {
   Response_Reward_GET_one,
 } from '../../../shared/src';
 import { RewardModel } from '../models/reward.model';
+import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class RewardController {
   async getAll(_req: Request, res: Response<Response_Reward_GET_all>) {
@@ -16,9 +17,7 @@ export class RewardController {
 
       return res.status(200).json({ success: true, rewards });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Reward Get All Error [TBI]' });
+      errorHandler(error, _req, res);
     }
   }
 
@@ -33,17 +32,12 @@ export class RewardController {
       //console.log('Reward One lean response: ', reward);
 
       if (!reward) {
-        return res.status(404).json({
-          success: false,
-          error: `Reward with id '${rewardId}' not found.`,
-        });
+        throw new CustomError(`Reward with id '${rewardId}' not found.`, 404);
       }
 
       return res.status(200).json({ success: true, reward });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Reward Get One Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 }

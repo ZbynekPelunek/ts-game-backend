@@ -5,6 +5,7 @@ import {
   Response_Account_POST,
 } from '../../../shared/src';
 import { AccountModel } from '../models/account.model';
+import { errorHandler } from '../middleware/errorHandler';
 
 export class AccountController {
   async post(
@@ -30,10 +31,7 @@ export class AccountController {
         },
       });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Account Post Error [TBI]',
-      });
+      errorHandler(error, req, res);
     }
   }
 

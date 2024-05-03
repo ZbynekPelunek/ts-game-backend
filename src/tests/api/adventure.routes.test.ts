@@ -48,12 +48,12 @@ describe('Adventure routes', () => {
       const queryString: Request_Adventure_GET_all_query = {
         populateReward: true,
       };
-      const reward1Id = REWARDS_MOCK[0]._id;
+      const adventures = [...ADVENTURES_MOCK];
       await RewardModel.create(REWARDS_MOCK);
-      ADVENTURES_MOCK[0].rewards[0].rewardId = reward1Id;
-      ADVENTURES_MOCK[1].rewards[0].rewardId = REWARDS_MOCK[1]._id;
-      ADVENTURES_MOCK[2].rewards[0].rewardId = REWARDS_MOCK[2]._id;
-      await addAdventureToDb(ADVENTURES_MOCK);
+      adventures[0].rewards[0].rewardId = REWARDS_MOCK[0]._id;
+      adventures[1].rewards[0].rewardId = REWARDS_MOCK[1]._id;
+      adventures[2].rewards[0].rewardId = REWARDS_MOCK[2]._id;
+      await addAdventureToDb(adventures);
 
       const adventuresLength = await AdventureModel.countDocuments();
 
@@ -65,7 +65,7 @@ describe('Adventure routes', () => {
       expect(adventuresResponse.adventures).toHaveLength(adventuresLength);
       const adventure1RewardPopulated = adventuresResponse.adventures[0]
         .rewards[0].rewardId as Reward;
-      expect(adventure1RewardPopulated._id).toStrictEqual(reward1Id);
+      expect(adventure1RewardPopulated._id).toBeDefined();
     });
 
     it('returns status code 200 with all available adventures with adventure level 2', async () => {

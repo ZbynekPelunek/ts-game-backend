@@ -16,6 +16,7 @@ import { CharacterModel } from '../models/character.model';
 import { EnemyModel } from '../models/enemy.model';
 import { ResultModel } from '../models/result.model';
 import { FULL_PUBLIC_ROUTES } from '../services/api.service';
+import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class ResultController {
   async post(
@@ -30,19 +31,19 @@ export class ResultController {
         await CharacterModel.findById(characterId);
 
       if (!character) {
-        return res.status(404).json({
-          success: false,
-          error: `Character with id '${characterId}' not found.`,
-        });
+        throw new CustomError(
+          `Character with id '${characterId}' not found.`,
+          404
+        );
       }
 
       const adventure = await AdventureModel.findById(adventureId);
 
       if (!adventure) {
-        return res.status(404).json({
-          success: false,
-          error: `Adventure with id '${adventureId}' not found.`,
-        });
+        throw new CustomError(
+          `Adventure with id '${adventureId}' not found.`,
+          404
+        );
       }
 
       const timeFinishMs = currentDateMs + adventure.timeInSeconds * 1000;
@@ -69,10 +70,7 @@ export class ResultController {
           );
 
         if (!characterAttributesRes.data.success) {
-          return res.status(500).json({
-            success: false,
-            error: `Character attributes error`,
-          });
+          throw new CustomError(`Character attributes error`, 500);
         }
 
         const characterAttributes = characterAttributesRes.data
@@ -80,10 +78,10 @@ export class ResultController {
         const enemy = await EnemyModel.findById(adventure.enemyIds[0]);
 
         if (!enemy) {
-          return res.status(500).json({
-            success: false,
-            error: `Enemy with id '${adventure.enemyIds[0]}' not found.`,
-          });
+          throw new CustomError(
+            `Enemy with id '${adventure.enemyIds[0]}' not found.`,
+            500
+          );
         }
 
         const combat = new Combat();
@@ -105,9 +103,7 @@ export class ResultController {
         result: { resultId: result.id, timeStart, timeFinish },
       });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Result Post Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 }

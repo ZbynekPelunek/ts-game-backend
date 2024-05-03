@@ -9,6 +9,7 @@ import {
 } from '../../../shared/src';
 
 import { AttributeDetailModel } from '../models/attribute.model';
+import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class AttributeController {
   async getAll(_req: Request, res: Response<Response_Attribute_GET_all>) {
@@ -31,9 +32,7 @@ export class AttributeController {
         .status(200)
         .json({ success: true, attributes: responseAttributes });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Attribute Get All Error [TBI]' });
+      errorHandler(error, _req, res);
     }
   }
 
@@ -47,17 +46,15 @@ export class AttributeController {
       const attribute: BasicAttribute | null =
         await AttributeDetailModel.findById(attributeId).lean();
       if (!attribute) {
-        return res.status(404).json({
-          success: false,
-          error: `Attribute with id '${attributeId}' not found`,
-        });
+        throw new CustomError(
+          `Attribute with id '${attributeId}' not found`,
+          404
+        );
       }
 
       return res.status(200).json({ success: true, attribute });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, error: 'Attribute Get One Error [TBI]' });
+      errorHandler(error, req, res);
     }
   }
 }

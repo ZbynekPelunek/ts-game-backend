@@ -12,6 +12,7 @@ import {
   CharacterEquipmentModel,
   CharacterEquipmentSchema,
 } from '../models/characterEquipment.model';
+import { errorHandler } from '../middleware/errorHandler';
 
 export class CharacterEquipmentController {
   async getAll(
@@ -37,10 +38,7 @@ export class CharacterEquipmentController {
 
       return res.status(200).json({ success: true, characterEquipment });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Character Equipment Get All Error [TBI]',
-      });
+      errorHandler(error, req, res);
     }
   }
 
@@ -69,10 +67,7 @@ export class CharacterEquipmentController {
         .status(201)
         .json({ success: true, characterEquipment: responseArr });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Character Equipment Get One Error [TBI]',
-      });
+      errorHandler(error, req, res);
     }
   }
 
