@@ -1,12 +1,12 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
-import { PUBLIC_ROUTES } from '../server';
-import { APP_SERVER } from '../tests/setupFile';
-import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
-import { Enemy, Enemy_GET_all, Enemy_GET_one } from '../../../shared/src';
-import { ENEMIES_MOCK } from '../mockData/enemies';
-import { EnemyModel } from '../models/enemy.model';
+import { PUBLIC_ROUTES } from '../../server';
+import { APP_SERVER } from '../setupFile';
+import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
+import { Enemy, Enemy_GET_all, Enemy_GET_one } from '../../../../shared/src';
+import { ENEMIES_MOCK } from '../../mockData/enemies';
+import { EnemyModel } from '../../models/enemy.model';
 
 describe('Enemy routes', () => {
   const apiAddress = PUBLIC_ROUTES.Enemies;

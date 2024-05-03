@@ -1,12 +1,12 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
-import { Reward, Reward_GET_one, Reward_GET_all } from '../../../shared/src';
-import { PUBLIC_ROUTES } from '../server';
-import { APP_SERVER } from '../tests/setupFile';
-import { REWARDS_MOCK } from '../mockData/rewards';
-import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
-import { RewardModel } from '../models/reward.model';
+import { Reward, Reward_GET_one, Reward_GET_all } from '../../../../shared/src';
+import { PUBLIC_ROUTES } from '../../server';
+import { APP_SERVER } from '../setupFile';
+import { REWARDS_MOCK } from '../../mockData/rewards';
+import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
+import { RewardModel } from '../../models/reward.model';
 
 describe('Reward routes', () => {
   const apiAddress = PUBLIC_ROUTES.Rewards;

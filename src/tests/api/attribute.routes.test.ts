@@ -7,11 +7,11 @@ import {
   Attribute_GET_one,
   BasicAttribute,
   MainAttributeNames,
-} from '../../../shared/src';
-import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
-import { PUBLIC_ROUTES } from '../server';
-import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
-import { AttributeDetailModel } from '../models/attribute.model';
+} from '../../../../shared/src';
+import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
+import { PUBLIC_ROUTES } from '../../server';
+import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
+import { AttributeDetailModel } from '../../models/attribute.model';
 
 describe('Attribute routes', () => {
   const apiAddress = PUBLIC_ROUTES.Attributes;

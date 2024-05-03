@@ -101,187 +101,29 @@ export class CharacterController {
     }
   }
 
-  async post(
+  async createCharacter(
     req: Request<{}, {}, Request_Character_POST_body>,
     res: Response<Response_Character_POST>
   ) {
     try {
-      const characterBody = req.body;
+      const { accountId, name } = req.body;
 
       const character = new CharacterModel({
-        accountId: characterBody.accountId,
-        name: characterBody.name,
+        accountId,
+        name,
         maxInventorySlot: 20,
       });
 
-      // ATTRIBUTES PART
-      const allAttributesResponse = await axios.get<Response_Attribute_GET_all>(
-        'http://localhost:3000/api/v1/attributes'
-      );
-
-      if (!allAttributesResponse.data.success) {
-        return res.status(500).json({
-          success: false,
-          error: 'Couldnt GET all attributes while creating character',
-        });
-      }
-
-      //console.log('allAttributesResponse: ', allAttributesResponse.data)
-
-      const defaultCharacterAttributes = generateDefaultCharacterAttributes(
-        allAttributesResponse.data.attributes,
-        character.id
-      );
-
-      const characterAttributesResponse = await axios.post<
-        Response_CharacterAttribute_POST,
-        AxiosResponse<
-          Response_CharacterAttribute_POST,
-          Request_CharacterAttribute_POST_body
-        >,
-        Request_CharacterAttribute_POST_body
-      >('http://localhost:3000/api/v1/character-attributes', {
-        characterAttributes: defaultCharacterAttributes,
-      });
-
-      //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
-      if (!characterAttributesResponse.data.success) {
-        console.error(
-          'Something went wrong while creating character attributes'
-        );
-        return res.status(500).json({
-          success: false,
-          error: 'Character attributes error',
-        });
-      }
-
-      // CURRENCY PART
-      const defaultCharacterCurrencies = generateCharacterCurrencies(
-        character.id
-      );
-
-      const characterCurrenciesResponse = await axios.post<
-        Response_CharacterCurrency_POST,
-        AxiosResponse<
-          Response_CharacterCurrency_POST,
-          Request_CharacterCurrency_POST_body
-        >,
-        Request_CharacterCurrency_POST_body
-      >('http://localhost:3000/api/v1/character-currencies', {
-        characterCurrencies: defaultCharacterCurrencies,
-      });
-
-      //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
-      if (!characterCurrenciesResponse.data.success) {
-        console.error(
-          'Something went wrong while creating character currencies'
-        );
-        return res.status(500).json({
-          success: false,
-          error: 'Character currencies error',
-        });
-      }
-
-      // EQUIPMENT PART
-      const equipmentArr: CharacterEquipmentFrontend[] = [];
-      for (const e in EquipmentSlot) {
-        const equipmentObj: CharacterEquipmentFrontend = {
-          slot: e as EquipmentSlot,
-          characterId: character.id,
-          uiPosition: this.setUiPosition(e as EquipmentSlot),
-          equipmentId: '',
-        };
-        equipmentArr.push(equipmentObj);
-      }
-
-      const characterEquipmentResponse = await axios.post<
-        Response_CharacterEquipment_POST,
-        AxiosResponse<
-          Response_CharacterEquipment_POST,
-          Request_CharacterEquipment_POST_body
-        >,
-        Request_CharacterEquipment_POST_body
-      >('http://localhost:3000/api/v1/character-equipment', {
-        characterEquipment: equipmentArr,
-      });
-
-      if (!characterEquipmentResponse.data.success) {
-        console.error(
-          'Something went wrong while creating character equipment'
-        );
-        return res.status(500).json({
-          success: false,
-          error: 'Character equipment error',
-        });
-      }
-
-      // INVENTORY PART
-      const inventoryQuery: Request_Inventory_POST_query = {
-        action: InventoryActions.NEW,
-      };
-      const inventoryItemsResponse = await axios.post<
-        Response_Inventory_POST,
-        AxiosResponse<Response_Inventory_POST, Request_Inventory_POST_body>,
-        Request_Inventory_POST_body
-      >(
-        `http://localhost:3000${PUBLIC_ROUTES.Inventory}`,
-        { characterId: character.id },
-        { params: inventoryQuery }
-      );
-      console.log(
-        'Characters POST inventoryItemsResponse: ',
-        inventoryItemsResponse.data
-      );
-      if (!inventoryItemsResponse.data.success) {
-        console.error(
-          'Something went wrong while creating character inventory: ',
-          inventoryItemsResponse.data
-        );
-        return res.status(500).json({
-          success: false,
-          error: 'Character inventory error',
-        });
-      }
+      await Promise.all([
+        this.createCharacterAttributes(character.id),
+        this.createCharacterCurrencies(character.id),
+        this.createCharacterEquipment(character.id),
+        this.createCharacterInventory(character.id),
+      ]);
 
       //console.log('saving character: ', character);
 
-      const adventuresQuery: Request_Adventure_GET_all_query = {
-        type: AdventureTypes.TUTORIAL,
-      };
-      const adventuresDataResponse =
-        await axios.get<Response_Adventure_GET_all>(
-          `http://localhost:3000${PUBLIC_ROUTES.Adventures}`,
-          { params: adventuresQuery }
-        );
-
-      if (!adventuresDataResponse.data.success) {
-        console.error(
-          'Something went wrong while creating adding adventures: ',
-          adventuresDataResponse.data
-        );
-        return res.status(500).json({
-          success: false,
-          error: 'Character adventures error',
-        });
-      }
-
-      character.adventures = adventuresDataResponse.data.adventures.map(
-        (a) => a._id
-      );
-
       await character.save();
-
-      // ACCOUNT PART (Not neccessary?)
-      // await axios.patch<
-      //   Response_Account_PATCH,
-      //   AxiosResponse<Response_Account_PATCH, Request_Account_PATCH_body>,
-      //   Request_Account_PATCH_body
-      // >(
-      //   `http://localhost:3000/api/v1/accounts/${characterBody.accountId}/characters`,
-      //   { characterId: character.id }
-      // );
-
-      //console.log('axios response: ', response);
 
       const responseCharacter = this.transformResponse(character);
 
@@ -290,12 +132,126 @@ export class CharacterController {
         character: responseCharacter,
       });
     } catch (error) {
-      if (isAxiosError(error)) {
-        console.error('Axios error: ', error.message);
-      }
+      console.error(error);
       return res
         .status(500)
         .json({ success: false, error: 'Character Post Error [TBI]' });
+    }
+  }
+
+  private async createCharacterAttributes(characterId: string): Promise<void> {
+    const allAttributesResponse = await axios.get<Response_Attribute_GET_all>(
+      'http://localhost:3000/api/v1/attributes'
+    );
+
+    if (!allAttributesResponse.data.success) {
+      throw new Error('Couldnt GET all attributes while creating character');
+    }
+
+    //console.log('allAttributesResponse: ', allAttributesResponse.data)
+
+    const defaultCharacterAttributes = generateDefaultCharacterAttributes(
+      allAttributesResponse.data.attributes,
+      characterId
+    );
+
+    // this.apiService.callExternalAPI<
+    //   Response_CharacterAttribute_POST,
+    //   Request_CharacterAttribute_POST_body
+    // >('http://localhost:3000/api/v1/character-attributes', {
+    //   characterAttributes: defaultCharacterAttributes,
+    // });
+    const characterAttributesResponse = await axios.post<
+      Response_CharacterAttribute_POST,
+      AxiosResponse<
+        Response_CharacterAttribute_POST,
+        Request_CharacterAttribute_POST_body
+      >,
+      Request_CharacterAttribute_POST_body
+    >('http://localhost:3000/api/v1/character-attributes', {
+      characterAttributes: defaultCharacterAttributes,
+    });
+
+    //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
+    if (!characterAttributesResponse.data.success) {
+      console.error('Something went wrong while creating character attributes');
+      throw new Error('Character attributes error');
+    }
+  }
+
+  private async createCharacterCurrencies(characterId: string): Promise<void> {
+    const defaultCharacterCurrencies = generateCharacterCurrencies(characterId);
+
+    const characterCurrenciesResponse = await axios.post<
+      Response_CharacterCurrency_POST,
+      AxiosResponse<
+        Response_CharacterCurrency_POST,
+        Request_CharacterCurrency_POST_body
+      >,
+      Request_CharacterCurrency_POST_body
+    >('http://localhost:3000/api/v1/character-currencies', {
+      characterCurrencies: defaultCharacterCurrencies,
+    });
+
+    //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
+    if (!characterCurrenciesResponse.data.success) {
+      console.error('Something went wrong while creating character currencies');
+      throw new Error('Character currencies error');
+    }
+  }
+
+  private async createCharacterEquipment(characterId: string): Promise<void> {
+    const equipmentArr: CharacterEquipmentFrontend[] = [];
+    for (const e in EquipmentSlot) {
+      const equipmentObj: CharacterEquipmentFrontend = {
+        slot: e as EquipmentSlot,
+        characterId: characterId,
+        uiPosition: this.setUiPosition(e as EquipmentSlot),
+        equipmentId: '',
+      };
+      equipmentArr.push(equipmentObj);
+    }
+
+    const characterEquipmentResponse = await axios.post<
+      Response_CharacterEquipment_POST,
+      AxiosResponse<
+        Response_CharacterEquipment_POST,
+        Request_CharacterEquipment_POST_body
+      >,
+      Request_CharacterEquipment_POST_body
+    >('http://localhost:3000/api/v1/character-equipment', {
+      characterEquipment: equipmentArr,
+    });
+
+    if (!characterEquipmentResponse.data.success) {
+      console.error('Something went wrong while creating character equipment');
+      throw new Error('Character equipment error');
+    }
+  }
+
+  private async createCharacterInventory(characterId: string): Promise<void> {
+    const inventoryQuery: Request_Inventory_POST_query = {
+      action: InventoryActions.NEW,
+    };
+    const inventoryItemsResponse = await axios.post<
+      Response_Inventory_POST,
+      AxiosResponse<Response_Inventory_POST, Request_Inventory_POST_body>,
+      Request_Inventory_POST_body
+    >(
+      `http://localhost:3000${PUBLIC_ROUTES.Inventory}`,
+      { characterId: characterId },
+      { params: inventoryQuery }
+    );
+    console.log(
+      'Characters POST inventoryItemsResponse: ',
+      inventoryItemsResponse.data
+    );
+    if (!inventoryItemsResponse.data.success) {
+      console.error(
+        'Something went wrong while creating character inventory: ',
+        inventoryItemsResponse.data
+      );
+      throw new Error('Character inventory error');
     }
   }
 

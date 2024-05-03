@@ -9,10 +9,10 @@ import {
   CharacterEquipment_POST,
   EquipmentSlot,
   UiPosition,
-} from '../../../shared/src';
-import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
-import { PUBLIC_ROUTES } from '../server';
-import { CharacterEquipmentModel } from '../models/characterEquipment.model';
+} from '../../../../shared/src';
+import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
+import { PUBLIC_ROUTES } from '../../server';
+import { CharacterEquipmentModel } from '../../models/characterEquipment.model';
 
 describe('Character Equipment routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterEquipment;

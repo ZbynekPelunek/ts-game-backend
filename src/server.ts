@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Application, Request, Response } from 'express';
 import { Server } from 'http';
 
 import { accountsRouter } from './routes/account.routes';
@@ -15,6 +15,8 @@ import { BasePaths, ApiRoutes } from '../../shared/src';
 import { rewardsRouter } from './routes/reward.routes';
 import { enemiesRouter } from './routes/enemy.routes';
 import { resultsRouter } from './routes/result.routes';
+import { readConfigFile } from './utils/setupConfig';
+import { corsMiddleware } from './middleware/corsMiddleware';
 
 export const PUBLIC_ROUTES = {
   Accounts: `/${BasePaths.PUBLIC}/${ApiRoutes.ACCOUNTS}`,
@@ -32,71 +34,73 @@ export const PUBLIC_ROUTES = {
 };
 
 export class AppServer {
-  mongoDbHandler: MongoDBHandler;
-  port = 3000;
-  app = express();
-  serverListener: Server;
+  private mongoDbHandler: MongoDBHandler;
+  private serverPort = 3000;
+  private app: Application;
+  private server: Server;
 
   constructor() {
+    this.app = express();
     this.mongoDbHandler = new MongoDBHandler();
-    this.serverListener = new Server();
+    this.server = new Server();
   }
 
-  getApp() {
+  getApp(): Application {
     return this.app;
   }
 
   async start(): Promise<void> {
+    try {
+      await this.initConfig();
+      await this.initServer();
+      await this.connectDb();
+    } catch (error) {
+      console.error('Error while starting application: ', error);
+      await this.destroy();
+      process.exit(2);
+    }
+  }
+
+  async destroy(): Promise<void> {
+    try {
+      await Promise.all([
+        this.server.close(),
+        this.mongoDbHandler.disconnect(),
+      ]);
+    } catch (error) {
+      console.error('Error while shutting down server: ', error);
+    }
+  }
+
+  private async initConfig(): Promise<void> {
+    const config = await readConfigFile();
+    this.serverPort = config.server.port ?? this.serverPort;
+    process.env.SERVER_URL = `${config.server.protocol}://${config.server.baseUrl}:${this.serverPort}`;
+    process.env.FRONTEND_URL = `${config.frontend.protocol}://${config.frontend.baseUrl}:${config.frontend.port}`;
+  }
+
+  private async initServer(): Promise<void> {
     this.app.use(express.json());
-
-    this.app.use((_req, res, next) => {
-      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-      res.setHeader(
-        'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-      );
-      res.setHeader(
-        'Access-Control-Allow-Methods',
-        'OPTIONS, PUT, DELETE, POST'
-      );
-
-      next();
-    });
-
-    this.setupPublicRouters();
-
+    this.app.use(corsMiddleware);
+    this.initPublicRouters();
     this.app.all('*', (req: Request, res: Response) => {
       return res.status(404).json({
         success: false,
         error: `Route ${req.url} does not exist.`,
       });
     });
-
-    // TODO - error middleware
-    //this.app.use(errorHandler);
-
-    await this.connectDb();
-
-    this.serverListener = this.app.listen(this.port, () => {
-      console.log(
-        'The application is listening on port http://localhost:' + this.port
-      );
+    this.server = this.app.listen(this.serverPort, () => {
+      console.log(`The application is listening on ${process.env.SERVER_URL}`);
     });
-
-    process.on('SIGINT', () => {
-      this.destroy().then(() => {
-        console.log('Closing application');
-        process.exit(2);
-      });
-    });
+    this.handleSIGINT();
   }
 
-  async connectDb() {
+  private async connectDb(): Promise<void> {
     const nodeEnv = process.env.NODE_ENV ?? 'dev';
-    return await this.mongoDbHandler.connect(nodeEnv);
+    await this.mongoDbHandler.connect(nodeEnv);
   }
 
-  setupPublicRouters() {
+  private initPublicRouters(): void {
     this.app.use(PUBLIC_ROUTES.Accounts, accountsRouter);
     this.app.use(PUBLIC_ROUTES.Characters, charactersRouter);
     this.app.use(PUBLIC_ROUTES.Adventures, adventuresRouter);
@@ -111,11 +115,8 @@ export class AppServer {
     this.app.use(PUBLIC_ROUTES.Results, resultsRouter);
   }
 
-  async destroy(): Promise<void> {
-    await Promise.all([
-      this.serverListener.close(),
-      this.mongoDbHandler.disconnect(),
-    ]);
+  private handleSIGINT(): void {
+    process.on('SIGINT', () => this.destroy());
   }
 }
 

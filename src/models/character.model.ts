@@ -8,20 +8,19 @@ import { Types } from 'mongoose';
 
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
 import { CharacterBackend } from '../../../shared/src';
-import { AdventureSchema } from './adventure.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
   options: { customName: 'characters', allowMixed: Severity.ALLOW },
 })
 export class CharacterSchema implements CharacterBackend {
-  @prop({ requied: true })
+  @prop({ required: true })
   public accountId!: Types.ObjectId;
 
   @prop({ required: true, unique: true })
   public name!: string;
 
-  @prop({ default: [], ref: () => AdventureSchema, type: () => Number })
+  @prop({ default: [] })
   public adventures?: number[];
 
   @prop({ default: 0 })

@@ -8,11 +8,11 @@ import {
   CurrencyId,
   CharacterCurrency_POST,
   CharacterCurrencyFrontend,
-} from '../../../shared/src';
-import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
-import { PUBLIC_ROUTES } from '../server';
-import { CharacterCurrencyModel } from '../models/characterCurrency.model';
-import { CurrencyModel } from '../models/currency.model';
+} from '../../../../shared/src';
+import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
+import { PUBLIC_ROUTES } from '../../server';
+import { CharacterCurrencyModel } from '../../models/characterCurrency.model';
+import { CurrencyModel } from '../../models/currency.model';
 
 describe('Character Currency routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterCurrencies;

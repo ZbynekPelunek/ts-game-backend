@@ -9,8 +9,6 @@ import { CharacterEquipmentModel } from './models/characterEquipment.model';
 export class MongoDBHandler {
   connection: Mongoose | undefined;
 
-  constructor() {}
-
   public async connect(nodeEnv: string) {
     let uri = 'mongodb://127.0.0.1:27017';
     try {

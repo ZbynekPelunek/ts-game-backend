@@ -28,18 +28,24 @@ export class InventoryController {
     try {
       const { characterId } = req.query;
 
-      let inventory;
-      if (characterId) {
-        inventory = await InventoryModel.find({ characterId });
-      } else {
-        inventory = await InventoryModel.find();
-      }
+      const query = InventoryModel.find().lean();
 
-      const response = inventory.map((invItem) => {
-        return this.transformResponse(invItem);
+      if (characterId) query.where({ characterId });
+
+      const inventory = await query.exec();
+      const transformedInventory = inventory.map((inv) => {
+        return {
+          inventoryId: inv._id.toString(),
+          characterId: inv.characterId.toString(),
+          amount: inv.amount ?? 0,
+          itemId: inv.itemId,
+          slot: inv.slot,
+        };
       });
 
-      return res.status(200).json({ success: true, inventory: response });
+      return res
+        .status(200)
+        .json({ success: true, inventory: transformedInventory });
     } catch (error) {
       return res
         .status(500)

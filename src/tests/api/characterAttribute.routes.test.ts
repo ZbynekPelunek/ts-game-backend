@@ -8,11 +8,11 @@ import {
   CharacterAttribute_GET_all,
   CharacterAttribute_POST,
   MainAttributeNames,
-} from '../../../shared/src';
-import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
-import { PUBLIC_ROUTES } from '../server';
-import { AttributeDetailModel } from '../models/attribute.model';
-import { CharacterAttributeModel } from '../models/characterAttribute.model';
+} from '../../../../shared/src';
+import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
+import { PUBLIC_ROUTES } from '../../server';
+import { AttributeDetailModel } from '../../models/attribute.model';
+import { CharacterAttributeModel } from '../../models/characterAttribute.model';
 
 describe('Character Attribute routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterAttributes;

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { EnemyController } from '../controllers/currency.controller';
+import { EnemyController } from '../controllers/enemy.controller';
 
 export const enemiesRouter = Router();
 const enemyController = new EnemyController();

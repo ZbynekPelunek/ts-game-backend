@@ -7,3 +7,4 @@
 # Miscellaneous
 /coverage
 .env
+/old_stuff

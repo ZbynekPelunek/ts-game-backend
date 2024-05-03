@@ -1,14 +1,14 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
-import { APP_SERVER } from '../tests/setupFile';
-import { PUBLIC_ROUTES } from '../server';
 import {
   Request_Account_POST_body,
   Account_POST,
   IAccountSchema,
-} from '../../../shared/src';
-import { AccountModel } from '../models/account.model';
+} from '../../../../shared/src';
+import { AccountModel } from '../../models/account.model';
+import { PUBLIC_ROUTES } from '../../server';
+import { APP_SERVER } from '../setupFile';
 
 describe('Account routes', () => {
   const apiAddress = PUBLIC_ROUTES.Accounts;

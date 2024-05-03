@@ -1,5 +1,13 @@
 import request from 'supertest';
-import { describe, afterEach, it, expect, xit } from '@jest/globals';
+import {
+  describe,
+  afterEach,
+  it,
+  expect,
+  xit,
+  jest,
+  beforeAll,
+} from '@jest/globals';
 
 import {
   CharacterBackend,
@@ -9,11 +17,11 @@ import {
   Request_Character_GET_all_query,
   Request_Character_POST_body,
   Response_Attribute_GET_all,
-} from '../../../shared/src';
-import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../tests/setupFile';
-import { PUBLIC_ROUTES } from '../server';
-import { CHARACTERS_MOCK } from '../mockData/characters';
-import { CharacterModel } from '../models/character.model';
+} from '../../../../shared/src';
+import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
+import { PUBLIC_ROUTES } from '../../server';
+import { CHARACTERS_MOCK } from '../../mockData/characters';
+import { CharacterModel } from '../../models/character.model';
 
 describe('Character routes', () => {
   const accountId = UNKNOWN_OBJECT_ID;

@@ -10,11 +10,11 @@ import {
   Item_GET_all,
   Item_GET_one,
   MainAttributeNames,
-} from '../../../shared/src';
-import { APP_SERVER } from '../tests/setupFile';
-import { PUBLIC_ROUTES } from '../server';
-import { Common_Response_Error } from '../../../shared/src/interface/API/commonResponse';
-import { ItemModel } from '../models/item.model';
+} from '../../../../shared/src';
+import { APP_SERVER } from '../setupFile';
+import { PUBLIC_ROUTES } from '../../server';
+import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
+import { ItemModel } from '../../models/item.model';
 
 describe('Item routes', () => {
   const apiAddress = PUBLIC_ROUTES.Items;

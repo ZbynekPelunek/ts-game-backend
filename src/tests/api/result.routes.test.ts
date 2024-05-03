@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
-import { PUBLIC_ROUTES } from '../server';
+import { PUBLIC_ROUTES } from '../../server';
 import {
   Adventure,
   Enemy,
@@ -11,15 +11,15 @@ import {
   Response_CharacterAttribute_GET_all,
   Result,
   Result_POST,
-} from '../../../shared/src';
-import { RESULTS_MOCK } from '../mockData/results';
-import { APP_SERVER, mockedAxios } from '../tests/setupFile';
-import { CHARACTERS_MOCK_ACCOUNT_1_ID } from '../mockData/characters';
-import { ADVENTURES_MOCK } from '../mockData/adventures';
-import { AdventureModel } from '../models/adventure.model';
-import { CharacterModel } from '../models/character.model';
-import { EnemyModel } from '../models/enemy.model';
-import { ResultModel } from '../models/result.model';
+} from '../../../../shared/src';
+import { RESULTS_MOCK } from '../../mockData/results';
+import { APP_SERVER, mockedAxios } from '../setupFile';
+import { CHARACTERS_MOCK_ACCOUNT_1_ID } from '../../mockData/characters';
+import { ADVENTURES_MOCK } from '../../mockData/adventures';
+import { AdventureModel } from '../../models/adventure.model';
+import { CharacterModel } from '../../models/character.model';
+import { EnemyModel } from '../../models/enemy.model';
+import { ResultModel } from '../../models/result.model';
 
 describe('Result routes', () => {
   const apiAddress = PUBLIC_ROUTES.Results;

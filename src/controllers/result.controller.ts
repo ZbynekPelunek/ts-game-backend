@@ -80,7 +80,7 @@ export class ResultController {
         const enemy = await EnemyModel.findById(adventure.enemyIds[0]);
 
         if (!enemy) {
-          return res.status(404).json({
+          return res.status(500).json({
             success: false,
             error: `Enemy with id '${adventure.enemyIds[0]}' not found.`,
           });

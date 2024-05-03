@@ -1,5 +1,5 @@
-import { Express } from 'express-serve-static-core';
 import axios from 'axios';
+import { Application } from 'express';
 import { Types } from 'mongoose';
 import { afterAll, beforeAll, jest } from '@jest/globals';
 
@@ -21,7 +21,7 @@ jest.mock('axios');
 
 export const mockedAxios = jest.mocked(axios);
 
-export let APP_SERVER: Express;
+export let APP_SERVER: Application;
 let appServer: AppServer;
 
 export const UNKNOWN_OBJECT_ID = new Types.ObjectId();
@@ -29,7 +29,6 @@ export const UNKNOWN_OBJECT_ID = new Types.ObjectId();
 beforeAll(() => {
   appServer = new AppServer();
   appServer.start();
-  appServer.setupPublicRouters();
   APP_SERVER = appServer.getApp();
 
   mockedAxios.get.mockImplementation((url: string) => {
