@@ -1,14 +1,12 @@
 import { Request, Response } from 'express';
-import axios, { AxiosResponse, isAxiosError } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 import {
-  AdventureTypes,
   CharacterBackend,
   CharacterEquipmentFrontend,
   CharacterFrontend,
   EquipmentSlot,
   InventoryActions,
-  Request_Adventure_GET_all_query,
   Request_Character_GET_all_query,
   Request_Character_GET_one_params,
   Request_Character_GET_one_query,
@@ -18,7 +16,6 @@ import {
   Request_CharacterEquipment_POST_body,
   Request_Inventory_POST_body,
   Request_Inventory_POST_query,
-  Response_Adventure_GET_all,
   Response_Attribute_GET_all,
   Response_Character_GET_All,
   Response_Character_GET_one,
@@ -32,9 +29,15 @@ import {
 import { CharacterModel } from '../models/character.model';
 import { generateDefaultCharacterAttributes } from '../defaultCharacterData/attributes';
 import { generateCharacterCurrencies } from '../defaultCharacterData/currencies';
-import { PUBLIC_ROUTES } from '../server';
+import { ApiService, FULL_PUBLIC_ROUTES } from '../services/api.service';
 
 export class CharacterController {
+  private apiService: ApiService;
+
+  constructor() {
+    this.apiService = new ApiService();
+  }
+
   async getAll(
     req: Request<{}, {}, {}, Request_Character_GET_all_query>,
     res: Response<Response_Character_GET_All>
@@ -140,40 +143,32 @@ export class CharacterController {
   }
 
   private async createCharacterAttributes(characterId: string): Promise<void> {
-    const allAttributesResponse = await axios.get<Response_Attribute_GET_all>(
-      'http://localhost:3000/api/v1/attributes'
-    );
+    console.log(`calling url: ${FULL_PUBLIC_ROUTES.Attributes}`);
+    const allAttributesResponse =
+      await this.apiService.get<Response_Attribute_GET_all>(
+        FULL_PUBLIC_ROUTES.Attributes
+      );
 
-    if (!allAttributesResponse.data.success) {
+    if (!allAttributesResponse.success) {
       throw new Error('Couldnt GET all attributes while creating character');
     }
 
     //console.log('allAttributesResponse: ', allAttributesResponse.data)
 
     const defaultCharacterAttributes = generateDefaultCharacterAttributes(
-      allAttributesResponse.data.attributes,
+      allAttributesResponse.attributes,
       characterId
     );
 
-    // this.apiService.callExternalAPI<
-    //   Response_CharacterAttribute_POST,
-    //   Request_CharacterAttribute_POST_body
-    // >('http://localhost:3000/api/v1/character-attributes', {
-    //   characterAttributes: defaultCharacterAttributes,
-    // });
-    const characterAttributesResponse = await axios.post<
+    const characterAttributesResponse = await this.apiService.post<
       Response_CharacterAttribute_POST,
-      AxiosResponse<
-        Response_CharacterAttribute_POST,
-        Request_CharacterAttribute_POST_body
-      >,
       Request_CharacterAttribute_POST_body
-    >('http://localhost:3000/api/v1/character-attributes', {
+    >(FULL_PUBLIC_ROUTES.CharacterAttributes, {
       characterAttributes: defaultCharacterAttributes,
     });
 
     //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
-    if (!characterAttributesResponse.data.success) {
+    if (!characterAttributesResponse.success) {
       console.error('Something went wrong while creating character attributes');
       throw new Error('Character attributes error');
     }
@@ -182,19 +177,15 @@ export class CharacterController {
   private async createCharacterCurrencies(characterId: string): Promise<void> {
     const defaultCharacterCurrencies = generateCharacterCurrencies(characterId);
 
-    const characterCurrenciesResponse = await axios.post<
+    const characterCurrenciesResponse = await this.apiService.post<
       Response_CharacterCurrency_POST,
-      AxiosResponse<
-        Response_CharacterCurrency_POST,
-        Request_CharacterCurrency_POST_body
-      >,
       Request_CharacterCurrency_POST_body
-    >('http://localhost:3000/api/v1/character-currencies', {
+    >(FULL_PUBLIC_ROUTES.CharacterCurrencies, {
       characterCurrencies: defaultCharacterCurrencies,
     });
 
     //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
-    if (!characterCurrenciesResponse.data.success) {
+    if (!characterCurrenciesResponse.success) {
       console.error('Something went wrong while creating character currencies');
       throw new Error('Character currencies error');
     }
@@ -212,18 +203,14 @@ export class CharacterController {
       equipmentArr.push(equipmentObj);
     }
 
-    const characterEquipmentResponse = await axios.post<
+    const characterEquipmentResponse = await this.apiService.post<
       Response_CharacterEquipment_POST,
-      AxiosResponse<
-        Response_CharacterEquipment_POST,
-        Request_CharacterEquipment_POST_body
-      >,
       Request_CharacterEquipment_POST_body
-    >('http://localhost:3000/api/v1/character-equipment', {
+    >(FULL_PUBLIC_ROUTES.CharacterEquipment, {
       characterEquipment: equipmentArr,
     });
 
-    if (!characterEquipmentResponse.data.success) {
+    if (!characterEquipmentResponse.success) {
       console.error('Something went wrong while creating character equipment');
       throw new Error('Character equipment error');
     }
@@ -233,24 +220,16 @@ export class CharacterController {
     const inventoryQuery: Request_Inventory_POST_query = {
       action: InventoryActions.NEW,
     };
-    const inventoryItemsResponse = await axios.post<
+    const inventoryItemsResponse = await this.apiService.post<
       Response_Inventory_POST,
-      AxiosResponse<Response_Inventory_POST, Request_Inventory_POST_body>,
       Request_Inventory_POST_body
     >(
-      `http://localhost:3000${PUBLIC_ROUTES.Inventory}`,
+      FULL_PUBLIC_ROUTES.Inventory,
       { characterId: characterId },
       { params: inventoryQuery }
     );
-    console.log(
-      'Characters POST inventoryItemsResponse: ',
-      inventoryItemsResponse.data
-    );
-    if (!inventoryItemsResponse.data.success) {
-      console.error(
-        'Something went wrong while creating character inventory: ',
-        inventoryItemsResponse.data
-      );
+
+    if (!inventoryItemsResponse.success) {
       throw new Error('Character inventory error');
     }
   }

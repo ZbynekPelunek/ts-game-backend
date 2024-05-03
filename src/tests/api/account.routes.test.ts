@@ -7,8 +7,8 @@ import {
   IAccountSchema,
 } from '../../../../shared/src';
 import { AccountModel } from '../../models/account.model';
-import { PUBLIC_ROUTES } from '../../server';
 import { APP_SERVER } from '../setupFile';
+import { PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Account routes', () => {
   const apiAddress = PUBLIC_ROUTES.Accounts;

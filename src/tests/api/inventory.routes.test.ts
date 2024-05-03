@@ -2,7 +2,6 @@ import request from 'supertest';
 import { describe, afterEach, it, expect, beforeAll } from '@jest/globals';
 
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
-import { PUBLIC_ROUTES } from '../../server';
 import { defaultMaxInventorySlots } from '../../defaultCharacterData/inventory';
 import {
   ArmorType,
@@ -22,6 +21,7 @@ import {
 } from '../../../../shared/src';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 import { InventoryModel } from '../../models/inventory.model';
+import { FULL_PUBLIC_ROUTES, PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Inventory routes', () => {
   const apiAddress = PUBLIC_ROUTES.Inventory;
@@ -151,9 +151,7 @@ describe('Inventory routes', () => {
 
     beforeAll(() => {
       mockedAxios.get.mockImplementation((url: string) => {
-        if (
-          url === `http://localhost:3000${PUBLIC_ROUTES.Items}/${newItemId}`
-        ) {
+        if (url === `${FULL_PUBLIC_ROUTES.Items}/${newItemId}`) {
           return Promise.resolve<{ data: Response_Item_GET_one }>({
             data: {
               success: true,

@@ -9,7 +9,7 @@ Backend part for a typescript game. The other parts are Frontend and Shared (int
   - [Overview](#overview)
   - [Technologies](#technologies)
   - [Features](#features)
-  - [Instalation](#instalation)
+  - [Installation](#installation)
   - [Status](#status)
   - [Inspiration](#inspiration)
 
@@ -38,7 +38,7 @@ This project also contains a lot of commented code for now because at first, I t
   - Equipment API
 - Reward API
 
-## Instalation
+## Installation
 
 To be able to make it run, you need to
 

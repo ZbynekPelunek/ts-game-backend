@@ -16,21 +16,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@typegoose/typegoose": "^12.2.0",
+    "@typegoose/typegoose": "^12.4.0",
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
-    "express": "^4.19.1",
+    "express": "^4.19.2",
     "lodash": "^4.17.21",
-    "uuid": "^9.0.1"
-  },
-  "peerDependencies": {
-    "mongoose": "^8.2.2"
+    "uuid": "^9.0.1",
+    "mongoose": "^8.3.3"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/express": "^4.17.21",
     "@types/lodash": "^4.17.0",
-    "@types/node": "^20.11.30",
+    "@types/node": "^20.12.8",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^9.0.8",
     "cross-env": "^7.0.3",
@@ -38,9 +36,9 @@
     "nodemon": "^3.1.0",
     "prettier": "3.2.5",
     "rimraf": "^5.0.5",
-    "supertest": "^6.3.4",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.3"
+    "typescript": "^5.4.5"
   }
 }

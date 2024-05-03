@@ -1,5 +1,4 @@
 import {
-  CharacterAttributeBackend,
   CharacterAttributeFrontendPopulated,
   Enemy,
   EnemyAttribute,

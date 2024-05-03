@@ -11,8 +11,8 @@ import {
   UiPosition,
 } from '../../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
-import { PUBLIC_ROUTES } from '../../server';
 import { CharacterEquipmentModel } from '../../models/characterEquipment.model';
+import { PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Character Equipment routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterEquipment;

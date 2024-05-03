@@ -19,6 +19,7 @@ import {
 } from '../../../shared/src';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
 import { InventoryModel, InventorySchema } from '../models/inventory.model';
+import { FULL_PUBLIC_ROUTES } from '../services/api.service';
 
 export class InventoryController {
   async getAll(
@@ -138,7 +139,7 @@ export class InventoryController {
 
       console.log('Looking for item data...');
       const item = await axios.get<Response_Item_GET_one>(
-        `http://localhost:3000/api/v1/items/${itemId}`
+        `${FULL_PUBLIC_ROUTES.Items}/${itemId}`
       );
       if (!item.data.success) {
         return res.status(500).json({
@@ -156,7 +157,6 @@ export class InventoryController {
 
       console.log('Getting all inventory slots data...');
 
-      //const inventorySlotItem = await axios.get<Response_Inventories_GET_one>(`http://localhost:3000/api/v1/inventory-items/${inventoryItemId}`)
       const inventorySlotItem = await InventoryModel.findById(inventoryId);
       console.log('...found inventory slots data: ', inventorySlotItem);
       if (!inventorySlotItem) {
@@ -223,7 +223,6 @@ export class InventoryController {
 
           return res.status(200).json({ success: true, inventory: response });
         } else {
-          //const allCharacterItemSlots = await axios.get<Response_Inventories_GET_all>(`http://localhost:3000/api/v1/inventory-items?characterId=${characterId}`);
           const allCharacterItemSlots = await InventoryModel.find({
             characterId,
           });

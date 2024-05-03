@@ -15,7 +15,7 @@ import { AdventureModel } from '../models/adventure.model';
 import { CharacterModel } from '../models/character.model';
 import { EnemyModel } from '../models/enemy.model';
 import { ResultModel } from '../models/result.model';
-import { PUBLIC_ROUTES } from '../server';
+import { FULL_PUBLIC_ROUTES } from '../services/api.service';
 
 export class ResultController {
   async post(
@@ -64,7 +64,7 @@ export class ResultController {
         };
         const characterAttributesRes =
           await axios.get<Response_CharacterAttribute_GET_all>(
-            `http://localhost:3000${PUBLIC_ROUTES.CharacterAttributes}`,
+            `${FULL_PUBLIC_ROUTES.CharacterAttributes}`,
             { params: charAttQueryString }
           );
 

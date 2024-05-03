@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
-import { PUBLIC_ROUTES } from '../../server';
 import {
   Adventure,
   Enemy,
@@ -20,6 +19,7 @@ import { AdventureModel } from '../../models/adventure.model';
 import { CharacterModel } from '../../models/character.model';
 import { EnemyModel } from '../../models/enemy.model';
 import { ResultModel } from '../../models/result.model';
+import { FULL_PUBLIC_ROUTES, PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Result routes', () => {
   const apiAddress = PUBLIC_ROUTES.Results;
@@ -80,7 +80,7 @@ describe('Result routes', () => {
 
       mockedAxios.get.mockImplementation((url: string) => {
         switch (url) {
-          case `http://localhost:3000${PUBLIC_ROUTES.CharacterAttributes}`:
+          case `${FULL_PUBLIC_ROUTES.CharacterAttributes}`:
             return Promise.resolve<{
               data: Response_CharacterAttribute_GET_all;
             }>({

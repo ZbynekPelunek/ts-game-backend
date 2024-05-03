@@ -19,9 +19,9 @@ import {
   Response_Attribute_GET_all,
 } from '../../../../shared/src';
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
-import { PUBLIC_ROUTES } from '../../server';
 import { CHARACTERS_MOCK } from '../../mockData/characters';
 import { CharacterModel } from '../../models/character.model';
+import { FULL_PUBLIC_ROUTES, PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Character routes', () => {
   const accountId = UNKNOWN_OBJECT_ID;
@@ -96,7 +96,7 @@ describe('Character routes', () => {
       const newCharName = 'Added Char 2';
 
       mockedAxios.get.mockImplementationOnce((url: string) => {
-        if (url === 'http://localhost:3000/api/v1/attributes') {
+        if (url === FULL_PUBLIC_ROUTES.Attributes) {
           return Promise.resolve<{
             data: Response_Attribute_GET_all;
           }>({

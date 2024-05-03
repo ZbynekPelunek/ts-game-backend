@@ -8,3 +8,4 @@
 /coverage
 .env
 /old_stuff
+/src/config.json

@@ -11,27 +11,12 @@ import { characterEquipmentRouter } from './routes/characterEquipment.routes';
 import { inventoryRouter } from './routes/inventory.routes';
 import { itemsRouter } from './routes/item.routes';
 import { MongoDBHandler } from './mongoDB.handler';
-import { BasePaths, ApiRoutes } from '../../shared/src';
 import { rewardsRouter } from './routes/reward.routes';
 import { enemiesRouter } from './routes/enemy.routes';
 import { resultsRouter } from './routes/result.routes';
 import { readConfigFile } from './utils/setupConfig';
 import { corsMiddleware } from './middleware/corsMiddleware';
-
-export const PUBLIC_ROUTES = {
-  Accounts: `/${BasePaths.PUBLIC}/${ApiRoutes.ACCOUNTS}`,
-  Characters: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTERS}`,
-  Adventures: `/${BasePaths.PUBLIC}/${ApiRoutes.ADVENTURES}`,
-  Results: `/${BasePaths.PUBLIC}/${ApiRoutes.RESULTS}`,
-  Inventory: `/${BasePaths.PUBLIC}/${ApiRoutes.INVENTORY}`,
-  Attributes: `/${BasePaths.PUBLIC}/${ApiRoutes.ATTRIBUTES}`,
-  CharacterAttributes: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_ATTRIBUTES}`,
-  CharacterCurrencies: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_CURRENCIES}`,
-  CharacterEquipment: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_EQUIPMENT}`,
-  Items: `/${BasePaths.PUBLIC}/${ApiRoutes.ITEMS}`,
-  Rewards: `/${BasePaths.PUBLIC}/${ApiRoutes.REWARDS}`,
-  Enemies: `/${BasePaths.PUBLIC}/${ApiRoutes.ENEMIES}`,
-};
+import { PUBLIC_ROUTES } from './services/api.service';
 
 export class AppServer {
   private mongoDbHandler: MongoDBHandler;

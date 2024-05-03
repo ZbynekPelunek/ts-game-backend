@@ -10,9 +10,9 @@ import {
   MainAttributeNames,
 } from '../../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
-import { PUBLIC_ROUTES } from '../../server';
 import { AttributeDetailModel } from '../../models/attribute.model';
 import { CharacterAttributeModel } from '../../models/characterAttribute.model';
+import { PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Character Attribute routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterAttributes;

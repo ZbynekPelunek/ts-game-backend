@@ -26,6 +26,8 @@ interface Config {
   };
 }
 
+let CONFIG_GAMEPLAY: Config['gameplay'];
+
 export function readConfigFile(): Promise<Config> {
   return new Promise((resolve, reject) => {
     fs.readFile('./src/config.json', 'utf8', (err, data) => {
@@ -36,6 +38,7 @@ export function readConfigFile(): Promise<Config> {
 
       try {
         const config: Config = JSON.parse(data);
+        CONFIG_GAMEPLAY = config.gameplay;
         resolve(config);
       } catch (parseError) {
         reject(parseError);

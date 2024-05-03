@@ -12,9 +12,9 @@ import {
   MainAttributeNames,
 } from '../../../../shared/src';
 import { APP_SERVER } from '../setupFile';
-import { PUBLIC_ROUTES } from '../../server';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 import { ItemModel } from '../../models/item.model';
+import { PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Item routes', () => {
   const apiAddress = PUBLIC_ROUTES.Items;

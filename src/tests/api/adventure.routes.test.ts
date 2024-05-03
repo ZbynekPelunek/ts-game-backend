@@ -10,12 +10,12 @@ import {
   Reward,
 } from '../../../../shared/src';
 import { APP_SERVER } from '../setupFile';
-import { PUBLIC_ROUTES } from '../../server';
 import { REWARDS_MOCK } from '../../mockData/rewards';
 import { ADVENTURES_MOCK } from '../../mockData/adventures';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 import { AdventureModel } from '../../models/adventure.model';
 import { RewardModel } from '../../models/reward.model';
+import { PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Adventure routes', () => {
   const apiAddress = PUBLIC_ROUTES.Adventures;
