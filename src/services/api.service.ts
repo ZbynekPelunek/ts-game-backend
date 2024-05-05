@@ -32,9 +32,9 @@ export const FULL_PUBLIC_ROUTES = {
 };
 
 export class ApiService {
-  async get<T>(url: string): Promise<T> {
+  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     try {
-      const apiResponse: AxiosResponse<T> = await axios.get(url);
+      const apiResponse: AxiosResponse<T> = await axios.get(url, config);
       console.log('GET API Response:', apiResponse.data);
       return apiResponse.data;
     } catch (error) {

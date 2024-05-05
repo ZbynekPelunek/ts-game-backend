@@ -1,50 +1,105 @@
-import axios from 'axios';
 import { Request, Response } from 'express';
 
 import {
   Request_Result_POST_body,
   Response_Result_POST,
-  CharacterBackend,
   Request_CharacterAttribute_GET_all_query,
   Response_CharacterAttribute_GET_all,
   CharacterAttributeFrontendPopulated,
   ResultCombat,
+  Request_Result_GET_all_query,
+  Response_Result_GET_all,
+  ResultBackend,
+  ResultFrontend,
+  Response_Result_GET_one,
+  Request_Result_GET_one_params,
+  Response_Character_GET_one,
+  Response_Adventure_GET_one,
 } from '../../../shared/src';
 import { Combat } from '../engine/combat';
-import { AdventureModel } from '../models/adventure.model';
-import { CharacterModel } from '../models/character.model';
 import { EnemyModel } from '../models/enemy.model';
 import { ResultModel } from '../models/result.model';
-import { FULL_PUBLIC_ROUTES } from '../services/api.service';
+import { ApiService, FULL_PUBLIC_ROUTES } from '../services/api.service';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class ResultController {
+  private apiService: ApiService;
+
+  constructor() {
+    this.apiService = new ApiService();
+  }
+
+  async getAll(
+    req: Request<{}, {}, {}, Request_Result_GET_all_query>,
+    res: Response<Response_Result_GET_all>
+  ) {
+    try {
+      const { characterId, limit } = req.query;
+
+      const query = ResultModel.find().lean();
+
+      if (characterId) query.where({ characterId });
+      if (limit) query.limit(limit);
+
+      const results = await query.exec();
+      const transformedResults = this.transformResponseArray(results);
+
+      return res
+        .status(200)
+        .json({ success: true, results: transformedResults });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  async getOneById(
+    req: Request<Request_Result_GET_one_params>,
+    res: Response<Response_Result_GET_one>
+  ) {
+    try {
+      const { resultId } = req.params;
+
+      const result = await ResultModel.findById(resultId).lean();
+      if (!result) {
+        throw new CustomError(`Result with id '${resultId}' not found`, 404);
+      }
+
+      const transformedResult = this.transformResponseObject(result);
+
+      return res.status(200).json({ success: true, result: transformedResult });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
   async post(
     req: Request<{}, {}, Request_Result_POST_body>,
     res: Response<Response_Result_POST>
   ) {
     try {
+      console.log('Request body: ', req.body);
       const { characterId, adventureId } = req.body;
       const currentDateMs = Date.now();
 
-      const character: CharacterBackend | null =
-        await CharacterModel.findById(characterId);
-
-      if (!character) {
-        throw new CustomError(
-          `Character with id '${characterId}' not found.`,
-          404
+      const characterResponse =
+        await this.apiService.get<Response_Character_GET_one>(
+          `${FULL_PUBLIC_ROUTES.Characters}/${characterId}`
         );
+
+      if (!characterResponse.success) {
+        throw new CustomError(`'${characterResponse.error}'`, 500);
       }
+      const { character } = characterResponse;
 
-      const adventure = await AdventureModel.findById(adventureId);
-
-      if (!adventure) {
-        throw new CustomError(
-          `Adventure with id '${adventureId}' not found.`,
-          404
+      const adventureResponse =
+        await this.apiService.get<Response_Adventure_GET_one>(
+          `${FULL_PUBLIC_ROUTES.Adventures}/${adventureId}`
         );
+
+      if (!adventureResponse.success) {
+        throw new CustomError(`'${adventureResponse.error}'`, 500);
       }
+      const { adventure } = adventureResponse;
 
       const timeFinishMs = currentDateMs + adventure.timeInSeconds * 1000;
 
@@ -64,17 +119,17 @@ export class ResultController {
           populateAttribute: true,
         };
         const characterAttributesRes =
-          await axios.get<Response_CharacterAttribute_GET_all>(
+          await this.apiService.get<Response_CharacterAttribute_GET_all>(
             `${FULL_PUBLIC_ROUTES.CharacterAttributes}`,
             { params: charAttQueryString }
           );
 
-        if (!characterAttributesRes.data.success) {
+        if (!characterAttributesRes.success) {
           throw new CustomError(`Character attributes error`, 500);
         }
 
-        const characterAttributes = characterAttributesRes.data
-          .characterAttributes as CharacterAttributeFrontendPopulated[];
+        const characterAttributes =
+          characterAttributesRes.characterAttributes as CharacterAttributeFrontendPopulated[];
         const enemy = await EnemyModel.findById(adventure.enemyIds[0]);
 
         if (!enemy) {
@@ -105,5 +160,21 @@ export class ResultController {
     } catch (error) {
       errorHandler(error, req, res);
     }
+  }
+
+  private transformResponseObject(
+    databaseResponse: ResultBackend
+  ): ResultFrontend {
+    const { characterId, ...rest } = databaseResponse;
+    return {
+      ...rest,
+      characterId: databaseResponse.characterId.toString(),
+    };
+  }
+
+  private transformResponseArray(
+    databaseResponse: ResultBackend[]
+  ): ResultFrontend[] {
+    return databaseResponse.map((res) => this.transformResponseObject(res));
   }
 }

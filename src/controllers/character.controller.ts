@@ -137,7 +137,6 @@ export class CharacterController {
   }
 
   private async createCharacterAttributes(characterId: string): Promise<void> {
-    console.log(`calling url: ${FULL_PUBLIC_ROUTES.Attributes}`);
     const allAttributesResponse =
       await this.apiService.get<Response_Attribute_GET_all>(
         FULL_PUBLIC_ROUTES.Attributes

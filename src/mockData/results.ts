@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
-import { Result } from '../../../shared/src';
+import { ResultBackend } from '../../../shared/src';
 
 export const RESULTS_MOCK_CHARACTERID = new Types.ObjectId();
 
 const nowISO = new Date(Date.now()).toISOString();
 const nowInOneHourISO = new Date(Date.now() + 1 * 60 * 60 * 1000).toISOString();
 
-export const RESULTS_MOCK: Result[] = [
+export const RESULTS_MOCK: ResultBackend[] = [
   {
     adventureId: 1,
     characterId: RESULTS_MOCK_CHARACTERID,

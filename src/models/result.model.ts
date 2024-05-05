@@ -1,13 +1,13 @@
 import { modelOptions, prop, getModelForClass } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
-import { Result, ResultCombat } from '../../../shared/src';
+import { ResultBackend, ResultCombat } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
   options: { customName: 'results' },
 })
-export class ResultSchema implements Result {
+export class ResultSchema implements ResultBackend {
   @prop({ required: true })
   public characterId!: Types.ObjectId;
 

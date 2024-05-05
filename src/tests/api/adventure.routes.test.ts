@@ -111,16 +111,12 @@ describe('Adventure routes', () => {
       };
       await addAdventureToDb(ADVENTURES_MOCK);
 
-      const adventuresLength = await AdventureModel.countDocuments(undefined, {
-        limit,
-      });
-
       const res = await request(APP_SERVER).get(apiAddress).query(queryString);
 
       expect(res.statusCode).toEqual(200);
       const adventuresResponse: Adventure_GET_all = res.body;
       expect(adventuresResponse.success).toBe(true);
-      expect(adventuresResponse.adventures).toHaveLength(adventuresLength);
+      expect(adventuresResponse.adventures).toHaveLength(limit);
     });
   });
 
