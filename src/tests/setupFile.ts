@@ -15,6 +15,7 @@ import {
   Response_CharacterEquipment_GET_all,
   Response_Inventory_GET_all,
   Response_Adventure_GET_all,
+  InventoryPostActions,
 } from '../../../shared/src';
 import { FULL_PUBLIC_ROUTES } from '../services/api.service';
 
@@ -83,6 +84,10 @@ beforeAll(() => {
           data: { success: true, characterEquipment: [] },
         });
       case FULL_PUBLIC_ROUTES.Inventory:
+        return Promise.resolve<{ data: Response_Inventory_POST }>({
+          data: { success: true, inventory: [] },
+        });
+      case `${FULL_PUBLIC_ROUTES.Inventory}/${InventoryPostActions.NEW}`:
         return Promise.resolve<{ data: Response_Inventory_POST }>({
           data: { success: true, inventory: [] },
         });

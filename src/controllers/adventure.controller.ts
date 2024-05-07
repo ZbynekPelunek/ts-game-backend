@@ -20,7 +20,11 @@ export class AdventureController {
 
       const query = AdventureModel.find().lean();
 
-      if (populateReward) query.populate<Reward>({ path: 'rewards.rewardId' });
+      if (populateReward)
+        query.populate<Reward>({
+          path: 'rewards.rewardId',
+          select: '-createdAt -updatedAt -__v',
+        });
       if (adventureLevel) query.where({ adventureLevel });
       if (type) query.where({ type });
       if (limit) query.limit(limit);

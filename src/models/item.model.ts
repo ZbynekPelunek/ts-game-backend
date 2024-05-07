@@ -15,6 +15,7 @@ import {
   WeaponType,
   CommonItemsEquipmenParams,
   CommonItemParams,
+  CurrencyId,
 } from '../../../shared/src';
 
 @modelOptions({
@@ -31,11 +32,14 @@ class ItemSchema implements CommonItemParams {
   @prop({ required: true, enum: ItemType })
   public itemType!: ItemType;
 
+  @prop({ required: true })
+  public sell!: {
+    value: number;
+    currencyId: CurrencyId;
+  };
+
   @prop({ default: 1 })
   public maxAmount?: number;
-
-  @prop()
-  public sellValue?: number;
 
   @prop({ enum: ItemQuality })
   public quality?: ItemQuality;

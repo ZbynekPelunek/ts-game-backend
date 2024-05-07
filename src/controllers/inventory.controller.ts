@@ -1,6 +1,4 @@
-import axios from 'axios';
 import { Request, Response } from 'express';
-import { Document } from 'mongoose';
 
 import {
   Request_Inventory_GET_all_query,
@@ -8,21 +6,36 @@ import {
   Request_Inventory_GET_item_param,
   Response_Inventory_GET_one,
   Request_Inventory_POST_body,
-  Request_Inventory_POST_query,
   Response_Inventory_POST,
-  InventoryActions,
   Request_Inventory_PATCH_param,
   Request_Inventory_PATCH_body,
   Response_Inventory_PATCH,
   Response_Item_GET_one,
   InventoryFrontend,
+  Request_Inventory_DELETE_param,
+  Response_Inventory_DELETE,
+  InventoryBackend,
+  CommonItemParams,
+  CommonItemsEquipmenParams,
+  InventoryItem,
+  Response_CharacterCurrency_GET_all,
+  Request_CharacterCurrency_GET_all_query,
+  Response_CharacterCurrency_PATCH,
+  Request_CharacterCurrency_PATCH_body,
 } from '../../../shared/src';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
-import { InventoryModel, InventorySchema } from '../models/inventory.model';
-import { FULL_PUBLIC_ROUTES } from '../services/api.service';
+import { InventoryModel } from '../models/inventory.model';
+import { ApiService, FULL_PUBLIC_ROUTES } from '../services/api.service';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
+import { Document } from 'mongoose';
 
 export class InventoryController {
+  private apiService: ApiService;
+
+  constructor() {
+    this.apiService = new ApiService();
+  }
+
   async getAll(
     req: Request<{}, {}, {}, Request_Inventory_GET_all_query>,
     res: Response<Response_Inventory_GET_all>
@@ -35,15 +48,7 @@ export class InventoryController {
       if (characterId) query.where({ characterId });
 
       const inventory = await query.exec();
-      const transformedInventory = inventory.map((inv) => {
-        return {
-          inventoryId: inv._id.toString(),
-          characterId: inv.characterId.toString(),
-          amount: inv.amount ?? 0,
-          itemId: inv.itemId,
-          slot: inv.slot,
-        };
-      });
+      const transformedInventory = this.transformResponseArray(inventory);
 
       return res
         .status(200)
@@ -60,67 +65,63 @@ export class InventoryController {
     try {
       const { inventoryId } = req.params;
 
-      const inventory = await InventoryModel.findById(inventoryId);
-
-      if (!inventory) {
-        throw new CustomError(
-          `Inventory with id '${inventoryId}' not found`,
-          404
-        );
-      }
+      const inventory = await this.getInventorySlotData(inventoryId);
+      const transformedInventory = this.transformResponseObject(inventory);
 
       return res
         .status(200)
-        .json({ success: true, inventory: this.transformResponse(inventory) });
+        .json({ success: true, inventory: transformedInventory });
     } catch (error) {
       errorHandler(error, req, res);
     }
   }
 
-  async post(
-    req: Request<
-      {},
-      {},
-      Request_Inventory_POST_body,
-      Request_Inventory_POST_query
-    >,
+  async addInventorySlot(
+    req: Request<{}, {}, Request_Inventory_POST_body>,
     res: Response<Response_Inventory_POST>
   ) {
     try {
-      const { action } = req.query;
+      const { characterId, slot, itemId } = req.body;
+      const inventoryDbResponse = await InventoryModel.create({
+        characterId,
+        slot,
+        itemId,
+      });
+      const transformedResponse = [
+        this.transformResponseObject(inventoryDbResponse),
+      ];
 
-      let response;
-      if (action === InventoryActions.NEW) {
-        const { characterId } = req.body;
-        console.log(
-          'creating new character inventory for character: ',
-          characterId
-        );
-        const defaultCharacterInventory =
-          generateCharacterInventory(characterId);
-        const inventoryDbResponse = await InventoryModel.create(
-          defaultCharacterInventory
-        );
-        response = inventoryDbResponse.map((ii) => {
-          return this.transformResponse(ii);
-        });
-      } else {
-        const { characterId, slot, itemId } = req.body;
-        const inventoryDbResponse = await InventoryModel.create({
-          characterId,
-          slot,
-          itemId,
-        });
-        response = [this.transformResponse(inventoryDbResponse)];
-      }
-
-      return res.status(201).json({ success: true, inventory: response });
+      return res
+        .status(201)
+        .json({ success: true, inventory: transformedResponse });
     } catch (error) {
       errorHandler(error, req, res);
     }
   }
 
-  async patch(
+  async createNewInventory(
+    req: Request<{}, {}, Request_Inventory_POST_body>,
+    res: Response<Response_Inventory_POST>
+  ) {
+    try {
+      const { characterId } = req.body;
+
+      const defaultCharacterInventory = generateCharacterInventory(characterId);
+      const inventoryDbResponse = await InventoryModel.create(
+        defaultCharacterInventory
+      );
+      const transformedResponse =
+        this.transformResponseArray(inventoryDbResponse);
+
+      return res
+        .status(201)
+        .json({ success: true, inventory: transformedResponse });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  async updateInventorySlot(
     req: Request<
       Request_Inventory_PATCH_param,
       {},
@@ -130,134 +131,294 @@ export class InventoryController {
   ) {
     try {
       const { inventoryId } = req.params;
-      const { characterId, itemId, amount, previousItemSlot } = req.body;
+      const { item } = req.body;
 
-      console.log('Looking for item data...');
-      const item = await axios.get<Response_Item_GET_one>(
-        `${FULL_PUBLIC_ROUTES.Items}/${itemId}`
-      );
-      if (!item.data.success) {
-        throw new CustomError('Error while retrieving item data', 500);
-      }
+      if (item === null) {
+        const updateRes = await this.updateInventoryItem(inventoryId, item);
 
-      if (!item.data.item) {
-        throw new CustomError('Item not found', 500);
-      }
-      console.log('...found item data: ', item.data.item);
-
-      console.log('Getting all inventory slots data...');
-
-      const inventorySlotItem = await InventoryModel.findById(inventoryId);
-      console.log('...found inventory slots data: ', inventorySlotItem);
-      if (!inventorySlotItem) {
-        throw new CustomError(
-          `Inventory item with id '${inventoryId}' does not exist`,
-          404
+        const response = this.transformResponseObject(
+          this.checkUpdateResponse(updateRes)
         );
+
+        return res.status(200).json({ success: true, inventory: response });
+      }
+
+      const inventorySlotToUpdate =
+        await this.getInventorySlotData(inventoryId);
+
+      const characterId = inventorySlotToUpdate.characterId.toString();
+
+      if (!inventorySlotToUpdate.item) {
+        const updateRes = await this.updateInventoryItem(inventoryId, item);
+
+        const response = this.transformResponseObject(
+          this.checkUpdateResponse(updateRes)
+        );
+
+        return res.status(200).json({ success: true, inventory: response });
+      }
+
+      const itemData = await this.getItemData(item.itemId);
+
+      if (this.isSameItem(inventorySlotToUpdate.item.itemId, item.itemId)) {
+        this.checkMaxAmount(itemData, inventorySlotToUpdate.item, item.amount);
+
+        const updateRes = await this.updateItemAmount(inventoryId, item.amount);
+
+        const response = this.transformResponseObject(
+          this.checkUpdateResponse(updateRes)
+        );
+
+        return res.status(200).json({ success: true, inventory: response });
       }
 
       let updateRes;
-      if (inventorySlotItem.itemId === item.data.item.itemId) {
-        if (inventorySlotItem.amount! + amount! > item.data.item.maxAmount!) {
-          throw new CustomError(
-            `Max amount reached ${inventorySlotItem.amount! + amount!}/${item.data.item.maxAmount}`,
-            400
-          );
-        }
-
-        updateRes = await InventoryModel.findByIdAndUpdate(
+      if (item.previousSlot) {
+        updateRes = await this.switchItems(
           inventoryId,
-          { $inc: { amount } },
-          { returnDocument: 'after' }
+          item.itemId,
+          item.amount,
+          characterId,
+          item.previousSlot,
+          inventorySlotToUpdate.item
         );
-        console.log('Update db response: ', updateRes);
-
-        const response = this.transformResponse(updateRes!);
-
-        return res.status(200).json({ success: true, inventory: response });
-      }
-
-      if (!inventorySlotItem.itemId) {
-        console.log('Updating itemId in slot: ', inventorySlotItem.slot);
-        updateRes = await InventoryModel.findByIdAndUpdate(
-          inventoryId,
-          { $set: { amount, characterId, itemId } },
-          { returnDocument: 'after' }
-        );
-        console.log('Update db response: ', updateRes);
-
-        const response = this.transformResponse(updateRes!);
-
-        return res.status(200).json({ success: true, inventory: response });
       } else {
-        if (previousItemSlot) {
-          console.log(
-            `'Switching item ${inventorySlotItem.itemId} with ${itemId}`
-          );
-          updateRes = await InventoryModel.findByIdAndUpdate(
-            inventoryId,
-            { itemId, amount },
-            { returnDocument: 'after' }
-          );
-          console.log('Update db response: ', updateRes);
-
-          await InventoryModel.findOneAndUpdate(
-            { slot: previousItemSlot },
-            {
-              itemId: inventorySlotItem.itemId,
-              amount: inventorySlotItem.amount,
-            }
-          );
-
-          const response = this.transformResponse(updateRes!);
-
-          return res.status(200).json({ success: true, inventory: response });
-        } else {
-          const allCharacterItemSlots = await InventoryModel.find({
-            characterId,
-          });
-
-          if (!allCharacterItemSlots) {
-            throw new CustomError('No character inventory data found', 500);
-          }
-
-          const freeCharacterItemSlots = allCharacterItemSlots.filter(
-            (i) => !i.itemId
-          );
-          console.log('freeCharacterItemSlots: ', freeCharacterItemSlots);
-
-          if (freeCharacterItemSlots.length === 0) {
-            throw new CustomError('Inventory is full', 500);
-          }
-
-          const firstFreeSlot = freeCharacterItemSlots[0];
-
-          updateRes = await InventoryModel.findOneAndUpdate(
-            { slot: firstFreeSlot.slot, characterId },
-            { itemId, amount },
-            { returnDocument: 'after' }
-          );
-          console.log('Update db response: ', updateRes);
-
-          const response = this.transformResponse(updateRes!);
-
-          return res.status(200).json({ success: true, inventory: response });
-        }
+        updateRes = await this.addItemToFreeSlot(
+          characterId,
+          item.itemId,
+          item.amount
+        );
       }
+      const response = this.transformResponseObject(
+        this.checkUpdateResponse(updateRes)
+      );
+
+      return res.status(200).json({ success: true, inventory: response });
     } catch (error) {
       errorHandler(error, req, res);
     }
   }
 
-  private transformResponse(
-    databaseResponse: InventorySchema & Document
+  async sellInventoryItem(
+    req: Request<
+      Request_Inventory_PATCH_param,
+      {},
+      Request_Inventory_PATCH_body
+    >,
+    res: Response<Response_Inventory_PATCH>
+  ) {
+    try {
+      const { inventoryId } = req.params;
+      const { item } = req.body;
+
+      const inventorySlotData = await this.getInventorySlotData(inventoryId);
+      const characterId = inventorySlotData.characterId.toString();
+
+      const updateRes = await this.updateInventoryItem(inventoryId, null);
+
+      const itemData = await this.getItemData(item!.itemId);
+      const { currencyId, value } = itemData.sell;
+
+      const charCurrencyQuery: Request_CharacterCurrency_GET_all_query = {
+        characterId,
+        currencyId,
+      };
+      const charCurrencyRes =
+        await this.apiService.get<Response_CharacterCurrency_GET_all>(
+          FULL_PUBLIC_ROUTES.CharacterCurrencies,
+          { params: charCurrencyQuery }
+        );
+
+      if (!charCurrencyRes.success) {
+        throw new CustomError(
+          'Error while retrieving character currency data',
+          500
+        );
+      }
+
+      const totalAmountIncrease = value * item?.amount!;
+      const updateCharCurrRes = await this.apiService.patch<
+        Response_CharacterCurrency_PATCH,
+        Request_CharacterCurrency_PATCH_body
+      >(
+        `${FULL_PUBLIC_ROUTES.CharacterCurrencies}/${charCurrencyRes.characterCurrencies[0]._id}`,
+        { amount: totalAmountIncrease }
+      );
+
+      if (!updateCharCurrRes.success) {
+        throw new CustomError(
+          'Error while updating character currency data',
+          500
+        );
+      }
+
+      const response = this.transformResponseObject(
+        this.checkUpdateResponse(updateRes)
+      );
+
+      return res.status(200).json({ success: true, inventory: response });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  async delete(
+    req: Request<Request_Inventory_DELETE_param>,
+    res: Response<Response_Inventory_DELETE>
+  ) {
+    try {
+      const { inventoryId } = req.params;
+
+      await InventoryModel.findByIdAndDelete(inventoryId);
+
+      return res.status(204);
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  private async getItemData(
+    itemId: number
+  ): Promise<CommonItemParams | CommonItemsEquipmenParams> {
+    const response = await this.apiService.get<Response_Item_GET_one>(
+      `${FULL_PUBLIC_ROUTES.Items}/${itemId}`
+    );
+
+    if (!response.success || !response.item) {
+      throw new CustomError('Error while retrieving item data', 500);
+    }
+
+    return response.item;
+  }
+
+  private async getInventorySlotData(inventoryId: string) {
+    const inventorySlotData = await InventoryModel.findById(inventoryId).lean();
+    if (!inventorySlotData) {
+      throw new CustomError(
+        `Inventory slot with id '${inventoryId}' does not exist`,
+        404
+      );
+    }
+
+    return inventorySlotData;
+  }
+
+  private isSameItem(inventoryItemId: number, receivedItemId: number): boolean {
+    return inventoryItemId === receivedItemId;
+  }
+
+  private checkMaxAmount(
+    item: CommonItemParams | CommonItemsEquipmenParams,
+    inventorySlotItem: InventoryItem,
+    amount: number
+  ): void {
+    if (inventorySlotItem.amount + amount > item.maxAmount!) {
+      throw new CustomError(
+        `Max amount reached ${inventorySlotItem.amount + amount}/${item.maxAmount}`,
+        400
+      );
+    }
+  }
+
+  private async updateItemAmount(inventoryId: string, amount: number) {
+    return InventoryModel.findByIdAndUpdate(
+      inventoryId,
+      { $inc: { 'item.amount': amount } },
+      { returnDocument: 'after' }
+    );
+  }
+
+  private async updateInventoryItem(
+    inventoryId: string,
+    item: {
+      itemId: number;
+      amount: number;
+    } | null
+  ) {
+    return InventoryModel.findByIdAndUpdate(
+      inventoryId,
+      {
+        $set: { item },
+      },
+      { returnDocument: 'after' }
+    );
+  }
+
+  private async switchItems(
+    inventoryId: string,
+    itemId: number,
+    amount: number,
+    characterId: string,
+    previousItemSlot: number,
+    inventorySlotItem: InventoryItem
+  ) {
+    const updateResponse = await InventoryModel.findByIdAndUpdate(
+      inventoryId,
+      { 'item.itemId': itemId, 'item.amount': amount },
+      { returnDocument: 'after' }
+    );
+
+    await InventoryModel.findOneAndUpdate(
+      { characterId, slot: previousItemSlot },
+      {
+        'item.itemId': inventorySlotItem.itemId,
+        'item.amount': inventorySlotItem.amount,
+      }
+    );
+
+    return updateResponse;
+  }
+
+  private async addItemToFreeSlot(
+    characterId: string,
+    itemId: number,
+    amount: number
+  ) {
+    const allCharacterItemSlots = await InventoryModel.find({
+      characterId,
+    });
+
+    if (!allCharacterItemSlots) {
+      throw new CustomError('No character inventory data found', 500);
+    }
+
+    const freeCharacterItemSlots = allCharacterItemSlots.filter((i) => !i.item);
+    console.log('freeCharacterItemSlots: ', freeCharacterItemSlots);
+
+    if (freeCharacterItemSlots.length === 0) {
+      throw new CustomError('Inventory is full', 500);
+    }
+
+    const firstFreeSlot = freeCharacterItemSlots[0];
+
+    return InventoryModel.findOneAndUpdate(
+      { slot: firstFreeSlot.slot, characterId },
+      { item: { itemId, amount } },
+      { returnDocument: 'after' }
+    );
+  }
+
+  private checkUpdateResponse(updateRes: (Document & InventoryBackend) | null) {
+    if (!updateRes) {
+      throw new CustomError('Something went wrong while updating', 500);
+    }
+    return updateRes;
+  }
+
+  private transformResponseObject(
+    databaseResponse: InventoryBackend
   ): InventoryFrontend {
     return {
-      inventoryId: databaseResponse.id,
-      characterId: databaseResponse.characterId.toString(),
-      amount: databaseResponse.amount ?? 0,
-      itemId: databaseResponse.itemId,
       slot: databaseResponse.slot,
+      item: databaseResponse.item,
+      _id: databaseResponse._id!.toString(),
+      characterId: databaseResponse.characterId.toString(),
     };
+  }
+
+  private transformResponseArray(
+    databaseResponse: InventoryBackend[]
+  ): InventoryFrontend[] {
+    return databaseResponse.map((res) => this.transformResponseObject(res));
   }
 }

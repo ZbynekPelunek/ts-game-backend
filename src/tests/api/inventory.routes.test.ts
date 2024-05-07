@@ -1,17 +1,26 @@
 import request from 'supertest';
-import { describe, afterEach, it, expect, beforeAll } from '@jest/globals';
+import {
+  describe,
+  afterEach,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  xit,
+} from '@jest/globals';
 
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { defaultMaxInventorySlots } from '../../defaultCharacterData/inventory';
 import {
   ArmorType,
+  CurrencyId,
   EquipmentSlot,
   Inventory_GET_all,
   Inventory_GET_one,
   Inventory_PATCH,
   Inventory_POST,
-  InventoryActions,
   InventoryBackend,
+  InventoryPostActions,
   ItemQuality,
   ItemType,
   MainAttributeNames,
@@ -33,8 +42,7 @@ describe('Inventory routes', () => {
   describe(`GET ${apiAddress}`, () => {
     it('returns status code 200 with all inventory slots', async () => {
       await addInventoryToDb({
-        itemId: 1,
-        amount: 2,
+        item: { itemId: 1, amount: 2 },
         characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
@@ -53,8 +61,7 @@ describe('Inventory routes', () => {
   describe(`GET ${apiAddress}/<INVENTORY_ID>`, () => {
     it('returns status code 200 with correct inventory slot', async () => {
       const inventory = await addInventoryToDb({
-        itemId: 1,
-        amount: 2,
+        item: { itemId: 1, amount: 2 },
         characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
@@ -65,7 +72,7 @@ describe('Inventory routes', () => {
       expect(res.statusCode).toEqual(200);
       const inventoryResponse: Inventory_GET_one = res.body;
       expect(inventoryResponse.success).toBe(true);
-      expect(inventoryResponse.inventory.inventoryId).toBe(inventoryId);
+      expect(inventoryResponse.inventory._id).toBe(inventoryId);
     });
 
     it('returns status code 404 when inventory ID is unknown', async () => {
@@ -78,7 +85,7 @@ describe('Inventory routes', () => {
       const inventoryResponse: Common_Response_Error = res.body;
       expect(inventoryResponse.success).toBe(false);
       expect(inventoryResponse.error).toBe(
-        `Inventory with id '${unknownInventoryId}' not found`
+        `Inventory slot with id '${unknownInventoryId}' does not exist`
       );
     });
   });
@@ -87,8 +94,7 @@ describe('Inventory routes', () => {
     it('returns status code 201 with added inventory', async () => {
       const characterId = UNKNOWN_OBJECT_ID;
       await addInventoryToDb({
-        itemId: 1,
-        amount: 2,
+        item: { itemId: 1, amount: 2 },
         characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
@@ -111,12 +117,13 @@ describe('Inventory routes', () => {
       expect(inventoryResponse.success).toEqual(true);
       expect(inventoryResponse.inventory).toHaveLength(1);
     });
+  });
 
+  describe(`POST ${apiAddress}/${InventoryPostActions.NEW}`, () => {
     it('returns status code 201 with added new character inventory', async () => {
       const characterId = UNKNOWN_OBJECT_ID;
       await addInventoryToDb({
-        itemId: 1,
-        amount: 2,
+        item: { itemId: 1, amount: 2 },
         characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
       });
@@ -128,7 +135,7 @@ describe('Inventory routes', () => {
       const currentInventoryLength = await InventoryModel.countDocuments();
 
       const res = await request(APP_SERVER)
-        .post(`${apiAddress}?action=${InventoryActions.NEW}`)
+        .post(`${apiAddress}/${InventoryPostActions.NEW}`)
         .send(newInventory);
 
       const newInventoryLength = await InventoryModel.countDocuments();
@@ -172,6 +179,10 @@ describe('Inventory routes', () => {
                 itemLevel: 15,
                 slot: EquipmentSlot.CHEST,
                 maxAmount: maxItemAmount,
+                sell: {
+                  currencyId: CurrencyId.GOLD,
+                  value: 10,
+                },
               },
             },
           });
@@ -181,29 +192,36 @@ describe('Inventory routes', () => {
       });
     });
 
+    afterAll(() => {
+      mockedAxios.get.mockClear();
+    });
+
     it('returns status code 200 when inventory ID is the same but NOT max amount reached', async () => {
       const inventory = await addInventoryToDb({
         characterId: UNKNOWN_OBJECT_ID,
         slot: 4,
-        itemId: newItemId,
-        amount: 1,
+        item: { itemId: newItemId, amount: 1 },
       });
       const inventoryId = inventory.id;
 
       const newInventory: Request_Inventory_PATCH_body = {
-        itemId: inventory.itemId,
-        amount: 1,
+        item: {
+          itemId: inventory.item!.itemId,
+          amount: 1,
+        },
       };
       const res = await request(APP_SERVER)
         .patch(`${apiAddress}/${inventoryId}`)
         .send(newInventory);
 
+      console.log('test call response: ', res.body);
       expect(res.statusCode).toEqual(200);
       const inventoryResponse: Inventory_PATCH = res.body;
       expect(inventoryResponse.success).toEqual(true);
-      expect(inventoryResponse.inventory.itemId).toBe(newItemId);
-      expect(inventoryResponse.inventory.amount).toBe(
-        inventory.amount! + newInventory.amount!
+      expect(inventoryResponse.inventory.item).toBeTruthy();
+      expect(inventoryResponse.inventory.item?.itemId).toBe(newItemId);
+      expect(inventoryResponse.inventory.item?.amount).toBe(
+        inventory.item?.amount! + newInventory.item!.amount
       );
     });
 
@@ -211,14 +229,15 @@ describe('Inventory routes', () => {
       const inventory = await addInventoryToDb({
         characterId: UNKNOWN_OBJECT_ID,
         slot: 4,
-        itemId: newItemId,
-        amount: 1,
+        item: { itemId: newItemId, amount: 1 },
       });
       const inventoryId = inventory.id;
 
       const newInventory: Request_Inventory_PATCH_body = {
-        itemId: inventory.itemId,
-        amount: 2,
+        item: {
+          itemId: inventory.item!.itemId,
+          amount: 2,
+        },
       };
       const res = await request(APP_SERVER)
         .patch(`${apiAddress}/${inventoryId}`)
@@ -228,7 +247,7 @@ describe('Inventory routes', () => {
       const inventoryResponse: Common_Response_Error = res.body;
       expect(inventoryResponse.success).toEqual(false);
       expect(inventoryResponse.error).toBe(
-        `Max amount reached ${inventory.amount! + newInventory.amount!}/${maxItemAmount}`
+        `Max amount reached ${inventory.item!.amount + newInventory.item?.amount!}/${maxItemAmount}`
       );
     });
 
@@ -240,7 +259,10 @@ describe('Inventory routes', () => {
       const inventoryId = inventory.id;
 
       const newInventory: Request_Inventory_PATCH_body = {
-        itemId: newItemId,
+        item: {
+          itemId: newItemId,
+          amount: 1,
+        },
       };
 
       const res = await request(APP_SERVER)
@@ -250,7 +272,8 @@ describe('Inventory routes', () => {
       expect(res.statusCode).toEqual(200);
       const inventoryResponse: Inventory_PATCH = res.body;
       expect(inventoryResponse.success).toEqual(true);
-      expect(inventoryResponse.inventory.itemId).toBe(newItemId);
+      expect(inventoryResponse.inventory.item).toBeTruthy();
+      expect(inventoryResponse.inventory.item?.itemId).toBe(newItemId);
     });
 
     it('returns status code 200 when item is successfully switched with another', async () => {
@@ -258,22 +281,28 @@ describe('Inventory routes', () => {
       const inventorySlot_1 = await addInventoryToDb({
         characterId: UNKNOWN_OBJECT_ID,
         slot: 6,
-        itemId: currentInventorySlotItemId,
-        amount: 1,
+        item: {
+          itemId: currentInventorySlotItemId,
+          amount: 1,
+        },
       });
       const inventorySlot_2 = await addInventoryToDb({
         characterId: UNKNOWN_OBJECT_ID,
         slot: 1,
-        itemId: newItemId,
-        amount: 1,
+        item: {
+          itemId: newItemId,
+          amount: 1,
+        },
       });
       const inventorySlot1Id = inventorySlot_1.id;
       const inventorySlot2Id = inventorySlot_2.id;
 
       const updatedInventory: Request_Inventory_PATCH_body = {
-        itemId: inventorySlot_2.itemId,
-        previousItemSlot: inventorySlot_2.slot,
-        amount: inventorySlot_2.amount,
+        item: {
+          itemId: inventorySlot_2.item?.itemId!,
+          previousSlot: inventorySlot_2.slot,
+          amount: inventorySlot_2.item?.amount!,
+        },
       };
 
       const res = await request(APP_SERVER)
@@ -286,8 +315,13 @@ describe('Inventory routes', () => {
       expect(res.statusCode).toEqual(200);
       const inventoryResponse: Inventory_PATCH = res.body;
       expect(inventoryResponse.success).toEqual(true);
-      expect(inventoryResponse.inventory.itemId).toBe(inventorySlot_2.itemId);
-      expect(previousInventorySlot?.itemId).toBe(inventorySlot_1.itemId);
+      expect(inventoryResponse.inventory.item).toBeTruthy();
+      expect(inventoryResponse.inventory.item?.itemId).toBe(
+        inventorySlot_2.item?.itemId
+      );
+      expect(previousInventorySlot?.item?.itemId).toBe(
+        inventorySlot_1.item?.itemId
+      );
     });
 
     it('returns status code 200 when new item is received and added to inventory', async () => {
@@ -297,8 +331,10 @@ describe('Inventory routes', () => {
       const inventorySlot_1 = await addInventoryToDb({
         characterId,
         slot: 1,
-        itemId: invSlot1ItemId,
-        amount: 1,
+        item: {
+          itemId: invSlot1ItemId,
+          amount: 1,
+        },
       });
       const inventorySlot_2 = await addInventoryToDb({
         characterId: UNKNOWN_OBJECT_ID,
@@ -307,15 +343,15 @@ describe('Inventory routes', () => {
       const inventorySlot_3 = await addInventoryToDb({
         characterId: UNKNOWN_OBJECT_ID,
         slot: 3,
-        itemId: invSlot3ItemId,
-        amount: 1,
+        item: { itemId: invSlot3ItemId, amount: 1 },
       });
       const inventorySlot1Id = inventorySlot_1.id;
 
       const updatedInventory: Request_Inventory_PATCH_body = {
-        itemId: newItemId,
-        amount: 2,
-        characterId: characterId.toString(),
+        item: {
+          itemId: newItemId,
+          amount: 2,
+        },
       };
 
       const res = await request(APP_SERVER)
@@ -331,9 +367,10 @@ describe('Inventory routes', () => {
       const inventoryResponse: Inventory_PATCH = res.body;
       expect(inventoryResponse.success).toEqual(true);
       expect(inventoryResponse.inventory.slot).toBe(inventorySlot_2.slot);
-      expect(inventoryResponse.inventory.itemId).toBe(newItemId);
-      expect(inventorySlot_1_Updated?.itemId).toBe(invSlot1ItemId);
-      expect(inventorySlot_3_Updated?.itemId).toBe(invSlot3ItemId);
+      expect(inventoryResponse.inventory.item).toBeTruthy();
+      expect(inventoryResponse.inventory.item?.itemId).toBe(newItemId);
+      expect(inventorySlot_1_Updated?.item?.itemId).toBe(invSlot1ItemId);
+      expect(inventorySlot_3_Updated?.item?.itemId).toBe(invSlot3ItemId);
     });
 
     it('returns status code 500 when new item is received but inventory is full', async () => {
@@ -344,27 +381,31 @@ describe('Inventory routes', () => {
       const inventorySlot_1 = await addInventoryToDb({
         characterId,
         slot: 1,
-        itemId: invSlot1ItemId,
-        amount: 1,
+        item: {
+          itemId: invSlot1ItemId,
+          amount: 1,
+        },
       });
       await addInventoryToDb({
         characterId: UNKNOWN_OBJECT_ID,
         slot: 2,
-        itemId: invSlot2ItemId,
-        amount: 1,
+        item: {
+          itemId: invSlot2ItemId,
+          amount: 1,
+        },
       });
       await addInventoryToDb({
         characterId: UNKNOWN_OBJECT_ID,
         slot: 3,
-        itemId: invSlot3ItemId,
-        amount: 1,
+        item: { itemId: invSlot3ItemId, amount: 1 },
       });
       const inventorySlot1Id = inventorySlot_1.id;
 
       const updatedInventory: Request_Inventory_PATCH_body = {
-        itemId: newItemId,
-        amount: 2,
-        characterId: characterId.toString(),
+        item: {
+          itemId: newItemId,
+          amount: 2,
+        },
       };
 
       const res = await request(APP_SERVER)
@@ -379,8 +420,6 @@ describe('Inventory routes', () => {
   });
 });
 
-async function addInventoryToDb(input: InventoryBackend) {
-  const inventory = new InventoryModel<InventoryBackend>(input);
-
-  return inventory.save();
+async function addInventoryToDb(input: InventoryBackend | InventoryBackend[]) {
+  return InventoryModel.create(input);
 }

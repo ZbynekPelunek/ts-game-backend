@@ -8,6 +8,7 @@ import {
   CurrencyId,
   CharacterCurrency_POST,
   CharacterCurrencyFrontend,
+  Request_CharacterCurrency_POST_body,
 } from '../../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { CharacterCurrencyModel } from '../../models/characterCurrency.model';
@@ -19,6 +20,7 @@ describe('Character Currency routes', () => {
 
   afterEach(async () => {
     await CharacterCurrencyModel.deleteMany();
+    await CurrencyModel.deleteMany();
   });
 
   describe(`GET ${apiAddress}`, () => {
@@ -87,59 +89,61 @@ describe('Character Currency routes', () => {
       expect(characterCurrenciesResponse.characterCurrencies).toHaveLength(
         charAttributesLength
       );
-      expect(
-        characterCurrenciesResponse.characterCurrencies[0].currency?._id
-      ).toBe(currencyId);
-      expect(
-        characterCurrenciesResponse.characterCurrencies[0].currency?.label
-      ).toBe(currencyLabel);
-      expect(
-        characterCurrenciesResponse.characterCurrencies[0].currency?.name
-      ).toBe(currencyName);
-      await CurrencyModel.deleteMany();
+      const populatedCurrency = characterCurrenciesResponse
+        .characterCurrencies[0].currencyId as Currency;
+      expect(populatedCurrency._id).toBe(currencyId);
+      expect(populatedCurrency.label).toBe(currencyLabel);
+      expect(populatedCurrency.name).toBe(currencyName);
     });
   });
 
   describe(`POST ${apiAddress}`, () => {
     it('returns status code 201 with multiple created character currencies', async () => {
-      const characterCurrencies: CharacterCurrencyFrontend[] = [
-        {
-          characterId: UNKNOWN_OBJECT_ID.toString(),
-          currencyId: CurrencyId.CHEATING_CURRENCY,
-          amount: 0,
-          characterCurrencyId: '',
-        },
-        {
-          characterId: UNKNOWN_OBJECT_ID.toString(),
-          currencyId: CurrencyId.GOLD,
-          amount: 10,
-          characterCurrencyId: '',
-        },
-      ];
+      const charCurrBody: Request_CharacterCurrency_POST_body = {
+        characterCurrencies: [
+          {
+            characterId: UNKNOWN_OBJECT_ID.toString(),
+            currencyId: CurrencyId.CHEATING_CURRENCY,
+            amount: 0,
+          },
+          {
+            characterId: UNKNOWN_OBJECT_ID.toString(),
+            currencyId: CurrencyId.GOLD,
+            amount: 10,
+          },
+        ],
+      };
+      const charCurrLength = (
+        charCurrBody.characterCurrencies as Omit<
+          CharacterCurrencyFrontend,
+          '_id'
+        >[]
+      ).length;
 
       const res = await request(APP_SERVER)
         .post(`${apiAddress}`)
-        .send({ characterCurrencies });
+        .send(charCurrBody);
 
       expect(res.statusCode).toEqual(201);
       const characterCurrenciesResponse: CharacterCurrency_POST = res.body;
       expect(characterCurrenciesResponse.success).toBe(true);
       expect(characterCurrenciesResponse.characterCurrencies).toHaveLength(
-        characterCurrencies.length
+        charCurrLength
       );
     });
 
     it('returns status code 201 with single created character currency', async () => {
-      const characterCurrency: CharacterCurrencyFrontend = {
-        characterId: UNKNOWN_OBJECT_ID.toString(),
-        currencyId: CurrencyId.CHEATING_CURRENCY,
-        amount: 0,
-        characterCurrencyId: '',
+      const charCurrBody: Request_CharacterCurrency_POST_body = {
+        characterCurrencies: {
+          characterId: UNKNOWN_OBJECT_ID.toString(),
+          currencyId: CurrencyId.CHEATING_CURRENCY,
+          amount: 0,
+        },
       };
 
       const res = await request(APP_SERVER)
         .post(`${apiAddress}`)
-        .send({ characterCurrencies: characterCurrency });
+        .send(charCurrBody);
 
       expect(res.statusCode).toEqual(201);
       const characterCurrenciesResponse: CharacterCurrency_POST = res.body;

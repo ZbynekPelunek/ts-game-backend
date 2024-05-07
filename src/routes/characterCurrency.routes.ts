@@ -14,3 +14,8 @@ characterCurrenciesRouter.post(
   '',
   characterCurrencyController.post.bind(characterCurrencyController)
 );
+
+characterCurrenciesRouter.patch(
+  '/:characterCurrencyId',
+  characterCurrencyController.patch.bind(characterCurrencyController)
+);

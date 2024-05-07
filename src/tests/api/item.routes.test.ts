@@ -4,6 +4,7 @@ import { describe, afterEach, it, expect } from '@jest/globals';
 import {
   ArmorType,
   CommonItemsEquipmenParams,
+  CurrencyId,
   EquipmentSlot,
   ItemQuality,
   ItemType,
@@ -41,6 +42,10 @@ describe('Item routes', () => {
         equipmentType: ArmorType.LEATHER,
         itemLevel: 15,
         slot: EquipmentSlot.CHEST,
+        sell: {
+          currencyId: CurrencyId.GOLD,
+          value: 15,
+        },
       });
 
       const itemsLength = await ItemModel.countDocuments();
@@ -73,6 +78,10 @@ describe('Item routes', () => {
         equipmentType: ArmorType.LEATHER,
         itemLevel: 15,
         slot: EquipmentSlot.CHEST,
+        sell: {
+          currencyId: CurrencyId.GOLD,
+          value: 15,
+        },
       });
 
       const res = await request(APP_SERVER).get(`${apiAddress}/${itemId}`);

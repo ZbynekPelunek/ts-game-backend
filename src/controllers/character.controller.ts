@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
-import axios, { AxiosResponse } from 'axios';
 
 import {
   CharacterBackend,
   CharacterEquipmentFrontend,
   CharacterFrontend,
   EquipmentSlot,
-  InventoryActions,
+  InventoryPostActions,
   Request_Character_GET_all_query,
   Request_Character_GET_one_params,
   Request_Character_GET_one_query,
@@ -15,7 +14,6 @@ import {
   Request_CharacterCurrency_POST_body,
   Request_CharacterEquipment_POST_body,
   Request_Inventory_POST_body,
-  Request_Inventory_POST_query,
   Response_Attribute_GET_all,
   Response_Character_GET_All,
   Response_Character_GET_one,
@@ -210,17 +208,12 @@ export class CharacterController {
   }
 
   private async createCharacterInventory(characterId: string): Promise<void> {
-    const inventoryQuery: Request_Inventory_POST_query = {
-      action: InventoryActions.NEW,
-    };
     const inventoryItemsResponse = await this.apiService.post<
       Response_Inventory_POST,
       Request_Inventory_POST_body
-    >(
-      FULL_PUBLIC_ROUTES.Inventory,
-      { characterId: characterId },
-      { params: inventoryQuery }
-    );
+    >(`${FULL_PUBLIC_ROUTES.Inventory}/${InventoryPostActions.NEW}`, {
+      characterId: characterId,
+    });
 
     if (!inventoryItemsResponse.success) {
       throw new Error('Character inventory error');

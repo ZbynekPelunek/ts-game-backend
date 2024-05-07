@@ -9,14 +9,18 @@ import {
   SecondaryAttributeNames,
   Weapon,
   WeaponType,
+  CurrencyId,
 } from '../../../shared/src';
 
 const commonStarterArmorParams = {
   itemLevel: 1,
   itemType: ItemType.EQUIPMENT,
-  sellValue: 1,
   maxItemLevel: 5,
   maxAmount: 1,
+  sell: {
+    currencyId: CurrencyId.GOLD,
+    value: 1,
+  },
 };
 
 export const starterArmor: Armor[] = [
@@ -277,9 +281,12 @@ export const starterArmor: Armor[] = [
 const commonStarterWeaponParams = {
   itemLevel: 1,
   itemType: ItemType.EQUIPMENT,
-  sellValue: 1,
   maxItemLevel: 5,
   maxAmount: 1,
+  sell: {
+    currencyId: CurrencyId.GOLD,
+    value: 1,
+  },
 };
 
 export const starterWeapons: Weapon[] = [
