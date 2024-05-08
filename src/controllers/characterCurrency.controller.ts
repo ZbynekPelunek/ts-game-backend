@@ -107,7 +107,7 @@ export class CharacterCurrencyController {
       );
 
       return res
-        .status(201)
+        .status(200)
         .json({ success: true, characterCurrency: transformedResponse });
     } catch (error) {
       errorHandler(error, req, res);

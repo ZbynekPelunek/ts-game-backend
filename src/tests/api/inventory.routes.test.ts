@@ -20,12 +20,15 @@ import {
   Inventory_PATCH,
   Inventory_POST,
   InventoryBackend,
+  InventoryPatchActions,
   InventoryPostActions,
   ItemQuality,
   ItemType,
   MainAttributeNames,
   Request_Inventory_PATCH_body,
   Request_Inventory_POST_body,
+  Response_CharacterCurrency_GET_all,
+  Response_CharacterCurrency_PATCH,
   Response_Item_GET_one,
 } from '../../../../shared/src';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
@@ -416,6 +419,106 @@ describe('Inventory routes', () => {
       const inventoryResponse: Common_Response_Error = res.body;
       expect(inventoryResponse.success).toEqual(false);
       expect(inventoryResponse.error).toBe('Inventory is full');
+    });
+  });
+
+  describe(`PATCH ${apiAddress}/<INVENTORY_ID>/${InventoryPatchActions.SELL_ITEM}`, () => {
+    const newItemId = 5;
+    const charCurrencyId = 'abc';
+
+    beforeAll(() => {
+      mockedAxios.get.mockImplementation((url: string) => {
+        switch (url) {
+          case `${FULL_PUBLIC_ROUTES.Items}/${newItemId}`:
+            return Promise.resolve<{ data: Response_Item_GET_one }>({
+              data: {
+                success: true,
+                item: {
+                  itemId: newItemId,
+                  itemType: ItemType.EQUIPMENT,
+                  name: 'Equipment1',
+                  quality: ItemQuality.LEGENDARY,
+                  attributes: [
+                    {
+                      attributeName: MainAttributeNames.ARMOR,
+                      attributeMaxValue: 10,
+                      attributeMinValue: 1,
+                      requiredQuality: ItemQuality.COMMON,
+                    },
+                  ],
+                  equipmentType: ArmorType.LEATHER,
+                  itemLevel: 15,
+                  slot: EquipmentSlot.CHEST,
+                  maxAmount: 1,
+                  sell: {
+                    currencyId: CurrencyId.GOLD,
+                    value: 10,
+                  },
+                },
+              },
+            });
+          case FULL_PUBLIC_ROUTES.CharacterCurrencies:
+            return Promise.resolve<{
+              data: Response_CharacterCurrency_GET_all;
+            }>({
+              data: {
+                success: true,
+                characterCurrencies: [
+                  {
+                    _id: charCurrencyId,
+                    amount: 15,
+                    characterId: '',
+                    currencyId: CurrencyId.GOLD,
+                  },
+                ],
+              },
+            });
+          default:
+            return Promise.resolve<any>({ data: [] });
+        }
+      });
+
+      mockedAxios.patch.mockImplementation((url: string) => {
+        switch (url) {
+          case `${FULL_PUBLIC_ROUTES.CharacterCurrencies}/${charCurrencyId}`:
+            return Promise.resolve<{ data: { success: true } }>({
+              data: { success: true },
+            });
+          default:
+            return Promise.resolve<any>({ data: [] });
+        }
+      });
+    });
+
+    afterAll(() => {
+      mockedAxios.get.mockClear();
+    });
+
+    it('returns status code 200 after selling an item', async () => {
+      const inventorySlot = await addInventoryToDb({
+        item: { itemId: newItemId, amount: 1 },
+        characterId: UNKNOWN_OBJECT_ID,
+        slot: 6,
+      });
+      const inventoryId = inventorySlot.id;
+
+      const newInventory: Request_Inventory_PATCH_body = {
+        item: {
+          itemId: inventorySlot.item!.itemId,
+          amount: 1,
+        },
+      };
+      const res = await request(APP_SERVER)
+        .patch(
+          `${apiAddress}/${inventoryId}/${InventoryPatchActions.SELL_ITEM}`
+        )
+        .send(newInventory);
+
+      expect(res.statusCode).toEqual(200);
+      const inventoryResponse: Inventory_PATCH = res.body;
+      expect(inventoryResponse.success).toEqual(true);
+      expect(inventoryResponse.inventory.slot).toBe(inventorySlot.slot);
+      expect(inventoryResponse.inventory.item).toBeNull();
     });
   });
 });

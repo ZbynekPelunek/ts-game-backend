@@ -9,6 +9,8 @@ import {
   CharacterCurrency_POST,
   CharacterCurrencyFrontend,
   Request_CharacterCurrency_POST_body,
+  Request_CharacterCurrency_PATCH_body,
+  CharacterCurrency_PATCH,
 } from '../../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { CharacterCurrencyModel } from '../../models/characterCurrency.model';
@@ -149,6 +151,35 @@ describe('Character Currency routes', () => {
       const characterCurrenciesResponse: CharacterCurrency_POST = res.body;
       expect(characterCurrenciesResponse.success).toBe(true);
       expect(characterCurrenciesResponse.characterCurrencies).toHaveLength(1);
+    });
+  });
+
+  describe(`PATCH ${apiAddress}/<CHARACTER_CURRENCY_ID>`, () => {
+    it('returns status code 200 with updated character currency', async () => {
+      const startingAmount = 1;
+      const amountToIncrease = 5;
+      const characterCurrency = await addCharCurrencyToDb(
+        CurrencyId.GOLD,
+        startingAmount
+      );
+      const characterCurrencyId = characterCurrency.id;
+
+      const requestBody: Request_CharacterCurrency_PATCH_body = {
+        amount: amountToIncrease,
+      };
+      const res = await request(APP_SERVER)
+        .patch(`${apiAddress}/${characterCurrencyId}`)
+        .send(requestBody);
+
+      expect(res.statusCode).toEqual(200);
+      const characterCurrenciesResponse: CharacterCurrency_PATCH = res.body;
+      expect(characterCurrenciesResponse.success).toBe(true);
+      expect(characterCurrenciesResponse.characterCurrency.amount).toBe(
+        startingAmount + amountToIncrease
+      );
+      expect(characterCurrenciesResponse.characterCurrency.currencyId).toBe(
+        CurrencyId.GOLD
+      );
     });
   });
 });

@@ -22,6 +22,7 @@ import {
   Request_CharacterCurrency_GET_all_query,
   Response_CharacterCurrency_PATCH,
   Request_CharacterCurrency_PATCH_body,
+  CurrencyId,
 } from '../../../shared/src';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
 import { InventoryModel } from '../models/inventory.model';
@@ -219,38 +220,16 @@ export class InventoryController {
       const itemData = await this.getItemData(item!.itemId);
       const { currencyId, value } = itemData.sell;
 
-      const charCurrencyQuery: Request_CharacterCurrency_GET_all_query = {
+      const charCurrencyRes = await this.getCharacterCurrencyData(
         characterId,
-        currencyId,
-      };
-      const charCurrencyRes =
-        await this.apiService.get<Response_CharacterCurrency_GET_all>(
-          FULL_PUBLIC_ROUTES.CharacterCurrencies,
-          { params: charCurrencyQuery }
-        );
-
-      if (!charCurrencyRes.success) {
-        throw new CustomError(
-          'Error while retrieving character currency data',
-          500
-        );
-      }
-
-      const totalAmountIncrease = value * item?.amount!;
-      const updateCharCurrRes = await this.apiService.patch<
-        Response_CharacterCurrency_PATCH,
-        Request_CharacterCurrency_PATCH_body
-      >(
-        `${FULL_PUBLIC_ROUTES.CharacterCurrencies}/${charCurrencyRes.characterCurrencies[0]._id}`,
-        { amount: totalAmountIncrease }
+        currencyId
       );
 
-      if (!updateCharCurrRes.success) {
-        throw new CustomError(
-          'Error while updating character currency data',
-          500
-        );
-      }
+      const totalAmountIncrease = value * item?.amount!;
+      await this.updateCharacterCurrency(
+        charCurrencyRes.characterCurrencies[0]._id,
+        totalAmountIncrease
+      );
 
       const response = this.transformResponseObject(
         this.checkUpdateResponse(updateRes)
@@ -301,6 +280,49 @@ export class InventoryController {
     }
 
     return inventorySlotData;
+  }
+
+  private async getCharacterCurrencyData(
+    characterId?: string,
+    currencyId?: CurrencyId
+  ) {
+    const charCurrencyQuery: Request_CharacterCurrency_GET_all_query = {
+      characterId,
+      currencyId,
+    };
+    const charCurrencyRes =
+      await this.apiService.get<Response_CharacterCurrency_GET_all>(
+        FULL_PUBLIC_ROUTES.CharacterCurrencies,
+        { params: charCurrencyQuery }
+      );
+
+    if (!charCurrencyRes.success) {
+      throw new CustomError(
+        'Error while retrieving character currency data',
+        500
+      );
+    }
+
+    return charCurrencyRes;
+  }
+
+  private async updateCharacterCurrency(
+    characterCurrencyId: string,
+    amount: number
+  ): Promise<void> {
+    const updateCharCurrRes = await this.apiService.patch<
+      Response_CharacterCurrency_PATCH,
+      Request_CharacterCurrency_PATCH_body
+    >(`${FULL_PUBLIC_ROUTES.CharacterCurrencies}/${characterCurrencyId}`, {
+      amount,
+    });
+
+    if (!updateCharCurrRes.success) {
+      throw new CustomError(
+        'Error while updating character currency data',
+        500
+      );
+    }
   }
 
   private isSameItem(inventoryItemId: number, receivedItemId: number): boolean {
