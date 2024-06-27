@@ -19,7 +19,7 @@ import {
 import { Combat } from '../engine/combat';
 import { EnemyModel } from '../models/enemy.model';
 import { ResultModel } from '../models/result.model';
-import { ApiService, FULL_PUBLIC_ROUTES } from '../services/api.service';
+import { ApiService, PUBLIC_ROUTES } from '../services/api.service';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class ResultController {
@@ -83,7 +83,7 @@ export class ResultController {
 
       const characterResponse =
         await this.apiService.get<Response_Character_GET_one>(
-          `${FULL_PUBLIC_ROUTES.Characters}/${characterId}`
+          `${PUBLIC_ROUTES.Characters}/${characterId}`
         );
 
       if (!characterResponse.success) {
@@ -93,7 +93,7 @@ export class ResultController {
 
       const adventureResponse =
         await this.apiService.get<Response_Adventure_GET_one>(
-          `${FULL_PUBLIC_ROUTES.Adventures}/${adventureId}`
+          `${PUBLIC_ROUTES.Adventures}/${adventureId}`
         );
 
       if (!adventureResponse.success) {
@@ -120,7 +120,7 @@ export class ResultController {
         };
         const characterAttributesRes =
           await this.apiService.get<Response_CharacterAttribute_GET_all>(
-            `${FULL_PUBLIC_ROUTES.CharacterAttributes}`,
+            `${PUBLIC_ROUTES.CharacterAttributes}`,
             { params: charAttQueryString }
           );
 

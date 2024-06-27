@@ -8,6 +8,7 @@ import { Types } from 'mongoose';
 
 import {
   CharacterEquipmentBackend,
+  CharacterEquipmentItem,
   EquipmentSlot,
   UiPosition,
 } from '../../../shared/src';
@@ -30,8 +31,13 @@ export class CharacterEquipmentSchema implements CharacterEquipmentBackend {
   @prop({ required: true })
   public uiPosition!: UiPosition;
 
-  @prop({ default: 0, ref: () => EquipmentSchema })
-  public itemId?: number;
+  @prop({ default: null, type: () => CharacterEquipmentItemSchema, _id: false })
+  item?: CharacterEquipmentItem | null;
+}
+
+class CharacterEquipmentItemSchema implements CharacterEquipmentItemSchema {
+  @prop({ required: true, ref: () => EquipmentSchema })
+  public itemId!: number;
 }
 
 export const CharacterEquipmentModel = getModelForClass(

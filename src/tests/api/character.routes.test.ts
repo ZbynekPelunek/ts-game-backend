@@ -21,7 +21,7 @@ import {
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { CHARACTERS_MOCK } from '../../mockData/characters';
 import { CharacterModel } from '../../models/character.model';
-import { FULL_PUBLIC_ROUTES, PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Character routes', () => {
   const accountId = UNKNOWN_OBJECT_ID;
@@ -80,6 +80,7 @@ describe('Character routes', () => {
       const res = await request(APP_SERVER).post(apiAddress).send(requestBody);
 
       const newLength = await CharacterModel.countDocuments();
+      console.log('response: ', res.body);
 
       expect(res.statusCode).toEqual(201);
       expect(newLength).toBe(currentLength + 1);
@@ -96,7 +97,7 @@ describe('Character routes', () => {
       const newCharName = 'Added Char 2';
 
       mockedAxios.get.mockImplementationOnce((url: string) => {
-        if (url === FULL_PUBLIC_ROUTES.Attributes) {
+        if (url.includes(PUBLIC_ROUTES.Attributes)) {
           return Promise.resolve<{
             data: Response_Attribute_GET_all;
           }>({

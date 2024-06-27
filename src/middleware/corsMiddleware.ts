@@ -7,7 +7,7 @@ export function corsMiddleware(
 ) {
   res.setHeader(
     'Access-Control-Allow-Origin',
-    process.env.FRONTEND_URL || 'http://localhost:4200'
+    process.env.FRONTEND_URL || 'http://127.0.0.1:4200'
   );
   res.setHeader(
     'Access-Control-Allow-Headers',

@@ -27,7 +27,7 @@ import {
 import { CharacterModel } from '../models/character.model';
 import { generateDefaultCharacterAttributes } from '../defaultCharacterData/attributes';
 import { generateCharacterCurrencies } from '../defaultCharacterData/currencies';
-import { ApiService, FULL_PUBLIC_ROUTES } from '../services/api.service';
+import { ApiService, PUBLIC_ROUTES } from '../services/api.service';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class CharacterController {
@@ -137,7 +137,7 @@ export class CharacterController {
   private async createCharacterAttributes(characterId: string): Promise<void> {
     const allAttributesResponse =
       await this.apiService.get<Response_Attribute_GET_all>(
-        FULL_PUBLIC_ROUTES.Attributes
+        PUBLIC_ROUTES.Attributes
       );
 
     if (!allAttributesResponse.success) {
@@ -154,7 +154,7 @@ export class CharacterController {
     const characterAttributesResponse = await this.apiService.post<
       Response_CharacterAttribute_POST,
       Request_CharacterAttribute_POST_body
-    >(FULL_PUBLIC_ROUTES.CharacterAttributes, {
+    >(PUBLIC_ROUTES.CharacterAttributes, {
       characterAttributes: defaultCharacterAttributes,
     });
 
@@ -171,7 +171,7 @@ export class CharacterController {
     const characterCurrenciesResponse = await this.apiService.post<
       Response_CharacterCurrency_POST,
       Request_CharacterCurrency_POST_body
-    >(FULL_PUBLIC_ROUTES.CharacterCurrencies, {
+    >(PUBLIC_ROUTES.CharacterCurrencies, {
       characterCurrencies: defaultCharacterCurrencies,
     });
 
@@ -183,13 +183,12 @@ export class CharacterController {
   }
 
   private async createCharacterEquipment(characterId: string): Promise<void> {
-    const equipmentArr: CharacterEquipmentFrontend[] = [];
+    const equipmentArr: Omit<CharacterEquipmentFrontend, '_id'>[] = [];
     for (const e in EquipmentSlot) {
-      const equipmentObj: CharacterEquipmentFrontend = {
+      const equipmentObj: Omit<CharacterEquipmentFrontend, '_id'> = {
         slot: e as EquipmentSlot,
         characterId: characterId,
         uiPosition: this.setUiPosition(e as EquipmentSlot),
-        equipmentId: '',
       };
       equipmentArr.push(equipmentObj);
     }
@@ -197,7 +196,7 @@ export class CharacterController {
     const characterEquipmentResponse = await this.apiService.post<
       Response_CharacterEquipment_POST,
       Request_CharacterEquipment_POST_body
-    >(FULL_PUBLIC_ROUTES.CharacterEquipment, {
+    >(PUBLIC_ROUTES.CharacterEquipment, {
       characterEquipment: equipmentArr,
     });
 
@@ -211,7 +210,7 @@ export class CharacterController {
     const inventoryItemsResponse = await this.apiService.post<
       Response_Inventory_POST,
       Request_Inventory_POST_body
-    >(`${FULL_PUBLIC_ROUTES.Inventory}/${InventoryPostActions.NEW}`, {
+    >(`${PUBLIC_ROUTES.Inventory}/${InventoryPostActions.NEW}`, {
       characterId: characterId,
     });
 

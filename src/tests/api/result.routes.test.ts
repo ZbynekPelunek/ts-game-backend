@@ -30,7 +30,7 @@ import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { ADVENTURES_MOCK } from '../../mockData/adventures';
 import { EnemyModel } from '../../models/enemy.model';
 import { ResultModel } from '../../models/result.model';
-import { FULL_PUBLIC_ROUTES, PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/api.service';
 import { Document } from 'mongoose';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 
@@ -112,8 +112,8 @@ describe('Result routes', () => {
 
     beforeAll(() => {
       mockedAxios.get.mockImplementation((url: string) => {
-        switch (url) {
-          case FULL_PUBLIC_ROUTES.CharacterAttributes:
+        switch (true) {
+          case url.includes(PUBLIC_ROUTES.CharacterAttributes):
             return Promise.resolve<{
               data: Response_CharacterAttribute_GET_all;
             }>({
@@ -151,7 +151,7 @@ describe('Result routes', () => {
                 ],
               },
             });
-          case `${FULL_PUBLIC_ROUTES.Characters}/${characterId}`:
+          case url.includes(`${PUBLIC_ROUTES.Characters}/${characterId}`):
             return Promise.resolve<{
               data: Response_Character_GET_one;
             }>({
@@ -164,7 +164,9 @@ describe('Result routes', () => {
                 },
               },
             });
-          case `${FULL_PUBLIC_ROUTES.Adventures}/${adventureNoEnemy._id}`:
+          case url.includes(
+            `${PUBLIC_ROUTES.Adventures}/${adventureNoEnemy._id}`
+          ):
             return Promise.resolve<{
               data: Response_Adventure_GET_one;
             }>({
@@ -175,7 +177,9 @@ describe('Result routes', () => {
                 },
               },
             });
-          case `${FULL_PUBLIC_ROUTES.Adventures}/${adventureWithEnemy._id}`:
+          case url.includes(
+            `${PUBLIC_ROUTES.Adventures}/${adventureWithEnemy._id}`
+          ):
             return Promise.resolve<{
               data: Response_Adventure_GET_one;
             }>({

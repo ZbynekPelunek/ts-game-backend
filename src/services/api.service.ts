@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { BasePaths, ApiRoutes } from '../../../shared/src';
+import { CustomError } from '../middleware/errorHandler';
 
 export const PUBLIC_ROUTES = {
   Accounts: `/${BasePaths.PUBLIC}/${ApiRoutes.ACCOUNTS}`,
@@ -16,7 +17,7 @@ export const PUBLIC_ROUTES = {
   Enemies: `/${BasePaths.PUBLIC}/${ApiRoutes.ENEMIES}`,
 };
 
-export const FULL_PUBLIC_ROUTES = {
+/* export const FULL_PUBLIC_ROUTES = {
   Accounts: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Accounts}`,
   Characters: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Characters}`,
   Adventures: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Adventures}`,
@@ -29,54 +30,48 @@ export const FULL_PUBLIC_ROUTES = {
   Items: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Items}`,
   Rewards: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Rewards}`,
   Enemies: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Enemies}`,
-};
+}; */
 
 export class ApiService {
-  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const apiResponse: AxiosResponse<T> = await axios.get(url, config);
-      console.log('GET API Response:', apiResponse.data);
-      return apiResponse.data;
-    } catch (error) {
-      console.error('Error calling GET API:', error);
-      throw error;
-    }
-  }
-
-  async post<T, D>(
-    url: string,
-    data: D,
+  private async makeRequest<T>(
+    method: 'get' | 'post' | 'patch' | 'delete',
+    path: string,
+    data?: any,
     config?: AxiosRequestConfig
   ): Promise<T> {
     try {
-      const apiResponse = await axios.post<T>(url, data, config);
-      console.log('POST API Response:', apiResponse.data);
+      const basePath = process.env.SERVER_URL;
+      if (!basePath) {
+        throw new CustomError('Base path is empty', 500);
+      }
+      const apiResponse: AxiosResponse<T> = await axios[method](
+        basePath + path,
+        data,
+        config
+      );
       return apiResponse.data;
     } catch (error) {
-      console.error('Error calling POST API:', error);
-      throw error;
+      throw new Error(`Error in ${method.toUpperCase()} request: ${error}`);
     }
   }
 
-  async patch<T, D>(url: string, data: D): Promise<T> {
-    try {
-      const apiResponse: AxiosResponse<T> = await axios.patch(url, data);
-      console.log('PATCH API Response:', apiResponse.data);
-      return apiResponse.data;
-    } catch (error) {
-      console.error('Error calling PATCH API:', error);
-      throw error;
-    }
+  async get<T>(path: string, config?: AxiosRequestConfig): Promise<T> {
+    return this.makeRequest<T>('get', path, undefined, config);
   }
 
-  async delete<T>(url: string): Promise<T> {
-    try {
-      const apiResponse: AxiosResponse<T> = await axios.delete(url);
-      console.log('DELETE API Response:', apiResponse.data);
-      return apiResponse.data;
-    } catch (error) {
-      console.error('Error calling DELETE API:', error);
-      throw error;
-    }
+  async post<T, D>(
+    path: string,
+    data: D,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return this.makeRequest<T>('post', path, data, config);
+  }
+
+  async patch<T, D>(path: string, data: D): Promise<T> {
+    return this.makeRequest<T>('patch', path, data);
+  }
+
+  async delete<T>(path: string): Promise<T> {
+    return this.makeRequest<T>('delete', path);
   }
 }

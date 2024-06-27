@@ -28,12 +28,11 @@ import {
   Request_Inventory_PATCH_body,
   Request_Inventory_POST_body,
   Response_CharacterCurrency_GET_all,
-  Response_CharacterCurrency_PATCH,
   Response_Item_GET_one,
 } from '../../../../shared/src';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 import { InventoryModel } from '../../models/inventory.model';
-import { FULL_PUBLIC_ROUTES, PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Inventory routes', () => {
   const apiAddress = PUBLIC_ROUTES.Inventory;
@@ -161,7 +160,7 @@ describe('Inventory routes', () => {
 
     beforeAll(() => {
       mockedAxios.get.mockImplementation((url: string) => {
-        if (url === `${FULL_PUBLIC_ROUTES.Items}/${newItemId}`) {
+        if (url.includes(`${PUBLIC_ROUTES.Items}/${newItemId}`)) {
           return Promise.resolve<{ data: Response_Item_GET_one }>({
             data: {
               success: true,
@@ -428,8 +427,8 @@ describe('Inventory routes', () => {
 
     beforeAll(() => {
       mockedAxios.get.mockImplementation((url: string) => {
-        switch (url) {
-          case `${FULL_PUBLIC_ROUTES.Items}/${newItemId}`:
+        switch (true) {
+          case url.includes(`${PUBLIC_ROUTES.Items}/${newItemId}`):
             return Promise.resolve<{ data: Response_Item_GET_one }>({
               data: {
                 success: true,
@@ -457,7 +456,7 @@ describe('Inventory routes', () => {
                 },
               },
             });
-          case FULL_PUBLIC_ROUTES.CharacterCurrencies:
+          case url.includes(PUBLIC_ROUTES.CharacterCurrencies):
             return Promise.resolve<{
               data: Response_CharacterCurrency_GET_all;
             }>({
@@ -479,8 +478,10 @@ describe('Inventory routes', () => {
       });
 
       mockedAxios.patch.mockImplementation((url: string) => {
-        switch (url) {
-          case `${FULL_PUBLIC_ROUTES.CharacterCurrencies}/${charCurrencyId}`:
+        switch (true) {
+          case url.includes(
+            `${PUBLIC_ROUTES.CharacterCurrencies}/${charCurrencyId}`
+          ):
             return Promise.resolve<{ data: { success: true } }>({
               data: { success: true },
             });

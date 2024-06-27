@@ -9,6 +9,7 @@
     "seedAttributes": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedAttributes.ts",
     "seedCurrencies": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedCurrencies.ts",
     "seedItems": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedItems.ts",
+    "seedAdventures": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedAdventures.ts",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles",
     "prettier-format": "prettier --config .prettierrc src/**/*.ts --write"
   },

@@ -6,7 +6,6 @@ import { adventuresRouter } from './routes/adventure.routes';
 import { attributesRouter } from './routes/attribute.routes';
 import { characterAttributesRouter } from './routes/characterAttribute.routes';
 import { characterCurrenciesRouter } from './routes/characterCurrency.routes';
-import { charactersRouter } from './routes/character.routes';
 import { characterEquipmentRouter } from './routes/characterEquipment.routes';
 import { inventoryRouter } from './routes/inventory.routes';
 import { itemsRouter } from './routes/item.routes';
@@ -18,12 +17,14 @@ import { readConfigFile } from './utils/setupConfig';
 import { corsMiddleware } from './middleware/corsMiddleware';
 import { PUBLIC_ROUTES } from './services/api.service';
 import { errorHandler } from './middleware/errorHandler';
+import { CharacterRoutes } from './routes/character.routes';
 
 export class AppServer {
   private mongoDbHandler: MongoDBHandler;
   private serverPort = 3000;
   private app: Application;
   private server: Server;
+  private serverUrl = '';
 
   constructor() {
     this.app = express();
@@ -35,10 +36,15 @@ export class AppServer {
     return this.app;
   }
 
+  getServerUrl(): string {
+    return this.serverUrl;
+  }
+
   async start(): Promise<void> {
     try {
       await this.initConfig();
       await this.initServer();
+      console.log('process.env.SERVER_URL: ', process.env.SERVER_URL);
       await this.connectDb();
     } catch (error) {
       console.error('Error while starting application: ', error);
@@ -61,7 +67,8 @@ export class AppServer {
   private async initConfig(): Promise<void> {
     const config = await readConfigFile();
     this.serverPort = config.server.port ?? this.serverPort;
-    process.env.SERVER_URL = `${config.server.protocol}://${config.server.baseUrl}:${this.serverPort}`;
+    this.serverUrl = `${config.server.protocol}://${config.server.baseUrl}:${this.serverPort}`;
+    process.env.SERVER_URL = this.serverUrl;
     process.env.FRONTEND_URL = `${config.frontend.protocol}://${config.frontend.baseUrl}:${config.frontend.port}`;
   }
 
@@ -89,6 +96,8 @@ export class AppServer {
   }
 
   private initPublicRouters(): void {
+    const characterRouter = new CharacterRoutes();
+    const charactersRouter = characterRouter.getRouter();
     this.app.use(PUBLIC_ROUTES.Accounts, accountsRouter);
     this.app.use(PUBLIC_ROUTES.Characters, charactersRouter);
     this.app.use(PUBLIC_ROUTES.Adventures, adventuresRouter);

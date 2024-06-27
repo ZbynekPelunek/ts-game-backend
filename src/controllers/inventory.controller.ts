@@ -26,7 +26,7 @@ import {
 } from '../../../shared/src';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
 import { InventoryModel } from '../models/inventory.model';
-import { ApiService, FULL_PUBLIC_ROUTES } from '../services/api.service';
+import { ApiService, PUBLIC_ROUTES } from '../services/api.service';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 import { Document } from 'mongoose';
 
@@ -42,11 +42,12 @@ export class InventoryController {
     res: Response<Response_Inventory_GET_all>
   ) {
     try {
-      const { characterId } = req.query;
+      const { characterId, slot } = req.query;
 
       const query = InventoryModel.find().lean();
 
       if (characterId) query.where({ characterId });
+      if (slot) query.where({ slot });
 
       const inventory = await query.exec();
       const transformedInventory = this.transformResponseArray(inventory);
@@ -260,7 +261,7 @@ export class InventoryController {
     itemId: number
   ): Promise<CommonItemParams | CommonItemsEquipmenParams> {
     const response = await this.apiService.get<Response_Item_GET_one>(
-      `${FULL_PUBLIC_ROUTES.Items}/${itemId}`
+      `${PUBLIC_ROUTES.Items}/${itemId}`
     );
 
     if (!response.success || !response.item) {
@@ -292,7 +293,7 @@ export class InventoryController {
     };
     const charCurrencyRes =
       await this.apiService.get<Response_CharacterCurrency_GET_all>(
-        FULL_PUBLIC_ROUTES.CharacterCurrencies,
+        PUBLIC_ROUTES.CharacterCurrencies,
         { params: charCurrencyQuery }
       );
 
@@ -313,7 +314,7 @@ export class InventoryController {
     const updateCharCurrRes = await this.apiService.patch<
       Response_CharacterCurrency_PATCH,
       Request_CharacterCurrency_PATCH_body
-    >(`${FULL_PUBLIC_ROUTES.CharacterCurrencies}/${characterCurrencyId}`, {
+    >(`${PUBLIC_ROUTES.CharacterCurrencies}/${characterCurrencyId}`, {
       amount,
     });
 
