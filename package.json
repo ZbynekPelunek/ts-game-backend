@@ -10,11 +10,13 @@
     "seedCurrencies": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedCurrencies.ts",
     "seedItems": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedItems.ts",
     "seedAdventures": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedAdventures.ts",
+    "seedRewards": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedRewards.ts",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles",
-    "prettier-format": "prettier --config .prettierrc src/**/*.ts --write"
+    "prettier-format": "prettier --config .prettierrc src/**/*.ts --write",
+    "seedAll": "seedAttributes && seedCurrencies && seedItems && seedAdventures"
   },
   "keywords": [],
-  "author": "",
+  "author": "Zbynek Pelunek",
   "license": "ISC",
   "dependencies": {
     "@typegoose/typegoose": "^12.4.0",

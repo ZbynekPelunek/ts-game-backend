@@ -8,7 +8,7 @@ export const BEGINNER_ADVENTURES: Adventure[] = [
     type: AdventureTypes.TUTORIAL,
     rewards: [
       {
-        rewardId: 0,
+        rewardId: 1,
         amount: 1,
       },
     ],
@@ -34,7 +34,7 @@ export const BEGINNER_ADVENTURES: Adventure[] = [
     type: AdventureTypes.TUTORIAL,
     rewards: [
       {
-        rewardId: 1,
+        rewardId: 2,
         amount: 1,
       },
     ],
@@ -47,7 +47,7 @@ export const BEGINNER_ADVENTURES: Adventure[] = [
     type: AdventureTypes.COMMON,
     rewards: [
       {
-        rewardId: 1,
+        rewardId: 3,
         amount: 1,
       },
     ],

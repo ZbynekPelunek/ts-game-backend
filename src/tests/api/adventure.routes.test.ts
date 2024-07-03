@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { describe, afterEach, it, expect, beforeAll } from '@jest/globals';
+import { describe, afterEach, it, expect, beforeAll, xit } from '@jest/globals';
 
 import {
   Adventure,
@@ -48,7 +48,11 @@ describe('Adventure routes', () => {
       const queryString: Request_Adventure_GET_all_query = {
         populateReward: true,
       };
-      const adventures = [...ADVENTURES_MOCK];
+      const adventures = [
+        ADVENTURES_MOCK[0],
+        ADVENTURES_MOCK[1],
+        ADVENTURES_MOCK[2],
+      ];
       await RewardModel.create(REWARDS_MOCK);
       adventures[0].rewards[0].rewardId = REWARDS_MOCK[0]._id;
       adventures[1].rewards[0].rewardId = REWARDS_MOCK[1]._id;
@@ -65,6 +69,18 @@ describe('Adventure routes', () => {
       expect(adventuresResponse.adventures).toHaveLength(adventuresLength);
       const adventure1RewardPopulated = adventuresResponse.adventures[0]
         .rewards[0].rewardId as Reward;
+      console.log(
+        'adventure1 reward populated: ',
+        adventuresResponse.adventures[0].rewards[0].rewardId
+      );
+      console.log(
+        'adventure2 reward populated: ',
+        adventuresResponse.adventures[1].rewards[0].rewardId
+      );
+      console.log(
+        'adventure3 reward populated: ',
+        adventuresResponse.adventures[2].rewards[0].rewardId
+      );
       expect(adventure1RewardPopulated._id).toBeDefined();
     });
 

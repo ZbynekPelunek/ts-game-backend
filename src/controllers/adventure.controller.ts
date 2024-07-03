@@ -24,6 +24,16 @@ export class AdventureController {
         query.populate<Reward>({
           path: 'rewards.rewardId',
           select: '-createdAt -updatedAt -__v',
+          populate: [
+            {
+              path: 'currencies.currencyId',
+            },
+            {
+              path: 'items.itemId',
+              localField: 'items.itemId',
+              foreignField: 'itemId',
+            },
+          ],
         });
       if (adventureLevel) query.where({ adventureLevel });
       if (type) query.where({ type });
