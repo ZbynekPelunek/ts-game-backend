@@ -20,9 +20,9 @@ import {
 
 @modelOptions({
   schemaOptions: { timestamps: true, discriminatorKey: 'itemType' },
-  options: { allowMixed: Severity.ALLOW },
+  options: { allowMixed: Severity.ALLOW, customName: 'items' },
 })
-class ItemSchema implements CommonItemParams {
+export class ItemSchema implements CommonItemParams {
   @prop({ required: true })
   public itemId!: number;
 
@@ -45,7 +45,7 @@ class ItemSchema implements CommonItemParams {
   public quality?: ItemQuality;
 
   @prop()
-  public icon?: string;
+  public icon!: string;
 }
 
 export class EquipmentSchema

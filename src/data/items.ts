@@ -11,8 +11,24 @@ import {
   WeaponType,
   CurrencyId,
 } from '../../../shared/src';
+import { getBase64FromImage } from '../engine/imageConvertor';
+
+const defaultImagePath = './src/images/noImageDefault.png'; // Replace with your image path
 
 const commonStarterArmorParams = {
+  icon: getBase64FromImage(defaultImagePath) ?? '',
+  itemLevel: 1,
+  itemType: ItemType.EQUIPMENT,
+  maxItemLevel: 5,
+  maxAmount: 1,
+  sell: {
+    currencyId: CurrencyId.GOLD,
+    value: 1,
+  },
+};
+
+const commonStarterWeaponParams = {
+  icon: getBase64FromImage(defaultImagePath) ?? '',
   itemLevel: 1,
   itemType: ItemType.EQUIPMENT,
   maxItemLevel: 5,
@@ -277,17 +293,6 @@ export const starterArmor: Armor[] = [
     ],
   },
 ];
-
-const commonStarterWeaponParams = {
-  itemLevel: 1,
-  itemType: ItemType.EQUIPMENT,
-  maxItemLevel: 5,
-  maxAmount: 1,
-  sell: {
-    currencyId: CurrencyId.GOLD,
-    value: 1,
-  },
-};
 
 export const starterWeapons: Weapon[] = [
   {

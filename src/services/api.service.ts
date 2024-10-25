@@ -15,6 +15,7 @@ export const PUBLIC_ROUTES = {
   Items: `/${BasePaths.PUBLIC}/${ApiRoutes.ITEMS}`,
   Rewards: `/${BasePaths.PUBLIC}/${ApiRoutes.REWARDS}`,
   Enemies: `/${BasePaths.PUBLIC}/${ApiRoutes.ENEMIES}`,
+  Currencies: `/${BasePaths.PUBLIC}/${ApiRoutes.CURRENCIES}`,
 };
 
 /* export const FULL_PUBLIC_ROUTES = {
@@ -36,7 +37,7 @@ export class ApiService {
   private async makeRequest<T>(
     method: 'get' | 'post' | 'patch' | 'delete',
     path: string,
-    data?: any,
+    data?: unknown,
     config?: AxiosRequestConfig
   ): Promise<T> {
     try {
@@ -44,14 +45,21 @@ export class ApiService {
       if (!basePath) {
         throw new CustomError('Base path is empty', 500);
       }
-      const apiResponse: AxiosResponse<T> = await axios[method](
-        basePath + path,
-        data,
-        config
-      );
+
+      let apiResponse: AxiosResponse<T>;
+      if (method === 'get') {
+        apiResponse = await axios.get(basePath + path, config);
+      } else {
+        apiResponse = await axios[method](basePath + path, data, config);
+      }
+
       return apiResponse.data;
-    } catch (error) {
-      throw new Error(`Error in ${method.toUpperCase()} request: ${error}`);
+    } catch (error: any) {
+      console.error('Axios Error with request method: ', method.toUpperCase());
+      throw new CustomError(
+        `${error.response.data.error}`,
+        error.response.status
+      );
     }
   }
 

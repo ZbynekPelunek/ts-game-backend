@@ -2,7 +2,7 @@ import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
 import { CharacterCurrencyBackend, CurrencyId } from '../../../shared/src';
-import { CurrencySchema } from './currency.model';
+import { CurrencySchema } from './currency';
 
 @modelOptions({
   schemaOptions: { timestamps: true },

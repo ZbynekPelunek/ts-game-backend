@@ -2,7 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 
 import { defaultCurrencies } from '../data/currencies';
-import { CurrencyModel } from '../models/currency.model';
+import { CurrencyModel } from '../models/currency';
 
 const uri = process.env.MONGOOSE_URI_DEV;
 const currencyData = defaultCurrencies;

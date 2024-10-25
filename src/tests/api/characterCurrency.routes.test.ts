@@ -14,7 +14,7 @@ import {
 } from '../../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { CharacterCurrencyModel } from '../../models/characterCurrency.model';
-import { CurrencyModel } from '../../models/currency.model';
+import { CurrencyModel } from '../../models/currency';
 import { PUBLIC_ROUTES } from '../../services/api.service';
 
 describe('Character Currency routes', () => {

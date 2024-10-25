@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 
 import { InventoryBackend } from '../../../shared/src';
 
-export const defaultMaxInventorySlots = 10;
+export const defaultMaxInventorySlots = 16;
 
 export const generateCharacterInventory = (
   characterId: string,

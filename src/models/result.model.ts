@@ -1,7 +1,20 @@
-import { modelOptions, prop, getModelForClass } from '@typegoose/typegoose';
+import {
+  modelOptions,
+  prop,
+  getModelForClass,
+  ArraySubDocumentType,
+} from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
-import { ResultBackend, ResultCombat } from '../../../shared/src';
+import {
+  IRewardSchema,
+  ResultBackend,
+  ResultCombat,
+  ResultReward,
+  RewardCurrency,
+  RewardItem,
+} from '../../../shared/src';
+import { RewardCurrencySchema, RewardItemSchema } from './reward.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
@@ -14,14 +27,26 @@ export class ResultSchema implements ResultBackend {
   @prop({ required: true })
   public adventureId!: number;
 
-  @prop({ type: () => ResultCombatSchema, _id: false })
-  public combat?: ResultCombat | null;
+  @prop({ required: true })
+  public adventureName!: string;
 
   @prop({ required: true })
   public timeFinish!: string;
 
   @prop({ required: true })
   public timeStart!: string;
+
+  @prop({ required: true })
+  public inProgress!: boolean;
+
+  @prop({ required: true, default: false })
+  public rewardCollected!: boolean;
+
+  @prop({ required: true, type: () => ResultRewardSchema, _id: false })
+  public reward!: ResultReward;
+
+  @prop({ type: () => ResultCombatSchema, _id: false })
+  public combat?: ResultCombat | null;
 }
 
 class ResultCombatSchema implements ResultCombat {
@@ -30,6 +55,33 @@ class ResultCombatSchema implements ResultCombat {
 
   @prop({ required: true })
   public playerWon!: boolean;
+}
+
+class ResultRewardSchema implements ResultReward {
+  @prop({
+    required: true,
+    default: [],
+    type: () => RewardCurrencySchema,
+    _id: false,
+  })
+  public currencies!: [
+    ArraySubDocumentType<RewardCurrencySchema>,
+    ...ArraySubDocumentType<RewardCurrencySchema>[],
+  ];
+
+  @prop({ required: true, default: 0 })
+  public experience!: number;
+
+  @prop({
+    required: true,
+    default: [],
+    type: () => RewardItemSchema,
+    _id: false,
+  })
+  public items!: [
+    ArraySubDocumentType<RewardItemSchema>,
+    ...ArraySubDocumentType<RewardItemSchema>[],
+  ];
 }
 
 export const ResultModel = getModelForClass(ResultSchema);

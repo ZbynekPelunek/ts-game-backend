@@ -5,8 +5,14 @@ import {
   prop,
 } from '@typegoose/typegoose';
 
-import { IRewardSchema, RewardCurrency, RewardItem } from '../../../shared/src';
-import { CurrencySchema } from './currency.model';
+import {
+  CommonItemsEquipmenParams,
+  Currency,
+  IRewardSchema,
+  RewardCurrency,
+  RewardItem,
+} from '../../../shared/src';
+import { CurrencySchema } from './currency';
 import { EquipmentSchema } from './item.model';
 
 @modelOptions({
@@ -33,17 +39,17 @@ export class RewardSchema implements IRewardSchema {
   ];
 }
 
-class RewardCurrencySchema implements RewardCurrency {
+export class RewardCurrencySchema implements RewardCurrency {
   @prop({ required: true, ref: () => CurrencySchema, type: () => Number })
-  public currencyId!: number;
+  public currencyId!: number | Currency;
 
   @prop({ required: true })
   public amount!: number;
 }
 
-class RewardItemSchema implements RewardItem {
+export class RewardItemSchema implements RewardItem {
   @prop({ required: true, ref: () => EquipmentSchema, type: () => Number })
-  public itemId!: number;
+  public itemId!: number | CommonItemsEquipmenParams;
 
   @prop({ required: true })
   public amount!: number;

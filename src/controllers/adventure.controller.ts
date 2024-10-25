@@ -53,10 +53,30 @@ export class AdventureController {
     res: Response<Response_Adventure_GET_one>
   ) {
     try {
+      const { populateReward } = req.query;
       const { adventureId } = req.params;
 
-      const adventure = await AdventureModel.findById(adventureId).lean();
+      console.log('adventure.controller-getOneById-req.query: ', req.query);
 
+      const query = AdventureModel.findById(adventureId).lean();
+
+      if (populateReward)
+        query.populate<Reward>({
+          path: 'rewards.rewardId',
+          select: '-createdAt -updatedAt -__v',
+          populate: [
+            {
+              path: 'currencies.currencyId',
+            },
+            {
+              path: 'items.itemId',
+              localField: 'items.itemId',
+              foreignField: 'itemId',
+            },
+          ],
+        });
+
+      const adventure = await query.exec();
       //console.log('Adventure One lean response: ', adventure);
 
       if (!adventure) {

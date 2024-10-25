@@ -24,6 +24,16 @@ export class CharacterRoutes {
       '',
       this.characterController.createCharacter.bind(this.characterController)
     );
+
+    this.router.patch(
+      '/:characterId',
+      this.characterController.patch.bind(this.characterController)
+    );
+
+    this.router.patch(
+      '/:characterId/increase-experience',
+      this.characterController.increaseExperience.bind(this.characterController)
+    );
   }
 
   public getRouter(): Router {

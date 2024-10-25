@@ -34,10 +34,7 @@ export class AdventureSchema implements Adventure {
   public type!: AdventureTypes;
 
   @prop({ required: true, type: () => AdventureRewardSchema, _id: false })
-  public rewards!: [
-    ArraySubDocumentType<AdventureRewardSchema>,
-    ...ArraySubDocumentType<AdventureRewardSchema>[],
-  ];
+  public rewards!: [AdventureRewardSchema, ...AdventureRewardSchema[]];
 
   @prop({ default: [], ref: () => EnemySchema, type: () => Number })
   public enemyIds?: number[];
@@ -46,7 +43,7 @@ export class AdventureSchema implements Adventure {
   public requiredLevel?: number;
 }
 
-class AdventureRewardSchema implements AdventureReward {
+export class AdventureRewardSchema implements AdventureReward {
   @prop({ required: true, ref: () => RewardSchema, type: () => Number })
   public rewardId!: number;
 

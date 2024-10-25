@@ -23,6 +23,10 @@ inventoryRouter.post(
   `/${InventoryPostActions.NEW}`,
   inventoryController.createNewInventory.bind(inventoryController)
 );
+inventoryRouter.post(
+  `/${InventoryPostActions.ADD_ITEM}`,
+  inventoryController.addItem.bind(inventoryController)
+);
 
 inventoryRouter.patch(
   '/:inventoryId',

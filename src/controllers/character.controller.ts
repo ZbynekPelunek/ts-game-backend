@@ -76,7 +76,59 @@ export class CharacterController {
     try {
       const { characterId } = req.params;
 
-      //console.log('GET Character, characterId:', characterId);
+      const character = await CharacterModel.findById(characterId);
+      if (!character) {
+        throw new CustomError(
+          `Character with id '${characterId}' not found`,
+          404
+        );
+      }
+
+      const responseCharacter: CharacterFrontend =
+        this.transformResponse(character);
+
+      return res
+        .status(200)
+        .json({ success: true, character: responseCharacter });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  //TODO add interface
+  async patch(req: Request, res: Response) {
+    try {
+      const { characterId } = req.params;
+      const updateFields = req.body;
+
+      const updatedCharacter = await CharacterModel.findByIdAndUpdate(
+        characterId,
+        updateFields,
+        { new: true, runValidators: true }
+      );
+      if (!updatedCharacter) {
+        throw new CustomError(
+          `Character with id '${characterId}' not found`,
+          404
+        );
+      }
+
+      const responseCharacter: CharacterFrontend =
+        this.transformResponse(updatedCharacter);
+
+      return res
+        .status(200)
+        .json({ success: true, character: responseCharacter });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  //TODO add interface
+  async increaseExperience(req: Request, res: Response) {
+    try {
+      const { characterId } = req.params;
+      const { experience } = req.body;
 
       const character = await CharacterModel.findById(characterId);
       if (!character) {
@@ -86,7 +138,22 @@ export class CharacterController {
         );
       }
 
-      //console.log('GET character db response: ', character);
+      const { currentExperience, maxExperience, level } = character;
+      const experienceLevel = this.levelUp({
+        currentExperience,
+        maxExperience,
+        level,
+        experienceToInrease: experience,
+      });
+
+      await character.updateOne(
+        {
+          currentExperience: experienceLevel.currentExperience,
+          maxExperience: experienceLevel.maxExperience,
+          level: experienceLevel.level,
+        },
+        { new: true, runValidators: true }
+      );
 
       const responseCharacter: CharacterFrontend =
         this.transformResponse(character);
@@ -218,6 +285,30 @@ export class CharacterController {
       throw new Error('Character inventory error');
     }
   }
+
+  private levelUp = (data: {
+    currentExperience: number;
+    maxExperience: number;
+    level: number;
+    experienceToInrease: number;
+  }) => {
+    if (
+      data.currentExperience + data.experienceToInrease <
+      data.maxExperience
+    ) {
+      data.currentExperience += data.experienceToInrease;
+    } else {
+      data.level++;
+      data.experienceToInrease -= data.maxExperience;
+      this.levelUp(data);
+    }
+
+    return {
+      currentExperience: data.currentExperience,
+      maxExperience: data.maxExperience,
+      level: data.level,
+    };
+  };
 
   private transformResponse(
     databaseResponse: CharacterBackend

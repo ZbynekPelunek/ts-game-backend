@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import { Server } from 'http';
 
 import { accountsRouter } from './routes/account.routes';
@@ -18,6 +18,7 @@ import { corsMiddleware } from './middleware/corsMiddleware';
 import { PUBLIC_ROUTES } from './services/api.service';
 import { errorHandler } from './middleware/errorHandler';
 import { CharacterRoutes } from './routes/character.routes';
+import { currenciesRouter } from './routes/currencyRoutes';
 
 export class AppServer {
   private mongoDbHandler: MongoDBHandler;
@@ -78,7 +79,7 @@ export class AppServer {
 
     this.initPublicRouters();
     this.app.all('*', (req: Request, res: Response) => {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         error: `Route ${req.url} does not exist.`,
       });
@@ -110,6 +111,7 @@ export class AppServer {
     this.app.use(PUBLIC_ROUTES.Rewards, rewardsRouter);
     this.app.use(PUBLIC_ROUTES.Enemies, enemiesRouter);
     this.app.use(PUBLIC_ROUTES.Results, resultsRouter);
+    this.app.use(PUBLIC_ROUTES.Currencies, currenciesRouter);
   }
 
   private handleSIGINT(): void {

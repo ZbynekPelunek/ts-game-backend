@@ -42,12 +42,19 @@ export class InventoryController {
     res: Response<Response_Inventory_GET_all>
   ) {
     try {
-      const { characterId, slot } = req.query;
+      const { characterId, slot, populateItem } = req.query;
 
-      const query = InventoryModel.find().lean();
+      const query = InventoryModel.find().sort({ slot: 1 }).lean();
 
       if (characterId) query.where({ characterId });
       if (slot) query.where({ slot });
+      if (populateItem)
+        query.populate<{ itemId: CommonItemParams }>({
+          path: 'item.itemId',
+          select: '-createdAt -updatedAt -__v',
+          localField: 'itemId',
+          foreignField: 'itemId',
+        });
 
       const inventory = await query.exec();
       const transformedInventory = this.transformResponseArray(inventory);
@@ -162,7 +169,12 @@ export class InventoryController {
 
       const itemData = await this.getItemData(item.itemId);
 
-      if (this.isSameItem(inventorySlotToUpdate.item.itemId, item.itemId)) {
+      if (
+        this.isSameItem(
+          inventorySlotToUpdate.item.itemId as number,
+          item.itemId
+        )
+      ) {
         this.checkMaxAmount(itemData, inventorySlotToUpdate.item, item.amount);
 
         const updateRes = await this.updateItemAmount(inventoryId, item.amount);
@@ -196,6 +208,25 @@ export class InventoryController {
       );
 
       return res.status(200).json({ success: true, inventory: response });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  //TODO: add interfaces
+  async addItem(req: Request, res: Response) {
+    try {
+      const { characterId, itemId, amount } = req.body;
+
+      console.log('Adding item with ID: ', itemId);
+
+      const inventorySlot = await this.addItemToFreeSlot(
+        characterId,
+        itemId,
+        amount
+      );
+
+      return res.status(201).json({ success: true, inventory: inventorySlot });
     } catch (error) {
       errorHandler(error, req, res);
     }
@@ -256,6 +287,8 @@ export class InventoryController {
       errorHandler(error, req, res);
     }
   }
+
+  ////////////////////////////////////////////////////////////////////
 
   private async getItemData(
     itemId: number
@@ -399,17 +432,19 @@ export class InventoryController {
   ) {
     const allCharacterItemSlots = await InventoryModel.find({
       characterId,
-    });
+    })
+      .sort({ slot: 1 })
+      .lean();
 
     if (!allCharacterItemSlots) {
       throw new CustomError('No character inventory data found', 500);
     }
 
     const freeCharacterItemSlots = allCharacterItemSlots.filter((i) => !i.item);
-    console.log('freeCharacterItemSlots: ', freeCharacterItemSlots);
+    //console.log('freeCharacterItemSlots: ', freeCharacterItemSlots);
 
     if (freeCharacterItemSlots.length === 0) {
-      throw new CustomError('Inventory is full', 500);
+      throw new CustomError('Inventory is full', 400);
     }
 
     const firstFreeSlot = freeCharacterItemSlots[0];

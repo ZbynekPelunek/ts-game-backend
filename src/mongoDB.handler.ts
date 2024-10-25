@@ -5,6 +5,7 @@ import { CharacterModel } from './models/character.model';
 import { CharacterAttributeModel } from './models/characterAttribute.model';
 import { CharacterCurrencyModel } from './models/characterCurrency.model';
 import { CharacterEquipmentModel } from './models/characterEquipment.model';
+import { ResultModel } from './models/result.model';
 
 export class MongoDBHandler {
   connection: Mongoose | undefined;
@@ -65,6 +66,7 @@ export class MongoDBHandler {
       CharacterAttributeModel.deleteMany({}),
       CharacterCurrencyModel.deleteMany({}),
       CharacterEquipmentModel.deleteMany({}),
+      ResultModel.deleteMany({}),
     ]);
     console.log('...cleaning database done.');
   }

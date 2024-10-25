@@ -24,16 +24,16 @@ export class CharacterSchema implements CharacterBackend {
   public adventures?: number[];
 
   @prop({ default: 0 })
-  public currentExperience?: number;
+  public currentExperience!: number;
+
+  @prop({ default: 2 })
+  public maxExperience!: number;
 
   @prop({ default: 1 })
-  public level?: number;
+  public level!: number;
 
   @prop({ default: defaultMaxInventorySlots })
   public maxInventorySlot?: number;
-
-  @prop({ default: 200 })
-  public maxExperience?: number;
 }
 
 export const CharacterModel = getModelForClass(CharacterSchema);
