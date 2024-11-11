@@ -15,7 +15,7 @@ import { ADVENTURES_MOCK } from '../../mockData/adventures';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 import { AdventureModel } from '../../models/adventure.model';
 import { RewardModel } from '../../models/reward.model';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Adventure routes', () => {
   const apiAddress = PUBLIC_ROUTES.Adventures;

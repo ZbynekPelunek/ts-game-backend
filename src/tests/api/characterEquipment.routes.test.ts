@@ -21,8 +21,8 @@ import {
   UiPosition,
 } from '../../../../shared/src';
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
-import { CharacterEquipmentModel } from '../../models/characterEquipment.model';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { CharacterEquipmentModel } from '../../models/characterEquipment';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 
 describe('Character Equipment routes', () => {

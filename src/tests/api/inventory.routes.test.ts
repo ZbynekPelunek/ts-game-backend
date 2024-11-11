@@ -32,7 +32,7 @@ import {
 } from '../../../../shared/src';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 import { InventoryModel } from '../../models/inventory.model';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Inventory routes', () => {
   const apiAddress = PUBLIC_ROUTES.Inventory;

@@ -30,7 +30,7 @@ import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { ADVENTURES_MOCK } from '../../mockData/adventures';
 import { EnemyModel } from '../../models/enemy.model';
 import { ResultModel } from '../../models/result.model';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 import { Document } from 'mongoose';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 
@@ -123,9 +123,9 @@ describe('Result routes', () => {
                   {
                     characterAttributeId: '661f06d36689a6dc9807a9e1',
                     characterId: '661f06d36689a6dc9807a9d1',
-                    addedValue: 0,
+                    equipmentAddedValue: 0,
                     baseValue: 4,
-                    statsAddedValue: 3,
+                    otherAttributesAddedValue: 3,
                     totalValue: 7,
                     attributeId: '661f06d36689a6dc9807a9df',
                     attribute: {
@@ -137,9 +137,9 @@ describe('Result routes', () => {
                   {
                     characterAttributeId: '661f06d36689a6dc9808abcd',
                     characterId: '661f06d36689a6dc9807a9d1',
-                    addedValue: 5,
+                    equipmentAddedValue: 5,
                     baseValue: 5,
-                    statsAddedValue: 0,
+                    otherAttributesAddedValue: 0,
                     totalValue: 10,
                     attributeId: '661f06d36689a6dc9807abcd',
                     attribute: {

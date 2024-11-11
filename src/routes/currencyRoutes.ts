@@ -4,10 +4,12 @@ import { CurrencyController } from '../controllers/currencyController';
 export const currenciesRouter = Router();
 const currencyController = new CurrencyController();
 
-currenciesRouter.get('', (req, res) =>
-  currencyController.listCurrencies(req, res)
+currenciesRouter.get(
+  '',
+  currencyController.listCurrencies.bind(currencyController)
 );
 
-currenciesRouter.get('/:id', (req, res) =>
-  currencyController.getCurrency(req, res)
+currenciesRouter.get(
+  '/:id',
+  currencyController.getCurrency.bind(currencyController)
 );

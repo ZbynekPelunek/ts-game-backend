@@ -16,7 +16,7 @@ export class InventorySchema implements InventoryBackend {
   public slot!: number;
 
   @prop({ default: null, type: () => InventoryItemSchema, _id: false })
-  public item?: InventoryItem;
+  public item!: InventoryItem | null;
 
   @prop({ default: 0 })
   public amount?: number;

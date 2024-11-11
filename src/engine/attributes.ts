@@ -19,7 +19,7 @@ export function calculateAttributes(
         const healthIndex = attributes.findIndex(
           (ca) => ca.attribute?.attributeName === MainAttributeNames.HEALTH
         );
-        attributes[healthIndex].statsAddedValue = att.totalValue;
+        attributes[healthIndex].otherAttributesAddedValue = att.totalValue;
         attributes[healthIndex].totalValue = updateAttributeTotal(
           attributes[healthIndex]
         );
@@ -30,7 +30,7 @@ export function calculateAttributes(
         const powerIndex = attributes.findIndex(
           (ca) => ca.attribute?.attributeName === MainAttributeNames.POWER
         );
-        attributes[powerIndex].statsAddedValue = att.totalValue;
+        attributes[powerIndex].otherAttributesAddedValue = att.totalValue;
         attributes[powerIndex].totalValue = updateAttributeTotal(
           attributes[powerIndex]
         );
@@ -43,7 +43,7 @@ export function calculateAttributes(
             ca.attribute?.attributeName ===
             SecondaryAttributeNames.CRIT_DAMAGE_PERCENT
         );
-        attributes[critDamagePercentIndex].statsAddedValue =
+        attributes[critDamagePercentIndex].otherAttributesAddedValue =
           att.totalValue / 100;
         attributes[critDamagePercentIndex].totalValue = updateAttributeTotal(
           attributes[critDamagePercentIndex]
@@ -56,7 +56,7 @@ export function calculateAttributes(
             ca.attribute?.attributeName ===
             SecondaryAttributeNames.CRIT_CHANCE_PERCENT
         );
-        attributes[critChancePercentIndex].statsAddedValue =
+        attributes[critChancePercentIndex].otherAttributesAddedValue =
           att.totalValue / 100;
         attributes[critChancePercentIndex].totalValue = updateAttributeTotal(
           attributes[critChancePercentIndex]
@@ -76,7 +76,7 @@ function updateAttributeTotal(
 ): number {
   return (
     charAttribute.baseValue +
-    charAttribute.addedValue +
-    charAttribute.statsAddedValue
+    charAttribute.equipmentAddedValue +
+    charAttribute.otherAttributesAddedValue
   );
 }

@@ -15,7 +15,7 @@ import {
 import { APP_SERVER } from '../setupFile';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 import { ItemModel } from '../../models/item.model';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Item routes', () => {
   const apiAddress = PUBLIC_ROUTES.Items;

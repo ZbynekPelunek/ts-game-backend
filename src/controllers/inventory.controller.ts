@@ -8,7 +8,6 @@ import {
   Request_Inventory_POST_body,
   Response_Inventory_POST,
   Request_Inventory_PATCH_param,
-  Request_Inventory_PATCH_body,
   Response_Inventory_PATCH,
   Response_Item_GET_one,
   InventoryFrontend,
@@ -18,22 +17,31 @@ import {
   CommonItemParams,
   CommonItemsEquipmenParams,
   InventoryItem,
-  Response_CharacterCurrency_GET_all,
-  Request_CharacterCurrency_GET_all_query,
-  Response_CharacterCurrency_PATCH,
-  Request_CharacterCurrency_PATCH_body,
-  CurrencyId,
+  Request_Inventory_PATCH_body,
 } from '../../../shared/src';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
 import { InventoryModel } from '../models/inventory.model';
-import { ApiService, PUBLIC_ROUTES } from '../services/api.service';
+import { ApiService, PUBLIC_ROUTES } from '../services/apiService';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 import { Document } from 'mongoose';
+import { SellItemCommand } from '../commands/inventory/sellItem';
+import { CharacterCurrencyService } from '../services/characterCurrencyService';
+import { InventoryService } from '../services/inventoryService';
+import { ItemService } from '../services/itemService';
 
 export class InventoryController {
+  private sellItemCommand: SellItemCommand;
   private apiService: ApiService;
 
   constructor() {
+    const inventoryService = new InventoryService();
+    const itemService = new ItemService();
+    const characterCurrencyService = new CharacterCurrencyService();
+    this.sellItemCommand = new SellItemCommand(
+      inventoryService,
+      itemService,
+      characterCurrencyService
+    );
     this.apiService = new ApiService();
   }
 
@@ -139,32 +147,24 @@ export class InventoryController {
     res: Response<Response_Inventory_PATCH>
   ) {
     try {
-      const { inventoryId } = req.params;
+      const { inventorySlotId } = req.params;
       const { item } = req.body;
 
       if (item === null) {
-        const updateRes = await this.updateInventoryItem(inventoryId, item);
+        await this.updateInventoryItem(inventorySlotId, item);
 
-        const response = this.transformResponseObject(
-          this.checkUpdateResponse(updateRes)
-        );
-
-        return res.status(200).json({ success: true, inventory: response });
+        return res.status(204).json({ success: true });
       }
 
       const inventorySlotToUpdate =
-        await this.getInventorySlotData(inventoryId);
+        await this.getInventorySlotData(inventorySlotId);
 
       const characterId = inventorySlotToUpdate.characterId.toString();
 
       if (!inventorySlotToUpdate.item) {
-        const updateRes = await this.updateInventoryItem(inventoryId, item);
+        await this.updateInventoryItem(inventorySlotId, item);
 
-        const response = this.transformResponseObject(
-          this.checkUpdateResponse(updateRes)
-        );
-
-        return res.status(200).json({ success: true, inventory: response });
+        return res.status(204).json({ success: true });
       }
 
       const itemData = await this.getItemData(item.itemId);
@@ -177,19 +177,14 @@ export class InventoryController {
       ) {
         this.checkMaxAmount(itemData, inventorySlotToUpdate.item, item.amount);
 
-        const updateRes = await this.updateItemAmount(inventoryId, item.amount);
+        await this.updateItemAmount(inventorySlotId, item.amount);
 
-        const response = this.transformResponseObject(
-          this.checkUpdateResponse(updateRes)
-        );
-
-        return res.status(200).json({ success: true, inventory: response });
+        return res.status(204).json({ success: true });
       }
 
-      let updateRes;
       if (item.previousSlot) {
-        updateRes = await this.switchItems(
-          inventoryId,
+        await this.switchItems(
+          inventorySlotId,
           item.itemId,
           item.amount,
           characterId,
@@ -197,17 +192,10 @@ export class InventoryController {
           inventorySlotToUpdate.item
         );
       } else {
-        updateRes = await this.addItemToFreeSlot(
-          characterId,
-          item.itemId,
-          item.amount
-        );
+        await this.addItemToFreeSlot(characterId, item.itemId, item.amount);
       }
-      const response = this.transformResponseObject(
-        this.checkUpdateResponse(updateRes)
-      );
 
-      return res.status(200).json({ success: true, inventory: response });
+      return res.status(204).json({ success: true });
     } catch (error) {
       errorHandler(error, req, res);
     }
@@ -233,41 +221,15 @@ export class InventoryController {
   }
 
   async sellInventoryItem(
-    req: Request<
-      Request_Inventory_PATCH_param,
-      {},
-      Request_Inventory_PATCH_body
-    >,
+    req: Request<Request_Inventory_PATCH_param>,
     res: Response<Response_Inventory_PATCH>
   ) {
     try {
-      const { inventoryId } = req.params;
-      const { item } = req.body;
+      const { inventorySlotId } = req.params;
 
-      const inventorySlotData = await this.getInventorySlotData(inventoryId);
-      const characterId = inventorySlotData.characterId.toString();
+      await this.sellItemCommand.execute({ inventorySlotId });
 
-      const updateRes = await this.updateInventoryItem(inventoryId, null);
-
-      const itemData = await this.getItemData(item!.itemId);
-      const { currencyId, value } = itemData.sell;
-
-      const charCurrencyRes = await this.getCharacterCurrencyData(
-        characterId,
-        currencyId
-      );
-
-      const totalAmountIncrease = value * item?.amount!;
-      await this.updateCharacterCurrency(
-        charCurrencyRes.characterCurrencies[0]._id,
-        totalAmountIncrease
-      );
-
-      const response = this.transformResponseObject(
-        this.checkUpdateResponse(updateRes)
-      );
-
-      return res.status(200).json({ success: true, inventory: response });
+      return res.status(204).json({ success: true });
     } catch (error) {
       errorHandler(error, req, res);
     }
@@ -314,49 +276,6 @@ export class InventoryController {
     }
 
     return inventorySlotData;
-  }
-
-  private async getCharacterCurrencyData(
-    characterId?: string,
-    currencyId?: CurrencyId
-  ) {
-    const charCurrencyQuery: Request_CharacterCurrency_GET_all_query = {
-      characterId,
-      currencyId,
-    };
-    const charCurrencyRes =
-      await this.apiService.get<Response_CharacterCurrency_GET_all>(
-        PUBLIC_ROUTES.CharacterCurrencies,
-        { params: charCurrencyQuery }
-      );
-
-    if (!charCurrencyRes.success) {
-      throw new CustomError(
-        'Error while retrieving character currency data',
-        500
-      );
-    }
-
-    return charCurrencyRes;
-  }
-
-  private async updateCharacterCurrency(
-    characterCurrencyId: string,
-    amount: number
-  ): Promise<void> {
-    const updateCharCurrRes = await this.apiService.patch<
-      Response_CharacterCurrency_PATCH,
-      Request_CharacterCurrency_PATCH_body
-    >(`${PUBLIC_ROUTES.CharacterCurrencies}/${characterCurrencyId}`, {
-      amount,
-    });
-
-    if (!updateCharCurrRes.success) {
-      throw new CustomError(
-        'Error while updating character currency data',
-        500
-      );
-    }
   }
 
   private isSameItem(inventoryItemId: number, receivedItemId: number): boolean {

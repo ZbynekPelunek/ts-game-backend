@@ -1,19 +1,33 @@
 import { Router } from 'express';
 
-import { CharacterEquipmentController } from '../controllers/characterEquipment.controller';
-import { CharacterEquipmentPatchActions } from '../../../shared/src';
+import { CharacterEquipmentController } from '../controllers/characterEquipmentController';
+import {
+  CharacterEquipmentPatchActions,
+  CharacterEquipmentPostActions,
+} from '../../../shared/src';
 
 export const characterEquipmentRouter = Router();
 const characterEquipmentController = new CharacterEquipmentController();
 
 characterEquipmentRouter.get(
   '',
-  characterEquipmentController.getAll.bind(characterEquipmentController)
+  characterEquipmentController.listCharacterEquipment.bind(
+    characterEquipmentController
+  )
 );
 
 characterEquipmentRouter.post(
   '',
-  characterEquipmentController.post.bind(characterEquipmentController)
+  characterEquipmentController.createCharacterEquipment.bind(
+    characterEquipmentController
+  )
+);
+
+characterEquipmentRouter.post(
+  `/${CharacterEquipmentPostActions.EQUIP_ITEM}`,
+  characterEquipmentController.equipItemFromInventory.bind(
+    characterEquipmentController
+  )
 );
 
 characterEquipmentRouter.patch(

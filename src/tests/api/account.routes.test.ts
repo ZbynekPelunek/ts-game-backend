@@ -8,7 +8,7 @@ import {
 } from '../../../../shared/src';
 import { AccountModel } from '../../models/account.model';
 import { APP_SERVER } from '../setupFile';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Account routes', () => {
   const apiAddress = PUBLIC_ROUTES.Accounts;

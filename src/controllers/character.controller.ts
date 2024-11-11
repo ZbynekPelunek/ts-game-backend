@@ -27,7 +27,7 @@ import {
 import { CharacterModel } from '../models/character.model';
 import { generateDefaultCharacterAttributes } from '../defaultCharacterData/attributes';
 import { generateCharacterCurrencies } from '../defaultCharacterData/currencies';
-import { ApiService, PUBLIC_ROUTES } from '../services/api.service';
+import { ApiService, PUBLIC_ROUTES } from '../services/apiService';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class CharacterController {
@@ -256,6 +256,7 @@ export class CharacterController {
         slot: e as EquipmentSlot,
         characterId: characterId,
         uiPosition: this.setUiPosition(e as EquipmentSlot),
+        itemId: null,
       };
       equipmentArr.push(equipmentObj);
     }
@@ -327,16 +328,12 @@ export class CharacterController {
   private setUiPosition(equipSlot: EquipmentSlot): UiPosition {
     switch (equipSlot) {
       case EquipmentSlot.CHEST:
-      case EquipmentSlot.SHOULDER:
-      case EquipmentSlot.HEAD:
         return UiPosition.LEFT;
 
-      case EquipmentSlot.HANDS:
       case EquipmentSlot.LEGS:
         return UiPosition.RIGHT;
 
       case EquipmentSlot.MAIN_HAND:
-      case EquipmentSlot.OFF_HAND:
         return UiPosition.BOTTOM;
       default:
         return UiPosition.LEFT;

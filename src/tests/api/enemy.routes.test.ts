@@ -6,7 +6,7 @@ import { Common_Response_Error } from '../../../../shared/src/interface/API/comm
 import { Enemy, Enemy_GET_all, Enemy_GET_one } from '../../../../shared/src';
 import { ENEMIES_MOCK } from '../../mockData/enemies';
 import { EnemyModel } from '../../models/enemy.model';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Enemy routes', () => {
   const apiAddress = PUBLIC_ROUTES.Enemies;

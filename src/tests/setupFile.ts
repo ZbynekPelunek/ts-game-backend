@@ -17,7 +17,7 @@ import {
   Response_Adventure_GET_all,
   InventoryPostActions,
 } from '../../../shared/src';
-import { PUBLIC_ROUTES } from '../services/api.service';
+import { PUBLIC_ROUTES } from '../services/apiService';
 
 jest.mock('axios');
 

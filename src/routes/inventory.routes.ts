@@ -29,10 +29,10 @@ inventoryRouter.post(
 );
 
 inventoryRouter.patch(
-  '/:inventoryId',
+  '/:inventorySlotId',
   inventoryController.updateInventorySlot.bind(inventoryController)
 );
 inventoryRouter.patch(
-  `/:inventoryId/${InventoryPatchActions.SELL_ITEM}`,
+  `/:inventorySlotId/${InventoryPatchActions.SELL_ITEM}`,
   inventoryController.sellInventoryItem.bind(inventoryController)
 );

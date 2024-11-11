@@ -11,15 +11,15 @@ import {
 } from '../../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { AttributeDetailModel } from '../../models/attribute.model';
-import { CharacterAttributeModel } from '../../models/characterAttribute.model';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { CharacterAttributeModel } from '../../models/characterAttribute';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Character Attribute routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterAttributes;
   const commonCharAttributesValues: CharacterAttributeFrontend = {
     baseValue: 0,
-    addedValue: 0,
-    statsAddedValue: 0,
+    equipmentAddedValue: 0,
+    otherAttributesAddedValue: 0,
     totalValue: 0,
     attributeId: UNKNOWN_OBJECT_ID.toString(),
     characterId: UNKNOWN_OBJECT_ID.toString(),
@@ -121,7 +121,7 @@ describe('Character Attribute routes', () => {
         },
         {
           ...commonCharAttributesValues,
-          addedValue: 5,
+          equipmentAddedValue: 5,
         },
         {
           ...commonCharAttributesValues,
@@ -175,8 +175,8 @@ async function addCharacterAttributeToDb(
     characterId,
     attributeId,
     baseValue,
-    addedValue,
-    statsAddedValue,
+    equipmentAddedValue: addedValue,
+    otherAttributesAddedValue: statsAddedValue,
     totalValue,
   });
 

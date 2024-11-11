@@ -21,7 +21,7 @@ import {
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { CHARACTERS_MOCK } from '../../mockData/characters';
 import { CharacterModel } from '../../models/character.model';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Character routes', () => {
   const accountId = UNKNOWN_OBJECT_ID;

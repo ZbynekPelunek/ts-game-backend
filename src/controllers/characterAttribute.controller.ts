@@ -12,7 +12,7 @@ import {
 import {
   CharacterAttributeModel,
   CharacterAttributeSchema,
-} from '../models/characterAttribute.model';
+} from '../models/characterAttribute';
 import { errorHandler } from '../middleware/errorHandler';
 
 export class CharacterAttributeController {
@@ -52,9 +52,9 @@ export class CharacterAttributeController {
           return {
             characterAttributeId: ca._id.toString(),
             characterId,
-            addedValue: ca.addedValue,
+            addedValue: ca.equipmentAddedValue,
             baseValue: ca.baseValue,
-            statsAddedValue: ca.statsAddedValue,
+            statsAddedValue: ca.otherAttributesAddedValue,
             totalValue: ca.totalValue,
             attributeId: ca.attributeId._id.toString(),
             attribute: ca.attributeId,
@@ -120,12 +120,12 @@ export class CharacterAttributeController {
     characterId: string | undefined = undefined
   ) => {
     return {
-      addedValue: databaseResponse.addedValue,
+      addedValue: databaseResponse.equipmentAddedValue,
       attributeId: databaseResponse.attributeId.toString(),
       baseValue: databaseResponse.baseValue,
       characterAttributeId: databaseResponse.id,
       characterId: characterId ?? databaseResponse.characterId.toString(),
-      statsAddedValue: databaseResponse.statsAddedValue,
+      statsAddedValue: databaseResponse.otherAttributesAddedValue,
       totalValue: databaseResponse.totalValue,
     };
   };

@@ -1,18 +1,22 @@
 import { Request, Response } from 'express';
 
 import { QueryHandler } from '../services/queryHandler';
-import { GetCurrency } from '../queries/getCurrency';
+import { GetCurrency } from '../queries/currency/getCurrency';
 import { errorHandler } from '../middleware/errorHandler';
-import { ListCurrencies } from '../queries/listCurrencies';
-
-const queryHandler = new QueryHandler();
+import { ListCurrencies } from '../queries/currency/listCurrencies';
 
 export class CurrencyController {
+  private queryHandler: QueryHandler;
+
+  constructor() {
+    this.queryHandler = new QueryHandler();
+  }
+
   async listCurrencies(req: Request, res: Response) {
     try {
       const query = new ListCurrencies();
 
-      const result = await queryHandler.handle(query);
+      const result = await this.queryHandler.handle(query);
 
       return res.status(200).json(result);
     } catch (error) {
@@ -26,7 +30,7 @@ export class CurrencyController {
 
       const query = new GetCurrency(id);
 
-      const result = await queryHandler.handle(query);
+      const result = await this.queryHandler.handle(query);
 
       return res.status(200).json(result);
     } catch (error) {

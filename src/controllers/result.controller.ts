@@ -30,7 +30,7 @@ import {
 import { Combat } from '../engine/combat';
 import { EnemyModel } from '../models/enemy.model';
 import { ResultModel } from '../models/result.model';
-import { ApiService, PUBLIC_ROUTES } from '../services/api.service';
+import { ApiService, PUBLIC_ROUTES } from '../services/apiService';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class ResultController {

@@ -1,6 +1,6 @@
 import { CurrencyModel } from '../models/currency';
-import { GetCurrency } from '../queries/getCurrency';
-import { ListCurrencies } from '../queries/listCurrencies';
+import { GetCurrency } from '../queries/currency/getCurrency';
+import { ListCurrencies } from '../queries/currency/listCurrencies';
 
 export class QueryHandler {
   async handle(query: any): Promise<any> {

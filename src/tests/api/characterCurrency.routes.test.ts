@@ -15,7 +15,7 @@ import {
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { CharacterCurrencyModel } from '../../models/characterCurrency.model';
 import { CurrencyModel } from '../../models/currency';
-import { PUBLIC_ROUTES } from '../../services/api.service';
+import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Character Currency routes', () => {
   const apiAddress = PUBLIC_ROUTES.CharacterCurrencies;

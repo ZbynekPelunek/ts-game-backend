@@ -13,6 +13,9 @@ export function corsMiddleware(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   );
-  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, PUT, DELETE, POST');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, PUT, DELETE, POST, PATCH'
+  );
   next();
 }

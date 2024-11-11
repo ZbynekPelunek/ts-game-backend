@@ -1,11 +1,15 @@
-import { connect, Mongoose } from 'mongoose';
+import { connect, Mongoose, startSession } from 'mongoose';
 
 import { AccountModel } from './models/account.model';
 import { CharacterModel } from './models/character.model';
-import { CharacterAttributeModel } from './models/characterAttribute.model';
+import { CharacterAttributeModel } from './models/characterAttribute';
 import { CharacterCurrencyModel } from './models/characterCurrency.model';
-import { CharacterEquipmentModel } from './models/characterEquipment.model';
+import { CharacterEquipmentModel } from './models/characterEquipment';
 import { ResultModel } from './models/result.model';
+
+export const startTransaction = () => {
+  return startSession();
+};
 
 export class MongoDBHandler {
   connection: Mongoose | undefined;
