@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 
 import {
+  CharacterAttributeCreateBody,
+  CharacterAttributeCreateBundleBody,
   CharacterBackend,
   CharacterEquipmentFrontend,
   CharacterFrontend,
@@ -10,7 +12,6 @@ import {
   Request_Character_GET_one_params,
   Request_Character_GET_one_query,
   Request_Character_POST_body,
-  Request_CharacterAttribute_POST_body,
   Request_CharacterCurrency_POST_body,
   Request_CharacterEquipment_POST_body,
   Request_Inventory_POST_body,
@@ -18,10 +19,11 @@ import {
   Response_Character_GET_All,
   Response_Character_GET_one,
   Response_Character_POST,
-  Response_CharacterAttribute_POST,
   Response_CharacterCurrency_POST,
   Response_CharacterEquipment_POST,
   Response_Inventory_POST,
+  ResponseCharacterAttributeCreate,
+  ResponseCharacterAttributeCreateBundle,
   UiPosition,
 } from '../../../shared/src';
 import { CharacterModel } from '../models/character.model';
@@ -219,9 +221,9 @@ export class CharacterController {
     );
 
     const characterAttributesResponse = await this.apiService.post<
-      Response_CharacterAttribute_POST,
-      Request_CharacterAttribute_POST_body
-    >(PUBLIC_ROUTES.CharacterAttributes, {
+      ResponseCharacterAttributeCreateBundle,
+      CharacterAttributeCreateBundleBody
+    >(`${PUBLIC_ROUTES.CharacterAttributes}/bundle`, {
       characterAttributes: defaultCharacterAttributes,
     });
 

@@ -3,9 +3,6 @@ import { Request, Response } from 'express';
 import {
   Request_Result_POST_body,
   Response_Result_POST,
-  Request_CharacterAttribute_GET_all_query,
-  Response_CharacterAttribute_GET_all,
-  CharacterAttributeFrontendPopulated,
   ResultCombat,
   Request_Result_GET_all_query,
   Response_Result_GET_all,
@@ -26,6 +23,8 @@ import {
   Request_CharacterCurrency_GET_all_query,
   Response_CharacterCurrency_PATCH,
   Request_CharacterCurrency_PATCH_body,
+  CharacterAttributeListQueryParams,
+  ResponseCharacterAttributeList,
 } from '../../../shared/src';
 import { Combat } from '../engine/combat';
 import { EnemyModel } from '../models/enemy.model';
@@ -325,11 +324,12 @@ export class ResultController {
       const createdResult = new ResultModel(result);
 
       if (adventure.enemyIds?.length) {
-        const charAttQueryString: Request_CharacterAttribute_GET_all_query = {
+        const charAttQueryString: CharacterAttributeListQueryParams = {
           populateAttribute: true,
+          characterId,
         };
         const characterAttributesRes =
-          await this.apiService.get<Response_CharacterAttribute_GET_all>(
+          await this.apiService.get<ResponseCharacterAttributeList>(
             `${PUBLIC_ROUTES.CharacterAttributes}`,
             { params: charAttQueryString }
           );
@@ -338,8 +338,7 @@ export class ResultController {
           throw new CustomError(`Character attributes error`, 500);
         }
 
-        const characterAttributes =
-          characterAttributesRes.characterAttributes as CharacterAttributeFrontendPopulated[];
+        const { characterAttributes } = characterAttributesRes;
         const enemy = await EnemyModel.findById(adventure.enemyIds[0]);
 
         if (!enemy) {

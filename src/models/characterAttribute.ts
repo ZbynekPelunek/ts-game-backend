@@ -12,6 +12,14 @@ import {
 } from '@typegoose/typegoose';
 import { AttributeDetailSchema } from './attribute.model';
 
+class AddedValueSchema implements Partial<AddedValue> {
+  @prop({ default: 0 })
+  equipment?: number;
+
+  @prop({ default: 0 })
+  otherAttributes?: number;
+}
+
 @modelOptions({
   schemaOptions: { timestamps: true },
   options: { customName: 'characters-attributes' },
@@ -22,14 +30,24 @@ export class CharacterAttributeSchema
   @prop({ required: true })
   public characterId!: Types.ObjectId;
 
-  @prop({ required: true, ref: () => AttributeDetailSchema })
+  @prop({
+    required: true,
+    ref: () => AttributeDetailSchema,
+    type: () => String,
+    foreignField: 'attributeName',
+    localField: 'attributeName',
+  })
   public attributeName!: AttributeName;
 
   @prop({ default: 0 })
   public baseValue?: number;
 
-  @prop({ default: { equipment: 0, otherAttributes: 0 } })
-  public addedValue?: AddedValueSchema;
+  @prop({
+    default: { equipment: 0, otherAttributes: 0 },
+    type: () => AddedValueSchema,
+    _id: false,
+  })
+  public addedValue?: Partial<AddedValue>;
 
   @prop({
     default: function (this: DocumentType<CharacterAttributeSchema>) {
@@ -41,14 +59,6 @@ export class CharacterAttributeSchema
     },
   })
   public totalValue?: number;
-}
-
-class AddedValueSchema implements Partial<AddedValue> {
-  @prop({ default: 0 })
-  equipment?: number;
-
-  @prop({ default: 0 })
-  otherAttributes?: number;
 }
 
 export const CharacterAttributeModel = getModelForClass(

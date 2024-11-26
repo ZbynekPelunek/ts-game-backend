@@ -1,32 +1,23 @@
 import {
   BasicAttributeFrontend,
-  CharacterAttributeFrontend,
+  CharacterAttributeCreateDTO,
   MainAttributeNames,
   PrimaryAttributeNames,
   SecondaryAttributeNames,
 } from '../../../shared/src';
-import { calculateAttributes } from '../engine/attributes';
-
-const commonCharAttributesValues = {
-  baseValue: 0,
-  addedValue: 0,
-  statsAddedValue: 0,
-  totalValue: 0,
-};
+//import { calculateAttributes } from '../engine/attributes';
 
 export function generateDefaultCharacterAttributes(
   allAttributes: BasicAttributeFrontend[],
   characterId: string
-): CharacterAttributeFrontend[] {
-  const defaultAttributes: CharacterAttributeFrontend[] = [];
+): CharacterAttributeCreateDTO[] {
+  const defaultAttributes: CharacterAttributeCreateDTO[] = [];
 
   allAttributes.forEach((a) => {
-    const attribute: CharacterAttributeFrontend = {
-      ...commonCharAttributesValues,
+    const attribute: CharacterAttributeCreateDTO = {
+      baseValue: 0,
       characterId,
-      attributeId: a.attributeId,
-      attribute: a,
-      characterAttributeId: '',
+      attributeName: a.attributeName,
     };
     switch (a.attributeName) {
       case MainAttributeNames.HEALTH:
@@ -67,11 +58,10 @@ export function generateDefaultCharacterAttributes(
         break;
     }
 
-    attribute.totalValue = attribute.baseValue;
     defaultAttributes.push(attribute);
   });
 
-  const calculatedAttributes = calculateAttributes(defaultAttributes);
+  //const calculatedAttributes = calculateAttributes(defaultAttributes);
 
-  return calculatedAttributes;
+  return defaultAttributes;
 }

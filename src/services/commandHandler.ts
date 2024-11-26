@@ -1,4 +1,4 @@
-import { CreateCharacterEquipment } from '../commands/characterEquipment/createCharacterEquipment';
+import { CreateCharacterEquipment } from '../commands/characterEquipment/create';
 import { EquipItemCommand } from '../commands/characterEquipment/equipItem';
 import { CharacterEquipmentModel } from '../models/characterEquipment';
 
@@ -8,9 +8,6 @@ export class CommandHandler {
       const { characterEquipment } = command.body;
 
       return await CharacterEquipmentModel.create(characterEquipment);
-    }
-
-    if (command instanceof EquipItemCommand) {
     }
   }
 }

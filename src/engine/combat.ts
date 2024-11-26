@@ -1,5 +1,5 @@
 import {
-  CharacterAttributeFrontendPopulated,
+  CharacterAttributeDTO,
   Enemy,
   EnemyAttribute,
   MainAttributeNames,
@@ -18,7 +18,7 @@ export class Combat {
 
   start = (
     characterName: string,
-    characterAttributes: CharacterAttributeFrontendPopulated[],
+    characterAttributes: CharacterAttributeDTO[],
     enemy: Enemy
   ) => {
     const attacker = this.transformCharacterToAttacker(
@@ -53,20 +53,16 @@ export class Combat {
 
   private transformCharacterToAttacker = (
     characterName: string,
-    characterAttributes: CharacterAttributeFrontendPopulated[]
+    characterAttributes: CharacterAttributeDTO[]
   ): AttackerTarget => {
-    const transformedAttributes = characterAttributes.reduce(
-      (obj: { [key: string]: number }, item) => ({
-        ...obj,
-        [item.attribute.attributeName]: item.totalValue,
-      }),
-      {}
-    );
-
     return {
       name: characterName,
-      damage: transformedAttributes[MainAttributeNames.MAX_DAMAGE],
-      health: transformedAttributes[MainAttributeNames.HEALTH],
+      damage: characterAttributes.filter(
+        (ca) => ca.attributeName === MainAttributeNames.MAX_DAMAGE
+      )[0].totalValue,
+      health: characterAttributes.filter(
+        (ca) => ca.attributeName === MainAttributeNames.HEALTH
+      )[0].totalValue,
     };
   };
 

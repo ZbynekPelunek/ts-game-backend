@@ -14,7 +14,7 @@ import {
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 import { ListCharacterEquipmentQuery } from '../queries/characterEquipment/listCharacterEquipment';
 import { CommandHandler } from '../services/commandHandler';
-import { CreateCharacterEquipment } from '../commands/characterEquipment/createCharacterEquipment';
+import { CreateCharacterEquipment } from '../commands/characterEquipment/create';
 import { EquipItemCommand } from '../commands/characterEquipment/equipItem';
 import { CharacterEquipmentService } from '../services/characterEquipmentService';
 import { ItemService } from '../services/itemService';
