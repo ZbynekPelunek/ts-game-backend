@@ -1,5 +1,6 @@
 import { CustomError } from '../../middleware/errorHandler';
 import { startTransaction } from '../../mongoDB.handler';
+import { CharacterAttributeService } from '../../services/characterAttributeService';
 import { CharacterEquipmentService } from '../../services/characterEquipmentService';
 import { InventoryService } from '../../services/inventoryService';
 import { ItemService } from '../../services/itemService';
@@ -8,7 +9,8 @@ export class EquipItemFromInventoryCommand {
   constructor(
     private characterEquipmentService: CharacterEquipmentService,
     private inventoryService: InventoryService,
-    private itemService: ItemService
+    private itemService: ItemService,
+    private characterAttributeService: CharacterAttributeService
   ) {}
 
   async execute(body: {
@@ -16,6 +18,7 @@ export class EquipItemFromInventoryCommand {
     characterId: string;
     inventoryId: string;
   }) {
+    console.log('Equiping item from inventory: ', body.itemId);
     const { itemId, characterId, inventoryId } = body;
     const session = await startTransaction();
 
@@ -23,33 +26,63 @@ export class EquipItemFromInventoryCommand {
       throw new CustomError('No item to equip', 400);
     }
 
-    const item = await this.itemService.getById({ itemId });
+    const inventoryItem = await this.itemService.getById({ itemId });
 
     const characterEquipmentSlot =
       await this.characterEquipmentService.listCharacterEquipment({
         characterId,
-        itemSlot: item.slot,
+        itemSlot: inventoryItem.slot,
       });
 
     if (characterEquipmentSlot.length < 1) {
       throw new CustomError('Unknown equipment slot', 400);
     }
 
+    if (characterEquipmentSlot.length > 1) {
+      throw new CustomError(
+        `There should be only 1 equipment slot ${inventoryItem.slot} for the character ${characterId}`,
+        500
+      );
+    }
+
     const characterEquipmentId = characterEquipmentSlot[0]._id.toString();
 
     if (characterEquipmentSlot[0].itemId !== null) {
+      const equippedItem = await this.itemService.getById({ itemId });
       try {
         session.startTransaction();
 
+        console.log('Updating inventory...');
         await this.inventoryService.updateInventoryItem(inventoryId, {
           itemId,
           amount: 1,
         });
+        console.log('...updating inventory done.');
 
+        console.log('Updating equipment...');
         await this.characterEquipmentService.updateEquipmentItem(
           characterEquipmentId,
           itemId
         );
+        console.log('...updating equipment done.');
+
+        console.log('Updating attributes from old item...');
+        await this.characterAttributeService.decreaseMultipleAttributeEquipmentValues(
+          {
+            characterId,
+            attributes: equippedItem.attributes,
+          }
+        );
+        console.log('...updating attributes done.');
+
+        console.log('Updating attributes from new item...');
+        await this.characterAttributeService.increaseMultipleAttributeEquipmentValues(
+          {
+            characterId,
+            attributes: inventoryItem.attributes,
+          }
+        );
+        console.log('...updating attributes done.');
 
         await session.commitTransaction();
       } catch (error) {
@@ -72,6 +105,15 @@ export class EquipItemFromInventoryCommand {
           characterEquipmentId,
           itemId
         );
+
+        console.log('Updating attributes...');
+        await this.characterAttributeService.increaseMultipleAttributeEquipmentValues(
+          {
+            characterId,
+            attributes: inventoryItem.attributes,
+          }
+        );
+        console.log('...updating attributes done.');
 
         await session.commitTransaction();
       } catch (error) {

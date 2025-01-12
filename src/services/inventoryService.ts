@@ -45,7 +45,31 @@ export class InventoryService {
     return this.transformResponseObject(inventorySlotData);
   }
 
-  //async updateInventorySlot() {}
+  async addItemToFreeSlot(characterId: string, itemId: number, amount: number) {
+    const allCharacterItemSlots = await InventoryModel.find({
+      characterId,
+    })
+      .sort({ slot: 1 })
+      .lean();
+
+    if (!allCharacterItemSlots) {
+      throw new CustomError('No character inventory data found', 500);
+    }
+
+    const freeCharacterItemSlots = allCharacterItemSlots.filter((i) => !i.item);
+    //console.log('freeCharacterItemSlots: ', freeCharacterItemSlots);
+
+    if (freeCharacterItemSlots.length === 0) {
+      throw new CustomError('Inventory is full', 400);
+    }
+
+    const firstFreeSlot = freeCharacterItemSlots[0];
+
+    await InventoryModel.findOneAndUpdate(
+      { slot: firstFreeSlot.slot, characterId },
+      { item: { itemId, amount } }
+    );
+  }
 
   async updateInventoryItem(
     inventoryId: string,
@@ -68,20 +92,7 @@ export class InventoryService {
     return updateRes;
   }
 
-  async sendEquippedItemToInventory() {
-    // currentCharacterEquipmentItem: { itemId: number } // characterId: string,
-    throw new Error(
-      'Method NYI: inventoryService.sendEquippedItemToInventory()'
-    );
-    // const inventorySlot = await this.listInventorySlots({
-    //   characterId,
-    //   slot: 1,
-    // });
-    // const inventorySlotId = inventorySlot[0]._id;
-    // await this.updateInventoryItem(inventorySlotId, {item});
-  }
-
-  private transformResponseObject(
+  transformResponseObject(
     databaseResponse: InventoryBackend
   ): InventoryFrontend {
     return {
@@ -92,7 +103,7 @@ export class InventoryService {
     };
   }
 
-  private transformResponseArray(
+  transformResponseArray(
     databaseResponse: InventoryBackend[]
   ): InventoryFrontend[] {
     return databaseResponse.map((res) => this.transformResponseObject(res));

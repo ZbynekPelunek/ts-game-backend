@@ -6,8 +6,7 @@ export const defaultMaxInventorySlots = 16;
 
 export const generateCharacterInventory = (
   characterId: string,
-  maxInventorySlots?: number,
-  item?: { itemId: number; amount: number }
+  maxInventorySlots?: number
 ): InventoryBackend[] => {
   const defaultInventorySlots: InventoryBackend[] = [];
   const convertCharacterId = new Types.ObjectId(characterId);
@@ -16,7 +15,10 @@ export const generateCharacterInventory = (
   for (let i = 0; i < maxSlots; i++) {
     defaultInventorySlots.push({
       slot: i + 1,
-      item: item ?? null,
+      item: {
+        itemId: 1,
+        amount: 1,
+      },
       characterId: convertCharacterId,
     });
   }

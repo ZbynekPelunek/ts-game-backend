@@ -1,24 +1,27 @@
 import {
+  AttributeName,
   CharacterAttributeCreateDTO,
   CharacterAttributeDocument,
   CharacterAttributeDTO,
   CharacterAttributeListQueryParams,
+  ItemAttribute,
 } from '../../../shared/src';
+import { CustomError } from '../middleware/errorHandler';
 import { CharacterAttributeModel } from '../models/characterAttribute';
 
 export class CharacterAttributeService {
   async listCharacterAttribute(queryParams: CharacterAttributeListQueryParams) {
     const { characterId, populateAttribute } = queryParams;
-    const charEquipQuery = CharacterAttributeModel.find();
+    const charAttributeQuery = CharacterAttributeModel.find();
 
-    if (characterId) charEquipQuery.where({ characterId });
-    if (populateAttribute)
-      charEquipQuery.populate({
-        path: 'attributeName',
-        select: '-createdAt -updatedAt -__v',
-      });
+    if (characterId) charAttributeQuery.where({ characterId });
+    // if (populateAttribute)
+    //   charAttributeQuery.populate({
+    //     path: 'attributeName',
+    //     select: '-createdAt -updatedAt -__v',
+    //   });
 
-    return await charEquipQuery.exec();
+    return await charAttributeQuery.exec();
   }
 
   async createCharacterAttribute(body: CharacterAttributeCreateDTO) {
@@ -26,7 +29,85 @@ export class CharacterAttributeService {
   }
 
   async createBundleCharacterAttribute(body: CharacterAttributeCreateDTO[]) {
-    return await CharacterAttributeModel.create(body);
+    return await CharacterAttributeModel.insertMany(body);
+  }
+
+  async increaseMultipleAttributeEquipmentValues(body: {
+    characterId: string;
+    attributes: ItemAttribute[];
+  }) {
+    const bulkOperations = body.attributes.map(
+      ({ attributeName, attributeValue }) => ({
+        updateOne: {
+          filter: { attributeName, characterId: body.characterId },
+          update: {
+            $inc: {
+              'addedValue.equipment': attributeValue,
+              totalValue: attributeValue,
+            },
+          },
+        },
+      })
+    );
+
+    console.log('bulkOperations: ', bulkOperations);
+
+    return await CharacterAttributeModel.bulkWrite(bulkOperations);
+  }
+
+  async decreaseMultipleAttributeEquipmentValues(body: {
+    characterId: string;
+    attributes: ItemAttribute[];
+  }) {
+    const bulkOperations = body.attributes.map(
+      ({ attributeName, attributeValue }) => ({
+        updateOne: {
+          filter: { attributeName, characterId: body.characterId },
+          update: {
+            $inc: {
+              'addedValue.equipment': -attributeValue,
+              totalValue: -attributeValue,
+            },
+          },
+        },
+      })
+    );
+
+    console.log('bulkOperations: ', bulkOperations);
+
+    return await CharacterAttributeModel.bulkWrite(bulkOperations);
+  }
+
+  async increaseCharacterAttributeValue(body: {
+    characterId: string;
+    attributeName: AttributeName;
+    addedValue: number;
+    source: 'equipment' | 'other';
+  }) {
+    switch (body.source) {
+      case 'equipment':
+        return await CharacterAttributeModel.updateOne(
+          { characterId: body.characterId, attributeName: body.attributeName },
+          {
+            $inc: {
+              'addedValue.equipment': body.addedValue,
+              totalValue: body.addedValue,
+            },
+          }
+        );
+      case 'other':
+        return await CharacterAttributeModel.updateOne(
+          { characterId: body.characterId, attributeName: body.attributeName },
+          {
+            $inc: {
+              'addedValue.otherAttributes': body.addedValue,
+              totalValue: body.addedValue,
+            },
+          }
+        );
+      default:
+        throw new CustomError('Unknown attribute source.', 500);
+    }
   }
 
   public transformResponse(

@@ -360,7 +360,7 @@ export class ResultController {
       }
 
       const resultdbRes = await createdResult.save();
-      console.log('resultdbRes: ', resultdbRes);
+      //console.log('resultdbRes: ', resultdbRes);
 
       return res.status(201).json({
         success: true,

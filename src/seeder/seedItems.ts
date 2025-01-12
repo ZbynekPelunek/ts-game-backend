@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 import { Armor, Weapon } from '../../../shared/src';
 import { starterArmor, starterWeapons } from '../data/items';
-import { ItemsEquipmentModel } from '../models/item.model';
+import { EquipmentModel } from '../models/item.model';
 
 const uri = process.env.MONGOOSE_URI_DEV;
 
@@ -16,10 +16,11 @@ async function connect() {
     console.log('Connected to MongoDB');
 
     console.log('Clearing previously saved items...');
-    await ItemsEquipmentModel.deleteMany({});
+    await EquipmentModel.deleteMany({});
     console.log('...clearing done');
-    await ItemsEquipmentModel.insertMany(equipmentArmorData);
-    await ItemsEquipmentModel.insertMany(equipmentWeaponData);
+
+    await EquipmentModel.insertMany(equipmentArmorData);
+    await EquipmentModel.insertMany(equipmentWeaponData);
     console.log('seeding done');
 
     await mongoose.connection.close();

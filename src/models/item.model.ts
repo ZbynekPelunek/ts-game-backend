@@ -1,5 +1,4 @@
 import {
-  Severity,
   getDiscriminatorModelForClass,
   getModelForClass,
   modelOptions,
@@ -16,11 +15,11 @@ import {
   CommonItemsEquipmenParams,
   CommonItemParams,
   CurrencyId,
+  AttributeName,
 } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true, discriminatorKey: 'itemType' },
-  options: { allowMixed: Severity.ALLOW, customName: 'items' },
 })
 export class ItemSchema implements CommonItemParams {
   @prop({ required: true })
@@ -55,7 +54,7 @@ export class EquipmentSchema
   @prop({ required: true, default: 1 })
   public itemLevel!: number;
 
-  @prop({ required: true })
+  @prop({ required: true, type: () => [ItemAttributeSchema] })
   public attributes!: [ItemAttribute, ...ItemAttribute[]];
 
   @prop({ required: true, enum: EquipmentSlot })
@@ -77,8 +76,22 @@ export class EquipmentSchema
   public isShopItem!: boolean;
 }
 
-export const ItemModel = getModelForClass(ItemSchema);
-export const ItemsEquipmentModel = getDiscriminatorModelForClass(
+class ItemAttributeSchema implements ItemAttribute {
+  @prop({ required: true })
+  public attributeName!: AttributeName;
+
+  @prop({ required: true })
+  public attributeValue!: number;
+
+  @prop({ required: true, enum: ItemQuality })
+  public requiredQuality?: ItemQuality;
+}
+
+// to make customName work with discriminator, it needs to be set here
+export const ItemModel = getModelForClass(ItemSchema, {
+  options: { customName: 'items' },
+});
+export const EquipmentModel = getDiscriminatorModelForClass(
   ItemModel,
   EquipmentSchema,
   ItemType.EQUIPMENT

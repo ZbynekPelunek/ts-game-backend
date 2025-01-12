@@ -2,7 +2,6 @@ import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
 import { InventoryBackend, InventoryItem } from '../../../shared/src';
-import { ItemSchema } from './item.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
@@ -23,7 +22,7 @@ export class InventorySchema implements InventoryBackend {
 }
 
 class InventoryItemSchema implements InventoryItem {
-  @prop({ required: true, ref: () => ItemSchema, type: () => Number })
+  @prop({ required: true, ref: () => 'items', type: () => Number })
   public itemId!: number;
 
   @prop({ default: 0 })

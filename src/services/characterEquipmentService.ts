@@ -10,12 +10,20 @@ export class CharacterEquipmentService {
   async listCharacterEquipment(queryParams: {
     characterId?: string;
     itemSlot?: EquipmentSlot;
+    populateItem?: boolean;
   }) {
-    const { characterId, itemSlot } = queryParams;
+    const { characterId, itemSlot, populateItem } = queryParams;
     const charEquipQuery = CharacterEquipmentModel.find().lean();
 
     if (characterId) charEquipQuery.where({ characterId });
     if (itemSlot) charEquipQuery.where({ slot: itemSlot });
+    if (populateItem)
+      charEquipQuery.populate({
+        path: 'itemId',
+        select: '-createdAt -updatedAt -__v',
+        localField: 'itemId',
+        foreignField: 'itemId',
+      });
 
     return await charEquipQuery.exec();
   }

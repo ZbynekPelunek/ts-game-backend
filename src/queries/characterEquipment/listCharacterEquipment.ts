@@ -7,6 +7,7 @@ export class ListCharacterEquipmentQuery {
   async execute(queryParams: {
     characterId?: string;
     itemSlot?: EquipmentSlot;
+    populateItem?: boolean;
   }) {
     const characterEquipment =
       await this.characterEquipmentService.listCharacterEquipment(queryParams);

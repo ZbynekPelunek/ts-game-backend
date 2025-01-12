@@ -32,10 +32,10 @@ export class CharacterAttributeSchema
 
   @prop({
     required: true,
-    ref: () => AttributeDetailSchema,
-    type: () => String,
-    foreignField: 'attributeName',
-    localField: 'attributeName',
+    // ref: () => AttributeDetailSchema,
+    // type: () => String,
+    // foreignField: 'attributeName',
+    // localField: 'attributeName',
   })
   public attributeName!: AttributeName;
 

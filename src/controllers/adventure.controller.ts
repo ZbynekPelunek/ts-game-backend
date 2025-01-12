@@ -56,8 +56,6 @@ export class AdventureController {
       const { populateReward } = req.query;
       const { adventureId } = req.params;
 
-      console.log('adventure.controller-getOneById-req.query: ', req.query);
-
       const query = AdventureModel.findById(adventureId).lean();
 
       if (populateReward)

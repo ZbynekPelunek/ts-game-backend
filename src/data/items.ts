@@ -13,7 +13,7 @@ import {
 } from '../../../shared/src';
 import { getBase64FromImage } from '../engine/imageConvertor';
 
-const defaultImagePath = './src/images/noImageDefault.png';
+const defaultImagePath = './images/noImageDefault.png';
 
 const commonStarterArmorParams = {
   icon: getBase64FromImage(defaultImagePath) ?? '',

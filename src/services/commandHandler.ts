@@ -1,5 +1,4 @@
 import { CreateCharacterEquipment } from '../commands/characterEquipment/create';
-import { EquipItemCommand } from '../commands/characterEquipment/equipItem';
 import { CharacterEquipmentModel } from '../models/characterEquipment';
 
 export class CommandHandler {

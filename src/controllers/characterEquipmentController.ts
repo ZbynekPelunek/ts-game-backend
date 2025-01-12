@@ -8,24 +8,23 @@ import {
   Response_CharacterEquipment_POST,
   CharacterEquipmentBackend,
   Request_CharacterEquipment_PATCH_param,
-  Request_CharacterEquipment_PATCH_body,
   Response_CharacterEquipment_PATCH,
+  ResponseCharacterEquipmentUnequip,
 } from '../../../shared/src';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 import { ListCharacterEquipmentQuery } from '../queries/characterEquipment/listCharacterEquipment';
 import { CommandHandler } from '../services/commandHandler';
 import { CreateCharacterEquipment } from '../commands/characterEquipment/create';
-import { EquipItemCommand } from '../commands/characterEquipment/equipItem';
 import { CharacterEquipmentService } from '../services/characterEquipmentService';
 import { ItemService } from '../services/itemService';
 import { InventoryService } from '../services/inventoryService';
 import { UnequipItemCommand } from '../commands/characterEquipment/unequipItem';
 import { EquipItemFromInventoryCommand } from '../commands/characterEquipment/equipItemFromInventory';
+import { CharacterAttributeService } from '../services/characterAttributeService';
 
 export class CharacterEquipmentController {
   private commandHandler: CommandHandler;
   private listCharacterEquipmentQuery: ListCharacterEquipmentQuery;
-  private equipItemCommand: EquipItemCommand;
   private unequipItemCommand: UnequipItemCommand;
   private equipItemFromInventoryCommand: EquipItemFromInventoryCommand;
 
@@ -34,22 +33,22 @@ export class CharacterEquipmentController {
     const characterEquipmentService = new CharacterEquipmentService();
     const itemService = new ItemService();
     const inventoryService = new InventoryService();
+    const characterAttributeService = new CharacterAttributeService();
+
     this.listCharacterEquipmentQuery = new ListCharacterEquipmentQuery(
       characterEquipmentService
     );
-    this.equipItemCommand = new EquipItemCommand(
-      characterEquipmentService,
-      itemService,
-      inventoryService
-    );
     this.unequipItemCommand = new UnequipItemCommand(
       characterEquipmentService,
-      inventoryService
+      inventoryService,
+      characterAttributeService,
+      itemService
     );
     this.equipItemFromInventoryCommand = new EquipItemFromInventoryCommand(
       characterEquipmentService,
       inventoryService,
-      itemService
+      itemService,
+      characterAttributeService
     );
   }
 
@@ -58,12 +57,13 @@ export class CharacterEquipmentController {
     res: Response<Response_CharacterEquipment_GET_all>
   ) {
     try {
-      const { characterId, itemSlot } = req.query;
+      const { characterId, itemSlot, populateItem } = req.query;
 
       const characterEquipment = await this.listCharacterEquipmentQuery.execute(
         {
           characterId,
           itemSlot,
+          populateItem,
         }
       );
 
@@ -106,47 +106,16 @@ export class CharacterEquipmentController {
     }
   }
 
-  async equipItem(
-    req: Request<
-      Request_CharacterEquipment_PATCH_param,
-      {},
-      Request_CharacterEquipment_PATCH_body
-    >,
-    res: Response<Response_CharacterEquipment_PATCH>
-  ) {
-    try {
-      const { characterEquipmentId } = req.params;
-      const { itemId } = req.body;
-
-      const characterEquipment = await this.equipItemCommand.execute(
-        characterEquipmentId,
-        itemId
-      );
-
-      return res.status(200).json({ success: true, characterEquipment });
-    } catch (error) {
-      errorHandler(error, req, res);
-    }
-  }
-
   async unequipItem(
-    req: Request<
-      Request_CharacterEquipment_PATCH_param,
-      {},
-      Request_CharacterEquipment_PATCH_body
-    >,
-    res: Response<Response_CharacterEquipment_PATCH>
+    req: Request<Request_CharacterEquipment_PATCH_param>,
+    res: Response<ResponseCharacterEquipmentUnequip>
   ) {
     try {
       const { characterEquipmentId } = req.params;
-      const { itemId } = req.body;
 
-      const characterEquipment = await this.unequipItemCommand.execute(
-        characterEquipmentId,
-        itemId
-      );
+      await this.unequipItemCommand.execute(characterEquipmentId);
 
-      return res.status(200).json({ success: true, characterEquipment });
+      return res.status(204).json({ success: true });
     } catch (error) {
       errorHandler(error, req, res);
     }

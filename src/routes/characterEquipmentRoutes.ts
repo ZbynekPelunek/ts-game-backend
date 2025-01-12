@@ -31,11 +31,6 @@ characterEquipmentRouter.post(
 );
 
 characterEquipmentRouter.patch(
-  `/:characterEquipmentId/${CharacterEquipmentPatchActions.EQUIP_ITEM}`,
-  characterEquipmentController.equipItem.bind(characterEquipmentController)
-);
-
-characterEquipmentRouter.patch(
   `/:characterEquipmentId/${CharacterEquipmentPatchActions.UNEQUIP_ITEM}`,
   characterEquipmentController.unequipItem.bind(characterEquipmentController)
 );
