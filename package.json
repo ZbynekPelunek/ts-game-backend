@@ -13,7 +13,7 @@
     "seedRewards": "cross-env NODE_ENV=dev ts-node ./src/seeder/seedRewards.ts",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles",
     "prettier-format": "prettier --config .prettierrc src/**/*.ts --write",
-    "seedAll": "seedAttributes && seedCurrencies && seedItems && seedAdventures"
+    "seedAll": "seedAttributes && seedCurrencies && seedItems && seedAdventures && seedRewards"
   },
   "keywords": [],
   "author": "Zbynek Pelunek",

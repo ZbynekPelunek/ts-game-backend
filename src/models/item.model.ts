@@ -22,6 +22,9 @@ import {
   schemaOptions: { timestamps: true, discriminatorKey: 'itemType' },
 })
 export class ItemSchema implements CommonItemParams {
+  @prop()
+  public icon!: string;
+
   @prop({ required: true })
   public itemId!: number;
 
@@ -40,11 +43,8 @@ export class ItemSchema implements CommonItemParams {
   @prop({ default: 1 })
   public maxAmount?: number;
 
-  @prop({ enum: ItemQuality })
+  @prop({ enum: ItemQuality, default: ItemQuality.COMMON })
   public quality?: ItemQuality;
-
-  @prop()
-  public icon!: string;
 }
 
 export class EquipmentSchema

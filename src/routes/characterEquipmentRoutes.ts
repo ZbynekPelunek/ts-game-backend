@@ -34,3 +34,8 @@ characterEquipmentRouter.patch(
   `/:characterEquipmentId/${CharacterEquipmentPatchActions.UNEQUIP_ITEM}`,
   characterEquipmentController.unequipItem.bind(characterEquipmentController)
 );
+
+characterEquipmentRouter.patch(
+  `/:characterEquipmentId/${CharacterEquipmentPatchActions.SELL_ITEM}`,
+  characterEquipmentController.sellItem.bind(characterEquipmentController)
+);

@@ -28,9 +28,10 @@ import {
 } from '../../../shared/src';
 import { Combat } from '../engine/combat';
 import { EnemyModel } from '../models/enemy.model';
-import { ResultModel } from '../models/result.model';
+import { ResultModel, ResultSchema } from '../models/result.model';
 import { ApiService, PUBLIC_ROUTES } from '../services/apiService';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
+import { AnyBulkWriteOperation, Types } from 'mongoose';
 
 export class ResultController {
   private apiService: ApiService;
@@ -89,23 +90,75 @@ export class ResultController {
     try {
       const currentDate = new Date();
 
-      const finishedResults = await ResultModel.find({
+      const resultsInProgress = await ResultModel.find({
         inProgress: true,
-        timeFinish: { $lte: currentDate },
-      });
+      }).lean();
 
-      if (finishedResults.length === 0) {
-        return res.status(200).json({ success: true, finishedResults: [] });
+      if (resultsInProgress.length === 0) {
+        console.log('No results in progress');
+        return res.status(200).json({ success: true });
       }
 
-      const resultIds = finishedResults.map((result) => result._id);
+      const bulkOperations:
+        | AnyBulkWriteOperation<ResultSchema>[]
+        | {
+            updateOne: {
+              filter: { _id: Types.ObjectId };
+              update: { $set: { inProgress: boolean } };
+            };
+          }[] = [];
+      resultsInProgress.forEach((result) => {
+        const finishTime = new Date(result.timeFinish);
 
-      await ResultModel.updateMany(
-        { _id: { $in: resultIds } },
-        { $set: { inProgress: false } }
-      );
+        if (finishTime <= currentDate) {
+          bulkOperations.push({
+            updateOne: {
+              filter: { _id: result._id },
+              update: {
+                $set: { inProgress: false },
+              },
+            },
+          });
+        }
+      });
 
-      return res.status(200).json({ success: true, finishedResults });
+      await ResultModel.bulkWrite(bulkOperations);
+
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  async finishResult(req: Request, res: Response) {
+    try {
+      const currentDate = Date.now();
+      const { resultId } = req.params;
+      console.log('resultId: ', resultId);
+
+      const result = await ResultModel.findById(resultId).lean();
+
+      if (!result) {
+        throw new CustomError('Result not found', 404);
+      }
+      console.log('result: ', result);
+      console.log('result.timeFinish: ', result.timeFinish);
+      const finishTime = new Date(result.timeFinish).getTime();
+
+      console.log('curentDate: ', currentDate);
+      console.log('finishTime: ', finishTime);
+
+      if (currentDate - finishTime < 0) {
+        throw new CustomError('Result is not finished yet', 400);
+      }
+
+      await ResultModel.findByIdAndUpdate(resultId, {
+        $set: { inProgress: false },
+      });
+
+      console.log('Result updated');
+
+      return res.status(200).json({ success: true });
     } catch (error) {
       errorHandler(error, req, res);
     }
@@ -364,7 +417,7 @@ export class ResultController {
 
       return res.status(201).json({
         success: true,
-        result: { resultId: createdResult.id, timeStart, timeFinish },
+        result: { resultId: createdResult.id, timeStart, timeFinish, reward },
       });
     } catch (error) {
       errorHandler(error, req, res);
@@ -460,6 +513,7 @@ export class ResultController {
     const { characterId, ...rest } = databaseResponse;
     return {
       ...rest,
+      _id: databaseResponse._id!.toString(),
       characterId: databaseResponse.characterId.toString(),
     };
   }

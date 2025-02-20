@@ -363,6 +363,7 @@ export class InventoryController {
     //console.log('freeCharacterItemSlots: ', freeCharacterItemSlots);
 
     if (freeCharacterItemSlots.length === 0) {
+      console.log('INVENTORY IS FULL');
       throw new CustomError('Inventory is full', 400);
     }
 

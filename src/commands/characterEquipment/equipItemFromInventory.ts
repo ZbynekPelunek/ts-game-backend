@@ -13,25 +13,27 @@ export class EquipItemFromInventoryCommand {
     private characterAttributeService: CharacterAttributeService
   ) {}
 
-  async execute(body: {
-    itemId: number | null;
-    characterId: string;
-    inventoryId: string;
-  }) {
-    console.log('Equiping item from inventory: ', body.itemId);
-    const { itemId, characterId, inventoryId } = body;
+  async execute(body: { inventoryId: string }) {
+    const { inventoryId } = body;
     const session = await startTransaction();
 
-    if (!itemId) {
+    const inventorySlot = await this.inventoryService.getInventorySlotById({
+      inventorySlotId: inventoryId,
+    });
+    const inventoryItem = inventorySlot.item;
+
+    if (!inventoryItem) {
       throw new CustomError('No item to equip', 400);
     }
 
-    const inventoryItem = await this.itemService.getById({ itemId });
+    const itemId = inventorySlot.item!.itemId as number;
+    const characterId = inventorySlot.characterId;
+    const inventoryItemDetails = await this.itemService.getById({ itemId });
 
     const characterEquipmentSlot =
       await this.characterEquipmentService.listCharacterEquipment({
         characterId,
-        itemSlot: inventoryItem.slot,
+        itemSlot: inventoryItemDetails.slot,
       });
 
     if (characterEquipmentSlot.length < 1) {
@@ -40,7 +42,7 @@ export class EquipItemFromInventoryCommand {
 
     if (characterEquipmentSlot.length > 1) {
       throw new CustomError(
-        `There should be only 1 equipment slot ${inventoryItem.slot} for the character ${characterId}`,
+        `There should be only 1 equipment slot ${inventoryItemDetails.slot} for the character ${characterId}`,
         500
       );
     }
@@ -53,10 +55,11 @@ export class EquipItemFromInventoryCommand {
         session.startTransaction();
 
         console.log('Updating inventory...');
-        await this.inventoryService.updateInventoryItem(inventoryId, {
-          itemId,
-          amount: 1,
-        });
+        await this.inventoryService.addItemToFreeSlot(
+          characterId,
+          equippedItem.itemId,
+          1
+        );
         console.log('...updating inventory done.');
 
         console.log('Updating equipment...');
@@ -79,7 +82,7 @@ export class EquipItemFromInventoryCommand {
         await this.characterAttributeService.increaseMultipleAttributeEquipmentValues(
           {
             characterId,
-            attributes: inventoryItem.attributes,
+            attributes: inventoryItemDetails.attributes,
           }
         );
         console.log('...updating attributes done.');
@@ -110,7 +113,7 @@ export class EquipItemFromInventoryCommand {
         await this.characterAttributeService.increaseMultipleAttributeEquipmentValues(
           {
             characterId,
-            attributes: inventoryItem.attributes,
+            attributes: inventoryItemDetails.attributes,
           }
         );
         console.log('...updating attributes done.');

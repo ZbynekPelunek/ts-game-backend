@@ -87,6 +87,7 @@ export const starterArmor: Armor[] = [
     name: 'Loosely Threaded Chest 2',
     slot: EquipmentSlot.CHEST,
     equipmentType: ArmorType.CLOTH,
+    quality: ItemQuality.UNCOMMON,
     attributes: [
       {
         attributeName: MainAttributeNames.ARMOR,
@@ -122,6 +123,7 @@ export const starterArmor: Armor[] = [
     name: 'Loosely Threaded Robe',
     slot: EquipmentSlot.CHEST,
     equipmentType: ArmorType.CLOTH,
+    quality: ItemQuality.RARE,
     attributes: [
       {
         attributeName: MainAttributeNames.ARMOR,
@@ -162,6 +164,7 @@ export const starterArmor: Armor[] = [
     name: 'Loosely Threaded Legs',
     slot: EquipmentSlot.LEGS,
     equipmentType: ArmorType.CLOTH,
+    quality: ItemQuality.EPIC,
     attributes: [
       {
         attributeName: MainAttributeNames.ARMOR,
@@ -197,6 +200,7 @@ export const starterArmor: Armor[] = [
     name: 'Loosely Threaded Pants',
     slot: EquipmentSlot.LEGS,
     equipmentType: ArmorType.CLOTH,
+    quality: ItemQuality.LEGENDARY,
     attributes: [
       {
         attributeName: MainAttributeNames.ARMOR,

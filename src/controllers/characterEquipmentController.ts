@@ -8,7 +8,6 @@ import {
   Response_CharacterEquipment_POST,
   CharacterEquipmentBackend,
   Request_CharacterEquipment_PATCH_param,
-  Response_CharacterEquipment_PATCH,
   ResponseCharacterEquipmentUnequip,
 } from '../../../shared/src';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
@@ -21,12 +20,15 @@ import { InventoryService } from '../services/inventoryService';
 import { UnequipItemCommand } from '../commands/characterEquipment/unequipItem';
 import { EquipItemFromInventoryCommand } from '../commands/characterEquipment/equipItemFromInventory';
 import { CharacterAttributeService } from '../services/characterAttributeService';
+import { CharacterCurrencyService } from '../services/characterCurrencyService';
+import { SellEquipmentItemCommand } from '../commands/characterEquipment/sellEquipmentItem';
 
 export class CharacterEquipmentController {
   private commandHandler: CommandHandler;
   private listCharacterEquipmentQuery: ListCharacterEquipmentQuery;
   private unequipItemCommand: UnequipItemCommand;
   private equipItemFromInventoryCommand: EquipItemFromInventoryCommand;
+  private sellEquipmentItemCommand: SellEquipmentItemCommand;
 
   constructor() {
     this.commandHandler = new CommandHandler();
@@ -34,6 +36,7 @@ export class CharacterEquipmentController {
     const itemService = new ItemService();
     const inventoryService = new InventoryService();
     const characterAttributeService = new CharacterAttributeService();
+    const characterCurrencyService = new CharacterCurrencyService();
 
     this.listCharacterEquipmentQuery = new ListCharacterEquipmentQuery(
       characterEquipmentService
@@ -49,6 +52,12 @@ export class CharacterEquipmentController {
       inventoryService,
       itemService,
       characterAttributeService
+    );
+    this.sellEquipmentItemCommand = new SellEquipmentItemCommand(
+      characterEquipmentService,
+      characterCurrencyService,
+      characterAttributeService,
+      itemService
     );
   }
 
@@ -121,14 +130,27 @@ export class CharacterEquipmentController {
     }
   }
 
+  async sellItem(
+    req: Request<Request_CharacterEquipment_PATCH_param>,
+    res: Response<ResponseCharacterEquipmentUnequip>
+  ) {
+    try {
+      const { characterEquipmentId } = req.params;
+
+      await this.sellEquipmentItemCommand.execute(characterEquipmentId);
+
+      return res.status(204).json({ success: true });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
   //TODO: define interfaces
   async equipItemFromInventory(req: Request, res: Response) {
     try {
-      const { itemId, characterId, inventoryId } = req.body;
+      const { inventoryId } = req.body;
 
       await this.equipItemFromInventoryCommand.execute({
-        itemId,
-        characterId,
         inventoryId,
       });
 

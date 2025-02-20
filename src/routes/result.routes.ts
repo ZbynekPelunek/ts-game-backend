@@ -19,3 +19,8 @@ resultsRouter.get(
   '/:resultId',
   resultController.getOneById.bind(resultController)
 );
+
+resultsRouter.patch(
+  '/:resultId/finish-result',
+  resultController.finishResult.bind(resultController)
+);

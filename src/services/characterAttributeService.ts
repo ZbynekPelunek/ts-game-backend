@@ -50,7 +50,7 @@ export class CharacterAttributeService {
       })
     );
 
-    console.log('bulkOperations: ', bulkOperations);
+    //console.log('bulkOperations: ', bulkOperations);
 
     return await CharacterAttributeModel.bulkWrite(bulkOperations);
   }
@@ -73,7 +73,7 @@ export class CharacterAttributeService {
       })
     );
 
-    console.log('bulkOperations: ', bulkOperations);
+    //console.log('bulkOperations: ', bulkOperations);
 
     return await CharacterAttributeModel.bulkWrite(bulkOperations);
   }
