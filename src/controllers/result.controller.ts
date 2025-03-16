@@ -13,7 +13,6 @@ import {
   Response_Character_GET_one,
   Response_Adventure_GET_one,
   InventoryPostActions,
-  IRewardSchema,
   Reward,
   ResultReward,
   CommonItemsEquipmenParams,
@@ -25,6 +24,7 @@ import {
   Request_CharacterCurrency_PATCH_body,
   CharacterAttributeListQueryParams,
   ResponseCharacterAttributeList,
+  ResultState
 } from '../../../shared/src';
 import { Combat } from '../engine/combat';
 import { EnemyModel } from '../models/enemy.model';
@@ -45,17 +45,18 @@ export class ResultController {
     res: Response<Response_Result_GET_all>
   ) {
     try {
-      const { characterId, limit, inProgress, rewardCollected } = req.query;
+      const { characterId, limit, state } = req.query;
 
       const query = ResultModel.find().lean();
 
       if (characterId) query.where({ characterId });
-      if (inProgress) query.where({ inProgress });
-      if (rewardCollected) query.where({ rewardCollected });
+      if (state) query.where({ state });
       if (limit) query.limit(limit);
 
       const results = await query.exec();
       const transformedResults = this.transformResponseArray(results);
+
+      console.log(`Results found with state ${state}`, transformedResults);
 
       return res
         .status(200)
@@ -88,10 +89,12 @@ export class ResultController {
   //TODO: add interfaces
   async checkInProgress(req: Request, res: Response) {
     try {
+      const { characterId } = req.body;
       const currentDate = new Date();
 
       const resultsInProgress = await ResultModel.find({
-        inProgress: true,
+        characterId,
+        state: ResultState.IN_PROGRESS
       }).lean();
 
       if (resultsInProgress.length === 0) {
@@ -104,7 +107,7 @@ export class ResultController {
         | {
             updateOne: {
               filter: { _id: Types.ObjectId };
-              update: { $set: { inProgress: boolean } };
+              update: { $set: { state: ResultState } };
             };
           }[] = [];
       resultsInProgress.forEach((result) => {
@@ -115,9 +118,9 @@ export class ResultController {
             updateOne: {
               filter: { _id: result._id },
               update: {
-                $set: { inProgress: false },
-              },
-            },
+                $set: { state: ResultState.FINISHED }
+              }
+            }
           });
         }
       });
@@ -130,33 +133,69 @@ export class ResultController {
     }
   }
 
-  async finishResult(req: Request, res: Response) {
+  //TODO: add interfaces
+  async cancelAdventure(req: Request, res: Response) {
     try {
-      const currentDate = Date.now();
       const { resultId } = req.params;
-      console.log('resultId: ', resultId);
 
       const result = await ResultModel.findById(resultId).lean();
 
       if (!result) {
         throw new CustomError('Result not found', 404);
       }
-      console.log('result: ', result);
-      console.log('result.timeFinish: ', result.timeFinish);
-      const finishTime = new Date(result.timeFinish).getTime();
 
-      console.log('curentDate: ', currentDate);
-      console.log('finishTime: ', finishTime);
+      await ResultModel.findByIdAndUpdate(resultId, {
+        $set: { state: ResultState.CANCELED }
+      });
+
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  //TODO: add interfaces
+  async skipAdventure(req: Request, res: Response) {
+    try {
+      const currentDate = new Date().toISOString();
+      const { resultId } = req.params;
+
+      const result = await ResultModel.findById(resultId).lean();
+
+      if (!result) {
+        throw new CustomError('Result not found', 404);
+      }
+
+      await ResultModel.findByIdAndUpdate(resultId, {
+        $set: { state: ResultState.SKIPPED, timeFinish: currentDate }
+      });
+
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
+  }
+
+  async finishResult(req: Request, res: Response) {
+    try {
+      const currentDate = Date.now();
+      const { resultId } = req.params;
+
+      const result = await ResultModel.findById(resultId).lean();
+
+      if (!result) {
+        throw new CustomError('Result not found', 404);
+      }
+
+      const finishTime = new Date(result.timeFinish).getTime();
 
       if (currentDate - finishTime < 0) {
         throw new CustomError('Result is not finished yet', 400);
       }
 
       await ResultModel.findByIdAndUpdate(resultId, {
-        $set: { inProgress: false },
+        $set: { state: ResultState.FINISHED }
       });
-
-      console.log('Result updated');
 
       return res.status(200).json({ success: true });
     } catch (error) {
@@ -176,7 +215,7 @@ export class ResultController {
         throw new CustomError(`Result with id '${resultId}' not found`, 404);
       }
 
-      if (uncollectedRewardResult.rewardCollected) {
+      if (uncollectedRewardResult.state === ResultState.REWARD_COLLECTED) {
         throw new CustomError(
           `Result with id '${resultId}' has already colllected reward.`,
           400
@@ -194,14 +233,14 @@ export class ResultController {
             await this.addItemToInventory({
               characterId,
               amount: ir.amount,
-              itemId: ir.itemId,
+              itemId: ir.itemId
             });
           } else {
             const item = ir.itemId as CommonItemsEquipmenParams;
             await this.addItemToInventory({
               characterId,
               amount: ir.amount,
-              itemId: item.itemId,
+              itemId: item.itemId
             });
           }
         }
@@ -210,7 +249,7 @@ export class ResultController {
       if (rewardExperience) {
         await this.updateCharacter({
           characterId,
-          experience: rewardExperience,
+          experience: rewardExperience
         });
       }
 
@@ -222,23 +261,23 @@ export class ResultController {
           ) {
             const characterCurrencyId = await this.findCharacterCurrencyId({
               characterId,
-              currencyId: currency.currencyId,
+              currencyId: currency.currencyId
             });
 
             await this.updateCharacterCurrency({
               characterCurrencyId,
-              amount: currency.amount,
+              amount: currency.amount
             });
           } else {
             const currencyData = currency.currencyId as Currency;
             const characterCurrencyId = await this.findCharacterCurrencyId({
               characterId,
-              currencyId: currencyData._id,
+              currencyId: currencyData._id
             });
 
             await this.updateCharacterCurrency({
               characterCurrencyId,
-              amount: currency.amount,
+              amount: currency.amount
             });
           }
         }
@@ -246,12 +285,10 @@ export class ResultController {
 
       await ResultModel.updateOne(
         { _id: resultId },
-        { $set: { rewardCollected: true } }
+        { $set: { state: ResultState.REWARD_COLLECTED } }
       );
 
-      return res
-        .status(200)
-        .json({ success: true, collectedRewards: uncollectedRewardResult });
+      return res.status(200).json({ success: true });
     } catch (error) {
       errorHandler(error, req, res);
     }
@@ -269,11 +306,11 @@ export class ResultController {
 
       const countInProgressResults = await ResultModel.countDocuments({
         characterId,
-        inProgress: true,
+        state: ResultState.IN_PROGRESS
       });
       const countUncollectedRewardResults = await ResultModel.countDocuments({
         characterId,
-        rewardCollected: false,
+        state: ResultState.FINISHED
       });
 
       console.log('Adventures in progress: ', countInProgressResults);
@@ -332,7 +369,7 @@ export class ResultController {
       const reward: ResultReward = {
         currencies: [],
         experience: 0,
-        items: [],
+        items: []
       };
       adventure.rewards.forEach((r) => {
         const rewardObj = r.rewardId as Reward;
@@ -344,7 +381,7 @@ export class ResultController {
             const item = i.itemId as CommonItemsEquipmenParams;
             reward.items.push({
               itemId: item.itemId,
-              amount: i.amount * r.amount,
+              amount: i.amount * r.amount
             });
           });
         }
@@ -353,7 +390,7 @@ export class ResultController {
             const currency = c.currencyId as Currency;
             reward.currencies.push({
               currencyId: currency._id,
-              amount: c.amount * r.amount,
+              amount: c.amount * r.amount
             });
           });
         }
@@ -369,9 +406,8 @@ export class ResultController {
         combat: null,
         timeFinish,
         timeStart,
-        inProgress: true,
         reward,
-        rewardCollected: false,
+        state: ResultState.IN_PROGRESS
       };
 
       const createdResult = new ResultModel(result);
@@ -379,7 +415,7 @@ export class ResultController {
       if (adventure.enemyIds?.length) {
         const charAttQueryString: CharacterAttributeListQueryParams = {
           populateAttribute: true,
-          characterId,
+          characterId
         };
         const characterAttributesRes =
           await this.apiService.get<ResponseCharacterAttributeList>(
@@ -406,7 +442,7 @@ export class ResultController {
 
         const combatResult: ResultCombat = {
           log: combat.log,
-          playerWon: combat.playerWon,
+          playerWon: combat.playerWon
         };
 
         createdResult.combat = combatResult;
@@ -417,7 +453,7 @@ export class ResultController {
 
       return res.status(201).json({
         success: true,
-        result: { resultId: createdResult.id, timeStart, timeFinish, reward },
+        result: { resultId: createdResult.id, timeStart, timeFinish, reward }
       });
     } catch (error) {
       errorHandler(error, req, res);
@@ -451,14 +487,14 @@ export class ResultController {
   }) {
     const queryParams: Request_CharacterCurrency_GET_all_query = {
       characterId: data.characterId,
-      currencyId: data.currencyId,
+      currencyId: data.currencyId
     };
 
     const findCharCurrResponse =
       await this.apiService.get<Response_CharacterCurrency_GET_all>(
         `${PUBLIC_ROUTES.CharacterCurrencies}`,
         {
-          params: queryParams,
+          params: queryParams
         }
       );
 
@@ -478,7 +514,7 @@ export class ResultController {
       Response_CharacterCurrency_PATCH,
       Request_CharacterCurrency_PATCH_body
     >(`${PUBLIC_ROUTES.CharacterCurrencies}/${data.characterCurrencyId}`, {
-      amount: data.amount,
+      amount: data.amount
     });
 
     if (!updateCharCurrResponse.success) {
@@ -499,7 +535,7 @@ export class ResultController {
       },
       { experience: number }
     >(`${PUBLIC_ROUTES.Characters}/${data.characterId}/increase-experience`, {
-      experience: data.experience,
+      experience: data.experience
     });
 
     if (!updateCharacterResponse.success) {
@@ -514,7 +550,7 @@ export class ResultController {
     return {
       ...rest,
       _id: databaseResponse._id!.toString(),
-      characterId: databaseResponse.characterId.toString(),
+      characterId: databaseResponse.characterId.toString()
     };
   }
 

@@ -7,12 +7,10 @@ import {
 import { Types } from 'mongoose';
 
 import {
-  IRewardSchema,
   ResultBackend,
   ResultCombat,
   ResultReward,
-  RewardCurrency,
-  RewardItem,
+  ResultState,
 } from '../../../shared/src';
 import { RewardCurrencySchema, RewardItemSchema } from './reward.model';
 
@@ -37,10 +35,7 @@ export class ResultSchema implements ResultBackend {
   public timeStart!: string;
 
   @prop({ required: true })
-  public inProgress!: boolean;
-
-  @prop({ required: true, default: false })
-  public rewardCollected!: boolean;
+  public state!: ResultState;
 
   @prop({ required: true, type: () => ResultRewardSchema, _id: false })
   public reward!: ResultReward;

@@ -7,7 +7,11 @@ import {
 import { Types } from 'mongoose';
 
 import { defaultMaxInventorySlots } from '../defaultCharacterData/inventory';
-import { CharacterBackend } from '../../../shared/src';
+import {
+  CharacterBackend,
+  CharacterClass,
+  CharacterRace,
+} from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
@@ -19,6 +23,12 @@ export class CharacterSchema implements CharacterBackend {
 
   @prop({ required: true, unique: true })
   public name!: string;
+
+  @prop({ required: true })
+  public characterClass!: CharacterClass;
+
+  @prop({ required: true })
+  public race!: CharacterRace;
 
   @prop({ default: [] })
   public adventures?: number[];

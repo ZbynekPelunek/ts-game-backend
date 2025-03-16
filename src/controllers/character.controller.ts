@@ -173,11 +173,13 @@ export class CharacterController {
     res: Response<Response_Character_POST>
   ) {
     try {
-      const { accountId, name } = req.body;
+      const { accountId, name, race, characterClass } = req.body;
 
       const character = new CharacterModel({
         accountId,
         name,
+        race,
+        characterClass,
         maxInventorySlot: 20,
       });
 
@@ -324,6 +326,8 @@ export class CharacterController {
       level: databaseResponse.level,
       maxExperience: databaseResponse.maxExperience,
       name: databaseResponse.name,
+      characterClass: databaseResponse.characterClass,
+      race: databaseResponse.race,
     };
   }
 
