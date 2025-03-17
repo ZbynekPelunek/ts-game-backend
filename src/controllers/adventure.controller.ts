@@ -1,19 +1,20 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
-  Request_Adventure_GET_all_query,
-  Request_Adventure_GET_one_params,
-  Response_Adventure_GET_all,
-  Response_Adventure_GET_one,
-  Reward,
+  ListAdventuresRequestQuery,
+  GetAdventureRequestParams,
+  ListAdventuresResponse,
+  GetAdventureResponse,
+  Reward
 } from '../../../shared/src';
 import { AdventureModel } from '../models/adventure.model';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class AdventureController {
-  async getAll(
-    req: Request<{}, {}, {}, Request_Adventure_GET_all_query>,
-    res: Response<Response_Adventure_GET_all>
+  async list(
+    req: Request<{}, {}, {}, ListAdventuresRequestQuery>,
+    res: Response<ListAdventuresResponse>,
+    _next: NextFunction
   ) {
     try {
       const { populateReward, adventureLevel, type, limit } = req.query;
@@ -26,31 +27,32 @@ export class AdventureController {
           select: '-createdAt -updatedAt -__v',
           populate: [
             {
-              path: 'currencies.currencyId',
+              path: 'currencies.currencyId'
             },
             {
               path: 'items.itemId',
               localField: 'items.itemId',
-              foreignField: 'itemId',
-            },
-          ],
+              foreignField: 'itemId'
+            }
+          ]
         });
       if (adventureLevel) query.where({ adventureLevel });
       if (type) query.where({ type });
-      if (limit) query.limit(limit);
+      if (limit) query.limit(+limit);
 
       const adventures = await query.exec();
       // console.log('Adventures All lean response: ', adventures);
 
-      return res.status(200).json({ success: true, adventures });
+      res.status(200).json({ success: true, adventures });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async getOneById(
-    req: Request<Request_Adventure_GET_one_params>,
-    res: Response<Response_Adventure_GET_one>
+    req: Request<GetAdventureRequestParams>,
+    res: Response<GetAdventureResponse>,
+    _next: NextFunction
   ) {
     try {
       const { populateReward } = req.query;
@@ -58,20 +60,20 @@ export class AdventureController {
 
       const query = AdventureModel.findById(adventureId).lean();
 
-      if (populateReward)
+      if (populateReward === 'true')
         query.populate<Reward>({
           path: 'rewards.rewardId',
           select: '-createdAt -updatedAt -__v',
           populate: [
             {
-              path: 'currencies.currencyId',
+              path: 'currencies.currencyId'
             },
             {
               path: 'items.itemId',
               localField: 'items.itemId',
-              foreignField: 'itemId',
-            },
-          ],
+              foreignField: 'itemId'
+            }
+          ]
         });
 
       const adventure = await query.exec();
@@ -84,9 +86,9 @@ export class AdventureController {
         );
       }
 
-      return res.status(200).json({ success: true, adventure });
+      res.status(200).json({ success: true, adventure });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 }

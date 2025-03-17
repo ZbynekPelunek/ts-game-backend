@@ -12,7 +12,7 @@ export class CharacterRoutes {
 
     this.router.get(
       '',
-      this.characterController.getAll.bind(this.characterController)
+      this.characterController.list.bind(this.characterController)
     );
 
     this.router.get(

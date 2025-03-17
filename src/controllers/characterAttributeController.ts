@@ -1,12 +1,12 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
   CharacterAttributeCreateBody,
   CharacterAttributeCreateBundleBody,
-  CharacterAttributeListQueryParams,
-  ResponseCharacterAttributeCreate,
-  ResponseCharacterAttributeCreateBundle,
-  ResponseCharacterAttributeList,
+  ListCharacterAttributesRequestQuery,
+  CreateCharacterAttributeResponse,
+  CreateCharacterAttributeBundleResponse,
+  ListCharacterAttributesResponse
 } from '../../../shared/src';
 import { errorHandler } from '../middleware/errorHandler';
 import { ListCharacterAttributeQuery } from '../queries/characterAttribute/listCharacterAttribute';
@@ -25,8 +25,9 @@ export class CharacterAttributeController {
   ) {}
 
   async list(
-    req: Request<{}, {}, {}, CharacterAttributeListQueryParams>,
-    res: Response<ResponseCharacterAttributeList>
+    req: Request<{}, {}, {}, ListCharacterAttributesRequestQuery>,
+    res: Response<ListCharacterAttributesResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterId, populateAttribute } = req.query;
@@ -34,21 +35,22 @@ export class CharacterAttributeController {
       const characterAttributes =
         await this.queries.listCharacterAttributeQuery.execute({
           characterId,
-          populateAttribute,
+          populateAttribute
         });
 
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
-        characterAttributes,
+        characterAttributes
       });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async create(
     req: Request<{}, {}, CharacterAttributeCreateBody>,
-    res: Response<ResponseCharacterAttributeCreate>
+    res: Response<CreateCharacterAttributeResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterAttribute } = req.body;
@@ -58,17 +60,18 @@ export class CharacterAttributeController {
           characterAttribute
         );
 
-      return res
+      res
         .status(201)
         .json({ success: true, characterAttribute: characterAttributeCreated });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async createBundle(
     req: Request<{}, {}, CharacterAttributeCreateBundleBody>,
-    res: Response<ResponseCharacterAttributeCreateBundle>
+    res: Response<CreateCharacterAttributeBundleResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterAttributes } = req.body;
@@ -77,9 +80,9 @@ export class CharacterAttributeController {
         characterAttributes
       );
 
-      return res.status(201).json({ success: true });
+      res.status(201).json({ success: true });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 }

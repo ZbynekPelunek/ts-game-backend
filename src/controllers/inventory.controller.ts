@@ -1,29 +1,28 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
-  Request_Inventory_GET_all_query,
-  Response_Inventory_GET_all,
-  Request_Inventory_GET_item_param,
-  Response_Inventory_GET_one,
-  Request_Inventory_POST_body,
-  Response_Inventory_POST,
-  Request_Inventory_PATCH_param,
-  Response_Inventory_PATCH,
-  Response_Item_GET_one,
+  ListInventoriesRequestQuery,
+  ListInventoriesResponse,
+  GetInventoryRequestParams,
+  GetInventoryResponse,
+  CreateInventoryRequestBody,
+  CreateInventoryResponse,
+  UpdateInventoryRequestParams,
+  UpdateInventoryResponse,
+  GetItemResponse,
   InventoryFrontend,
-  Request_Inventory_DELETE_param,
-  Response_Inventory_DELETE,
+  DeleteInventoryRequestParams,
+  DeleteInventoryResponse,
   InventoryBackend,
   CommonItemParams,
   CommonItemsEquipmenParams,
   InventoryItem,
-  Request_Inventory_PATCH_body,
+  UpdateInventoryRequestBody
 } from '../../../shared/src';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
 import { InventoryModel } from '../models/inventory.model';
 import { ApiService, PUBLIC_ROUTES } from '../services/apiService';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
-import { Document } from 'mongoose';
 import { SellItemCommand } from '../commands/inventory/sellItem';
 import { CharacterCurrencyService } from '../services/characterCurrencyService';
 import { InventoryService } from '../services/inventoryService';
@@ -45,9 +44,10 @@ export class InventoryController {
     this.apiService = new ApiService();
   }
 
-  async getAll(
-    req: Request<{}, {}, {}, Request_Inventory_GET_all_query>,
-    res: Response<Response_Inventory_GET_all>
+  async list(
+    req: Request<{}, {}, {}, ListInventoriesRequestQuery>,
+    res: Response<ListInventoriesResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterId, slot, populateItem } = req.query;
@@ -55,29 +55,30 @@ export class InventoryController {
       const query = InventoryModel.find().sort({ slot: 1 }).lean();
 
       if (characterId) query.where({ characterId });
-      if (slot) query.where({ slot });
-      if (populateItem)
+      if (slot) query.where({ slot: +slot });
+      if (populateItem === 'true')
         query.populate<{ itemId: CommonItemParams }>({
           path: 'item.itemId',
           select: '-createdAt -updatedAt -__v',
           localField: 'itemId',
-          foreignField: 'itemId',
+          foreignField: 'itemId'
         });
 
       const inventory = await query.exec();
       const transformedInventory = this.transformResponseArray(inventory);
 
-      return res
+      res
         .status(200)
-        .json({ success: true, inventory: transformedInventory });
+        .json({ success: true, inventories: transformedInventory });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async getOneById(
-    req: Request<Request_Inventory_GET_item_param>,
-    res: Response<Response_Inventory_GET_one>
+    req: Request<GetInventoryRequestParams>,
+    res: Response<GetInventoryResponse>,
+    _next: NextFunction
   ) {
     try {
       const { inventoryId } = req.params;
@@ -85,40 +86,38 @@ export class InventoryController {
       const inventory = await this.getInventorySlotData(inventoryId);
       const transformedInventory = this.transformResponseObject(inventory);
 
-      return res
-        .status(200)
-        .json({ success: true, inventory: transformedInventory });
+      res.status(200).json({ success: true, inventory: transformedInventory });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async addInventorySlot(
-    req: Request<{}, {}, Request_Inventory_POST_body>,
-    res: Response<Response_Inventory_POST>
+    req: Request<{}, {}, CreateInventoryRequestBody>,
+    res: Response<CreateInventoryResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterId, slot, itemId } = req.body;
       const inventoryDbResponse = await InventoryModel.create({
         characterId,
         slot,
-        itemId,
+        itemId
       });
       const transformedResponse = [
-        this.transformResponseObject(inventoryDbResponse),
+        this.transformResponseObject(inventoryDbResponse)
       ];
 
-      return res
-        .status(201)
-        .json({ success: true, inventory: transformedResponse });
+      res.status(201).json({ success: true, inventory: transformedResponse });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async createNewInventory(
-    req: Request<{}, {}, Request_Inventory_POST_body>,
-    res: Response<Response_Inventory_POST>
+    req: Request<{}, {}, CreateInventoryRequestBody>,
+    res: Response<CreateInventoryResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterId } = req.body;
@@ -130,21 +129,16 @@ export class InventoryController {
       const transformedResponse =
         this.transformResponseArray(inventoryDbResponse);
 
-      return res
-        .status(201)
-        .json({ success: true, inventory: transformedResponse });
+      res.status(201).json({ success: true, inventory: transformedResponse });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async updateInventorySlot(
-    req: Request<
-      Request_Inventory_PATCH_param,
-      {},
-      Request_Inventory_PATCH_body
-    >,
-    res: Response<Response_Inventory_PATCH>
+    req: Request<UpdateInventoryRequestParams, {}, UpdateInventoryRequestBody>,
+    res: Response<UpdateInventoryResponse>,
+    _next: NextFunction
   ) {
     try {
       const { inventorySlotId } = req.params;
@@ -153,7 +147,8 @@ export class InventoryController {
       if (item === null) {
         await this.updateInventoryItem(inventorySlotId, item);
 
-        return res.status(204).json({ success: true });
+        res.status(204).json({ success: true });
+        return;
       }
 
       const inventorySlotToUpdate =
@@ -164,7 +159,8 @@ export class InventoryController {
       if (!inventorySlotToUpdate.item) {
         await this.updateInventoryItem(inventorySlotId, item);
 
-        return res.status(204).json({ success: true });
+        res.status(204).json({ success: true });
+        return;
       }
 
       const itemData = await this.getItemData(item.itemId);
@@ -179,7 +175,8 @@ export class InventoryController {
 
         await this.updateItemAmount(inventorySlotId, item.amount);
 
-        return res.status(204).json({ success: true });
+        res.status(204).json({ success: true });
+        return;
       }
 
       if (item.previousSlot) {
@@ -195,14 +192,14 @@ export class InventoryController {
         await this.addItemToFreeSlot(characterId, item.itemId, item.amount);
       }
 
-      return res.status(204).json({ success: true });
+      res.status(204).json({ success: true });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   //TODO: add interfaces
-  async addItem(req: Request, res: Response) {
+  async addItem(req: Request, res: Response, _next: NextFunction) {
     try {
       const { characterId, itemId, amount } = req.body;
 
@@ -214,39 +211,41 @@ export class InventoryController {
         amount
       );
 
-      return res.status(201).json({ success: true, inventory: inventorySlot });
+      res.status(201).json({ success: true, inventory: inventorySlot });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async sellInventoryItem(
-    req: Request<Request_Inventory_PATCH_param>,
-    res: Response<Response_Inventory_PATCH>
+    req: Request<UpdateInventoryRequestParams>,
+    res: Response<UpdateInventoryResponse>,
+    _next: NextFunction
   ) {
     try {
       const { inventorySlotId } = req.params;
 
       await this.sellItemCommand.execute({ inventorySlotId });
 
-      return res.status(204).json({ success: true });
+      res.status(204).json({ success: true });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async delete(
-    req: Request<Request_Inventory_DELETE_param>,
-    res: Response<Response_Inventory_DELETE>
+    req: Request<DeleteInventoryRequestParams>,
+    res: Response<DeleteInventoryResponse>,
+    _next: NextFunction
   ) {
     try {
       const { inventoryId } = req.params;
 
       await InventoryModel.findByIdAndDelete(inventoryId);
 
-      return res.status(204);
+      res.status(204);
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
@@ -255,7 +254,7 @@ export class InventoryController {
   private async getItemData(
     itemId: number
   ): Promise<CommonItemParams | CommonItemsEquipmenParams> {
-    const response = await this.apiService.get<Response_Item_GET_one>(
+    const response = await this.apiService.get<GetItemResponse>(
       `${PUBLIC_ROUTES.Items}/${itemId}`
     );
 
@@ -313,7 +312,7 @@ export class InventoryController {
     return InventoryModel.findByIdAndUpdate(
       inventoryId,
       {
-        $set: { item },
+        $set: { item }
       },
       { returnDocument: 'after' }
     );
@@ -337,7 +336,7 @@ export class InventoryController {
       { characterId, slot: previousItemSlot },
       {
         'item.itemId': inventorySlotItem.itemId,
-        'item.amount': inventorySlotItem.amount,
+        'item.amount': inventorySlotItem.amount
       }
     );
 
@@ -350,7 +349,7 @@ export class InventoryController {
     amount: number
   ) {
     const allCharacterItemSlots = await InventoryModel.find({
-      characterId,
+      characterId
     })
       .sort({ slot: 1 })
       .lean();
@@ -376,13 +375,6 @@ export class InventoryController {
     );
   }
 
-  private checkUpdateResponse(updateRes: (Document & InventoryBackend) | null) {
-    if (!updateRes) {
-      throw new CustomError('Something went wrong while updating', 500);
-    }
-    return updateRes;
-  }
-
   private transformResponseObject(
     databaseResponse: InventoryBackend
   ): InventoryFrontend {
@@ -390,7 +382,7 @@ export class InventoryController {
       slot: databaseResponse.slot,
       item: databaseResponse.item,
       _id: databaseResponse._id!.toString(),
-      characterId: databaseResponse.characterId.toString(),
+      characterId: databaseResponse.characterId.toString()
     };
   }
 

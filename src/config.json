@@ -19,7 +19,7 @@
     "xpRate": 1,
     "dropRate": 1,
     "currencyRate": 1,
-    "maxLevel": 1,
+    "maxLevel": 10,
     "maxItemLevel": 100
   }
 }

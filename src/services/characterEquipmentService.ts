@@ -2,27 +2,26 @@ import {
   CharacterEquipmentBackend,
   CharacterEquipmentFrontend,
   EquipmentSlot,
+  ListCharacterEquipmentsRequestQuery
 } from '../../../shared/src';
 import { CustomError } from '../middleware/errorHandler';
 import { CharacterEquipmentModel } from '../models/characterEquipment';
 
 export class CharacterEquipmentService {
-  async listCharacterEquipment(queryParams: {
-    characterId?: string;
-    itemSlot?: EquipmentSlot;
-    populateItem?: boolean;
-  }) {
+  async listCharacterEquipment(
+    queryParams: ListCharacterEquipmentsRequestQuery
+  ) {
     const { characterId, itemSlot, populateItem } = queryParams;
     const charEquipQuery = CharacterEquipmentModel.find().lean();
 
     if (characterId) charEquipQuery.where({ characterId });
     if (itemSlot) charEquipQuery.where({ slot: itemSlot });
-    if (populateItem)
+    if (populateItem === 'true')
       charEquipQuery.populate({
         path: 'itemId',
         select: '-createdAt -updatedAt -__v',
         localField: 'itemId',
-        foreignField: 'itemId',
+        foreignField: 'itemId'
       });
 
     return await charEquipQuery.exec();
@@ -47,7 +46,7 @@ export class CharacterEquipmentService {
     const updateRes = CharacterEquipmentModel.findByIdAndUpdate(
       characterEquipmentId,
       {
-        itemId,
+        itemId
       },
       { new: true }
     );
@@ -65,7 +64,7 @@ export class CharacterEquipmentService {
       _id: databaseResponse._id!.toString(),
       itemId: databaseResponse.itemId,
       uiPosition: databaseResponse.uiPosition,
-      slot: databaseResponse.slot,
+      slot: databaseResponse.slot
     };
   }
 

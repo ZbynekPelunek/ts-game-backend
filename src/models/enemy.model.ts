@@ -3,21 +3,21 @@ import {
   getModelForClass,
   modelOptions,
   prop,
-  Severity,
+  Severity
 } from '@typegoose/typegoose';
 
 import {
   AttributeName,
-  Enemy,
   EnemyAttribute,
-  EnemyTypes,
+  EnemyMongooseSchema,
+  EnemyTypes
 } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'enemies', allowMixed: Severity.ALLOW },
+  options: { customName: 'enemies', allowMixed: Severity.ALLOW }
 })
-export class EnemySchema implements Enemy {
+export class EnemySchema implements EnemyMongooseSchema {
   @prop({ required: true })
   public _id!: number;
 

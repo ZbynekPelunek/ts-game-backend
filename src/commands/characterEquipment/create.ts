@@ -1,5 +1,5 @@
-import { Request_CharacterEquipment_POST_body } from '../../../../shared/src';
+import { CreateCharacterEquipmentRequestBody } from '../../../../shared/src';
 
 export class CreateCharacterEquipment {
-  constructor(public body: Request_CharacterEquipment_POST_body) {}
+  constructor(public body: CreateCharacterEquipmentRequestBody) {}
 }

@@ -1,14 +1,10 @@
-import { EquipmentSlot } from '../../../../shared/src';
+import { ListCharacterEquipmentsRequestQuery } from '../../../../shared/src';
 import { CharacterEquipmentService } from '../../services/characterEquipmentService';
 
 export class ListCharacterEquipmentQuery {
   constructor(private characterEquipmentService: CharacterEquipmentService) {}
 
-  async execute(queryParams: {
-    characterId?: string;
-    itemSlot?: EquipmentSlot;
-    populateItem?: boolean;
-  }) {
+  async execute(queryParams: ListCharacterEquipmentsRequestQuery) {
     const characterEquipment =
       await this.characterEquipmentService.listCharacterEquipment(queryParams);
 

@@ -2,7 +2,7 @@ import {
   modelOptions,
   prop,
   getModelForClass,
-  ArraySubDocumentType,
+  ArraySubDocumentType
 } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
@@ -10,13 +10,13 @@ import {
   ResultBackend,
   ResultCombat,
   ResultReward,
-  ResultState,
+  ResultState
 } from '../../../shared/src';
-import { RewardCurrencySchema, RewardItemSchema } from './reward.model';
+import { RewardCurrencySchema, RewardItemSchema } from './rewardModel';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'results' },
+  options: { customName: 'results' }
 })
 export class ResultSchema implements ResultBackend {
   @prop({ required: true })
@@ -57,11 +57,11 @@ class ResultRewardSchema implements ResultReward {
     required: true,
     default: [],
     type: () => RewardCurrencySchema,
-    _id: false,
+    _id: false
   })
   public currencies!: [
     ArraySubDocumentType<RewardCurrencySchema>,
-    ...ArraySubDocumentType<RewardCurrencySchema>[],
+    ...ArraySubDocumentType<RewardCurrencySchema>[]
   ];
 
   @prop({ required: true, default: 0 })
@@ -71,11 +71,11 @@ class ResultRewardSchema implements ResultReward {
     required: true,
     default: [],
     type: () => RewardItemSchema,
-    _id: false,
+    _id: false
   })
   public items!: [
     ArraySubDocumentType<RewardItemSchema>,
-    ...ArraySubDocumentType<RewardItemSchema>[],
+    ...ArraySubDocumentType<RewardItemSchema>[]
   ];
 }
 

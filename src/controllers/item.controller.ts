@@ -1,27 +1,32 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
-  Response_Item_GET_all,
-  Request_Item_GET_one_params,
-  Response_Item_GET_one,
+  ListItemsResponse,
+  GetItemRequestParams,
+  GetItemResponse
 } from '../../../shared/src';
 import { ItemModel } from '../models/item.model';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class ItemController {
-  async getAll(_req: Request, res: Response<Response_Item_GET_all>) {
+  async list(
+    _req: Request,
+    res: Response<ListItemsResponse>,
+    _next: NextFunction
+  ) {
     try {
       const items = await ItemModel.find();
 
-      return res.status(200).json({ success: true, items });
+      res.status(200).json({ success: true, items });
     } catch (error) {
-      errorHandler(error, _req, res);
+      errorHandler(error, _req, res, _next);
     }
   }
 
   async getOneById(
-    req: Request<Request_Item_GET_one_params>,
-    res: Response<Response_Item_GET_one>
+    req: Request<GetItemRequestParams>,
+    res: Response<GetItemResponse>,
+    _next: NextFunction
   ) {
     try {
       const { itemId } = req.params;
@@ -32,9 +37,9 @@ export class ItemController {
         throw new CustomError(`Item with id '${itemId}' not found`, 404);
       }
 
-      return res.status(200).json({ success: true, item });
+      res.status(200).json({ success: true, item });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 }

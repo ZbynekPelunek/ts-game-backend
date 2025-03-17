@@ -7,14 +7,14 @@ import {
   Adventure_GET_one,
   AdventureTypes,
   Request_Adventure_GET_all_query,
-  Reward,
+  Reward
 } from '../../../../shared/src';
 import { APP_SERVER } from '../setupFile';
 import { REWARDS_MOCK } from '../../mockData/rewards';
 import { ADVENTURES_MOCK } from '../../mockData/adventures';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 import { AdventureModel } from '../../models/adventure.model';
-import { RewardModel } from '../../models/reward.model';
+import { RewardModel } from '../../models/rewardModel';
 import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Adventure routes', () => {
@@ -46,12 +46,12 @@ describe('Adventure routes', () => {
 
     it('returns status code 200 with all available adventures and populated reward', async () => {
       const queryString: Request_Adventure_GET_all_query = {
-        populateReward: true,
+        populateReward: true
       };
       const adventures = [
         ADVENTURES_MOCK[0],
         ADVENTURES_MOCK[1],
-        ADVENTURES_MOCK[2],
+        ADVENTURES_MOCK[2]
       ];
       await RewardModel.create(REWARDS_MOCK);
       adventures[0].rewards[0].rewardId = REWARDS_MOCK[0]._id;
@@ -86,12 +86,12 @@ describe('Adventure routes', () => {
 
     it('returns status code 200 with all available adventures with adventure level 2', async () => {
       const queryString: Request_Adventure_GET_all_query = {
-        adventureLevel: 2,
+        adventureLevel: 2
       };
       await addAdventureToDb(ADVENTURES_MOCK);
 
       const adventuresLength = await AdventureModel.countDocuments({
-        adventureLevel: 2,
+        adventureLevel: 2
       });
 
       const res = await request(APP_SERVER).get(apiAddress).query(queryString);
@@ -104,12 +104,12 @@ describe('Adventure routes', () => {
 
     it(`returns status code 200 with all available adventures with adventure type ${AdventureTypes.TUTORIAL}`, async () => {
       const queryString: Request_Adventure_GET_all_query = {
-        type: AdventureTypes.TUTORIAL,
+        type: AdventureTypes.TUTORIAL
       };
       await addAdventureToDb(ADVENTURES_MOCK);
 
       const adventuresLength = await AdventureModel.countDocuments({
-        type: AdventureTypes.TUTORIAL,
+        type: AdventureTypes.TUTORIAL
       });
 
       const res = await request(APP_SERVER).get(apiAddress).query(queryString);
@@ -123,7 +123,7 @@ describe('Adventure routes', () => {
     it('returns status code 200 with adventures limited to 3', async () => {
       const limit = 3;
       const queryString: Request_Adventure_GET_all_query = {
-        limit,
+        limit
       };
       await addAdventureToDb(ADVENTURES_MOCK);
 

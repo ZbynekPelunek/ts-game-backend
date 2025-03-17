@@ -1,30 +1,27 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
-  CharacterAttributeCreateBody,
   CharacterAttributeCreateBundleBody,
   CharacterBackend,
   CharacterEquipmentFrontend,
   CharacterFrontend,
   EquipmentSlot,
   InventoryPostActions,
-  Request_Character_GET_all_query,
-  Request_Character_GET_one_params,
-  Request_Character_GET_one_query,
-  Request_Character_POST_body,
-  Request_CharacterCurrency_POST_body,
-  Request_CharacterEquipment_POST_body,
-  Request_Inventory_POST_body,
-  Response_Attribute_GET_all,
-  Response_Character_GET_All,
-  Response_Character_GET_one,
-  Response_Character_POST,
-  Response_CharacterCurrency_POST,
-  Response_CharacterEquipment_POST,
-  Response_Inventory_POST,
-  ResponseCharacterAttributeCreate,
-  ResponseCharacterAttributeCreateBundle,
+  ListCharactersRequestQuery,
+  GetCharacterRequestParams,
+  CreateCharacterRequestBody,
+  CreateCharacterCurrenciesResponse,
+  CreateCharacterEquipmentRequestBody,
+  CreateInventoryRequestBody,
+  ListCharactersResponse,
+  GetCharacterResponse,
+  CreateCharacterResponse,
+  CreateCharacterCurrencyRequestBody,
+  CreateCharacterEquipmentResponse,
+  CreateInventoryResponse,
+  CreateCharacterAttributeBundleResponse,
   UiPosition,
+  ListAttributesResponse
 } from '../../../shared/src';
 import { CharacterModel } from '../models/character.model';
 import { generateDefaultCharacterAttributes } from '../defaultCharacterData/attributes';
@@ -39,9 +36,10 @@ export class CharacterController {
     this.apiService = new ApiService();
   }
 
-  async getAll(
-    req: Request<{}, {}, {}, Request_Character_GET_all_query>,
-    res: Response<Response_Character_GET_All>
+  async list(
+    req: Request<{}, {}, {}, ListCharactersRequestQuery>,
+    res: Response<ListCharactersResponse>,
+    _next: NextFunction
   ) {
     try {
       const { accountId } = req.query;
@@ -58,22 +56,16 @@ export class CharacterController {
         }
       );
 
-      return res
-        .status(200)
-        .json({ success: true, characters: responseCharacters });
+      res.status(200).json({ success: true, characters: responseCharacters });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async getOneById(
-    req: Request<
-      Request_Character_GET_one_params,
-      {},
-      {},
-      Request_Character_GET_one_query
-    >,
-    res: Response<Response_Character_GET_one>
+    req: Request<GetCharacterRequestParams>,
+    res: Response<GetCharacterResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterId } = req.params;
@@ -89,16 +81,14 @@ export class CharacterController {
       const responseCharacter: CharacterFrontend =
         this.transformResponse(character);
 
-      return res
-        .status(200)
-        .json({ success: true, character: responseCharacter });
+      res.status(200).json({ success: true, character: responseCharacter });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   //TODO add interface
-  async patch(req: Request, res: Response) {
+  async patch(req: Request, res: Response, _next: NextFunction) {
     try {
       const { characterId } = req.params;
       const updateFields = req.body;
@@ -118,16 +108,14 @@ export class CharacterController {
       const responseCharacter: CharacterFrontend =
         this.transformResponse(updatedCharacter);
 
-      return res
-        .status(200)
-        .json({ success: true, character: responseCharacter });
+      res.status(200).json({ success: true, character: responseCharacter });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   //TODO add interface
-  async increaseExperience(req: Request, res: Response) {
+  async increaseExperience(req: Request, res: Response, _next: NextFunction) {
     try {
       const { characterId } = req.params;
       const { experience } = req.body;
@@ -145,14 +133,14 @@ export class CharacterController {
         currentExperience,
         maxExperience,
         level,
-        experienceToInrease: experience,
+        experienceToInrease: experience
       });
 
       await character.updateOne(
         {
           currentExperience: experienceLevel.currentExperience,
           maxExperience: experienceLevel.maxExperience,
-          level: experienceLevel.level,
+          level: experienceLevel.level
         },
         { new: true, runValidators: true }
       );
@@ -160,17 +148,16 @@ export class CharacterController {
       const responseCharacter: CharacterFrontend =
         this.transformResponse(character);
 
-      return res
-        .status(200)
-        .json({ success: true, character: responseCharacter });
+      res.status(200).json({ success: true, character: responseCharacter });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async createCharacter(
-    req: Request<{}, {}, Request_Character_POST_body>,
-    res: Response<Response_Character_POST>
+    req: Request<{}, {}, CreateCharacterRequestBody>,
+    res: Response<CreateCharacterResponse>,
+    _next: NextFunction
   ) {
     try {
       const { accountId, name, race, characterClass } = req.body;
@@ -180,14 +167,14 @@ export class CharacterController {
         name,
         race,
         characterClass,
-        maxInventorySlot: 20,
+        maxInventorySlot: 20
       });
 
       await Promise.all([
         this.createCharacterAttributes(character.id),
         this.createCharacterCurrencies(character.id),
         this.createCharacterEquipment(character.id),
-        this.createCharacterInventory(character.id),
+        this.createCharacterInventory(character.id)
       ]);
 
       //console.log('saving character: ', character);
@@ -196,18 +183,18 @@ export class CharacterController {
 
       const responseCharacter = this.transformResponse(character);
 
-      return res.status(201).json({
+      res.status(201).json({
         success: true,
-        character: responseCharacter,
+        character: responseCharacter
       });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   private async createCharacterAttributes(characterId: string): Promise<void> {
     const allAttributesResponse =
-      await this.apiService.get<Response_Attribute_GET_all>(
+      await this.apiService.get<ListAttributesResponse>(
         PUBLIC_ROUTES.Attributes
       );
 
@@ -223,10 +210,10 @@ export class CharacterController {
     );
 
     const characterAttributesResponse = await this.apiService.post<
-      ResponseCharacterAttributeCreateBundle,
+      CreateCharacterAttributeBundleResponse,
       CharacterAttributeCreateBundleBody
     >(`${PUBLIC_ROUTES.CharacterAttributes}/bundle`, {
-      characterAttributes: defaultCharacterAttributes,
+      characterAttributes: defaultCharacterAttributes
     });
 
     //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
@@ -240,10 +227,10 @@ export class CharacterController {
     const defaultCharacterCurrencies = generateCharacterCurrencies(characterId);
 
     const characterCurrenciesResponse = await this.apiService.post<
-      Response_CharacterCurrency_POST,
-      Request_CharacterCurrency_POST_body
+      CreateCharacterCurrenciesResponse,
+      CreateCharacterCurrencyRequestBody
     >(PUBLIC_ROUTES.CharacterCurrencies, {
-      characterCurrencies: defaultCharacterCurrencies,
+      characterCurrencies: defaultCharacterCurrencies
     });
 
     //console.log('characterAttributesResponse: ', characterAttributesResponse.data);
@@ -254,22 +241,28 @@ export class CharacterController {
   }
 
   private async createCharacterEquipment(characterId: string): Promise<void> {
-    const equipmentArr: Omit<CharacterEquipmentFrontend, '_id'>[] = [];
+    const equipmentArr: Pick<
+      CharacterEquipmentFrontend,
+      'characterId' | 'itemId' | 'slot' | 'uiPosition'
+    >[] = [];
     for (const e in EquipmentSlot) {
-      const equipmentObj: Omit<CharacterEquipmentFrontend, '_id'> = {
+      const equipmentObj: Pick<
+        CharacterEquipmentFrontend,
+        'characterId' | 'itemId' | 'slot' | 'uiPosition'
+      > = {
         slot: e as EquipmentSlot,
         characterId: characterId,
         uiPosition: this.setUiPosition(e as EquipmentSlot),
-        itemId: null,
+        itemId: null
       };
       equipmentArr.push(equipmentObj);
     }
 
     const characterEquipmentResponse = await this.apiService.post<
-      Response_CharacterEquipment_POST,
-      Request_CharacterEquipment_POST_body
+      CreateCharacterEquipmentResponse,
+      CreateCharacterEquipmentRequestBody
     >(PUBLIC_ROUTES.CharacterEquipment, {
-      characterEquipment: equipmentArr,
+      characterEquipment: equipmentArr
     });
 
     if (!characterEquipmentResponse.success) {
@@ -280,10 +273,10 @@ export class CharacterController {
 
   private async createCharacterInventory(characterId: string): Promise<void> {
     const inventoryItemsResponse = await this.apiService.post<
-      Response_Inventory_POST,
-      Request_Inventory_POST_body
+      CreateInventoryResponse,
+      CreateInventoryRequestBody
     >(`${PUBLIC_ROUTES.Inventory}/${InventoryPostActions.NEW}`, {
-      characterId: characterId,
+      characterId: characterId
     });
 
     if (!inventoryItemsResponse.success) {
@@ -311,7 +304,7 @@ export class CharacterController {
     return {
       currentExperience: data.currentExperience,
       maxExperience: data.maxExperience,
-      level: data.level,
+      level: data.level
     };
   };
 
@@ -327,7 +320,7 @@ export class CharacterController {
       maxExperience: databaseResponse.maxExperience,
       name: databaseResponse.name,
       characterClass: databaseResponse.characterClass,
-      race: databaseResponse.race,
+      race: databaseResponse.race
     };
   }
 

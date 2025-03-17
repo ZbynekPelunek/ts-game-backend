@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import { REWARDS } from '../data/rewards';
-import { RewardModel } from '../models/reward.model';
+import { RewardModel } from '../models/rewardModel';
 
 const uri = process.env.MONGOOSE_URI_DEV;
 

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import { QueryHandler } from '../services/queryHandler';
 import { GetCurrency } from '../queries/currency/getCurrency';
@@ -12,19 +12,19 @@ export class CurrencyController {
     this.queryHandler = new QueryHandler();
   }
 
-  async listCurrencies(req: Request, res: Response) {
+  async listCurrencies(req: Request, res: Response, _next: NextFunction) {
     try {
       const query = new ListCurrencies();
 
       const result = await this.queryHandler.handle(query);
 
-      return res.status(200).json(result);
+      res.status(200).json(result);
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
-  async getCurrency(req: Request, res: Response) {
+  async getCurrency(req: Request, res: Response, _next: NextFunction) {
     try {
       const { id } = req.params;
 
@@ -32,9 +32,9 @@ export class CurrencyController {
 
       const result = await this.queryHandler.handle(query);
 
-      return res.status(200).json(result);
+      res.status(200).json(result);
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 }

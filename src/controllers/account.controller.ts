@@ -1,16 +1,17 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
-  Request_Account_POST_body,
-  Response_Account_POST,
+  CreateAccountRequestBody,
+  CreateAccountResponse
 } from '../../../shared/src';
 import { AccountModel } from '../models/account.model';
 import { errorHandler } from '../middleware/errorHandler';
 
 export class AccountController {
-  async post(
-    req: Request<object, object, Request_Account_POST_body>,
-    res: Response<Response_Account_POST>
+  async create(
+    req: Request<{}, {}, CreateAccountRequestBody>,
+    res: Response<CreateAccountResponse>,
+    _next: NextFunction
   ) {
     try {
       const { email, password, username } = req.body;
@@ -18,20 +19,20 @@ export class AccountController {
       const account = await AccountModel.create({
         email,
         password,
-        username,
+        username
       });
 
-      return res.status(201).json({
+      res.status(201).json({
         success: true,
         account: {
           id: account.id,
           email: account.email,
           username: account.username,
-          level: account.level!,
-        },
+          level: account.level!
+        }
       });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
@@ -41,11 +42,11 @@ export class AccountController {
   '/:accountId',
   async (
     req: Request<
-      Request_Account_PATCH_params,
+      UpdateAccountRequestParams,
       object,
-      Request_Account_PATCH_body
+      UpdateAccountRequestBody
     >,
-    res: Response<Response_Account_PATCH>
+    res: Response<UpdateAccountResponse>
   ) => {
     const { accountId } = req.params;
     const { characterId } = req.body;

@@ -7,15 +7,15 @@ const characterCurrencyController = new CharacterCurrencyController();
 
 characterCurrenciesRouter.get(
   '',
-  characterCurrencyController.getAll.bind(characterCurrencyController)
+  characterCurrencyController.list.bind(characterCurrencyController)
 );
 
 characterCurrenciesRouter.post(
   '',
-  characterCurrencyController.post.bind(characterCurrencyController)
+  characterCurrencyController.create.bind(characterCurrencyController)
 );
 
 characterCurrenciesRouter.patch(
   '/:characterCurrencyId',
-  characterCurrencyController.patch.bind(characterCurrencyController)
+  characterCurrencyController.update.bind(characterCurrencyController)
 );

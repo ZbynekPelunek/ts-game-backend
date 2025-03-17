@@ -1,36 +1,37 @@
-import { Request, Response } from 'express';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 
-export const errorHandler = (
+export const errorHandler: ErrorRequestHandler = (
   error: any,
-  _req: Request<object, object, object, object>,
-  res: Response
+  _req: Request<any, any, any, any>,
+  res: Response,
+  _next: NextFunction
 ) => {
   if (error instanceof CustomError) {
-    return res.status(error.statusCode).json({
+    res.status(error.statusCode).json({
       success: false,
-      error: error.message,
+      error: error.message
     });
   } else if (error instanceof SyntaxError) {
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
-      error: 'Bad request: Malformed JSON',
+      error: 'Bad request: Malformed JSON'
     });
   } else if (error.name === 'ValidationError') {
     const messages = Object.values(error.errors).map((val: any) => val.message);
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
-      error: messages.join(', '),
+      error: messages.join(', ')
     });
   } else if (error.name === 'UnauthorizedError') {
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
-      error: 'Unauthorized: Invalid token',
+      error: 'Unauthorized: Invalid token'
     });
   } else {
     console.error('Unhandled error:', error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      error: 'Internal server error',
+      error: 'Internal server error'
     });
   }
 };

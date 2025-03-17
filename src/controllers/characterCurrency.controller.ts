@@ -1,25 +1,26 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
-  Request_CharacterCurrency_GET_all_query,
-  Response_CharacterCurrency_GET_all,
+  ListCharacterCurrenciesQuery,
+  ListCharacterCurrenciesResponse,
   CharacterCurrencyFrontend,
   Currency,
-  Request_CharacterCurrency_POST_body,
-  Response_CharacterCurrency_POST,
+  CreateCharacterCurrencyRequestBody,
+  CreateCharacterCurrenciesResponse,
   CharacterCurrencyBackend,
-  Request_CharacterCurrency_PATCH_body,
-  Response_CharacterCurrency_PATCH,
-  Request_CharacterCurrency_PATCH_param,
+  UpdateCharacterCurrencyRequestBody,
+  UpdateCharacterCurrencyResponse,
+  UpdateCharacterCurrencyRequestParams
 } from '../../../shared/src';
 import { CharacterCurrencyModel } from '../models/characterCurrency.model';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 import { Document } from 'mongoose';
 
 export class CharacterCurrencyController {
-  async getAll(
-    req: Request<{}, {}, {}, Request_CharacterCurrency_GET_all_query>,
-    res: Response<Response_CharacterCurrency_GET_all>
+  async list(
+    req: Request<{}, {}, {}, ListCharacterCurrenciesQuery>,
+    res: Response<ListCharacterCurrenciesResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterId, populateCurrency, currencyId } = req.query;
@@ -29,7 +30,7 @@ export class CharacterCurrencyController {
       if (populateCurrency)
         query.populate<{ currencyId: Currency }>({
           path: 'currencyId',
-          select: '-createdAt -updatedAt -__v',
+          select: '-createdAt -updatedAt -__v'
         });
       if (characterId) query.where({ characterId });
       if (currencyId) query.where({ currencyId });
@@ -38,18 +39,19 @@ export class CharacterCurrencyController {
       const transformedResponse =
         this.transformResponseArray(characterCurrencies);
 
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
-        characterCurrencies: transformedResponse,
+        characterCurrencies: transformedResponse
       });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
-  async post(
-    req: Request<{}, {}, Request_CharacterCurrency_POST_body>,
-    res: Response<Response_CharacterCurrency_POST>
+  async create(
+    req: Request<{}, {}, CreateCharacterCurrencyRequestBody>,
+    res: Response<CreateCharacterCurrenciesResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterCurrencies } = req.body;
@@ -66,21 +68,20 @@ export class CharacterCurrencyController {
         responseArr.push(charAttributeResponse);
       }
 
-      return res
-        .status(201)
-        .json({ success: true, characterCurrencies: responseArr });
+      res.status(201).json({ success: true, characterCurrencies: responseArr });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
-  async patch(
+  async update(
     req: Request<
-      Request_CharacterCurrency_PATCH_param,
+      UpdateCharacterCurrencyRequestParams,
       {},
-      Request_CharacterCurrency_PATCH_body
+      UpdateCharacterCurrencyRequestBody
     >,
-    res: Response<Response_CharacterCurrency_PATCH>
+    res: Response<UpdateCharacterCurrencyResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterCurrencyId } = req.params;
@@ -106,11 +107,11 @@ export class CharacterCurrencyController {
         this.checkUpdateResponse(updatedCharacterCurrency)
       );
 
-      return res
+      res
         .status(200)
         .json({ success: true, characterCurrency: transformedResponse });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
@@ -130,7 +131,7 @@ export class CharacterCurrencyController {
       amount: databaseResponse.amount,
       _id: databaseResponse._id!.toString(),
       characterId: databaseResponse.characterId.toString(),
-      currencyId: databaseResponse.currencyId,
+      currencyId: databaseResponse.currencyId
     };
   }
 

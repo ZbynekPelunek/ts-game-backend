@@ -6,8 +6,8 @@ import { ResultGetActions, ResultPatchActions } from '../../../shared/src';
 export const resultsRouter = Router();
 const resultController = new ResultController();
 
-resultsRouter.post('', resultController.post.bind(resultController));
-resultsRouter.get('', resultController.getAll.bind(resultController));
+resultsRouter.post('', resultController.create.bind(resultController));
+resultsRouter.get('', resultController.list.bind(resultController));
 resultsRouter.get(
   '/:resultId',
   resultController.getOneById.bind(resultController)

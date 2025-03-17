@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { CharacterEquipmentController } from '../controllers/characterEquipmentController';
 import {
   CharacterEquipmentPatchActions,
-  CharacterEquipmentPostActions,
+  CharacterEquipmentPostActions
 } from '../../../shared/src';
 
 export const characterEquipmentRouter = Router();
@@ -11,16 +11,12 @@ const characterEquipmentController = new CharacterEquipmentController();
 
 characterEquipmentRouter.get(
   '',
-  characterEquipmentController.listCharacterEquipment.bind(
-    characterEquipmentController
-  )
+  characterEquipmentController.list.bind(characterEquipmentController)
 );
 
 characterEquipmentRouter.post(
   '',
-  characterEquipmentController.createCharacterEquipment.bind(
-    characterEquipmentController
-  )
+  characterEquipmentController.create.bind(characterEquipmentController)
 );
 
 characterEquipmentRouter.post(

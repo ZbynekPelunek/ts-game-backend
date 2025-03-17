@@ -1,29 +1,30 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
+import { AnyBulkWriteOperation, Types } from 'mongoose';
 
 import {
-  Request_Result_POST_body,
-  Response_Result_POST,
+  CreateResultRequestBody,
+  CreateResultResponse,
   ResultCombat,
-  Request_Result_GET_all_query,
-  Response_Result_GET_all,
+  ListResultsRequestQuery,
+  ListResultsResponse,
   ResultBackend,
   ResultFrontend,
-  Response_Result_GET_one,
-  Request_Result_GET_one_params,
-  Response_Character_GET_one,
-  Response_Adventure_GET_one,
+  GetResultResponse,
+  GetResultRequestParams,
+  GetCharacterResponse,
+  GetAdventureResponse,
   InventoryPostActions,
   Reward,
   ResultReward,
   CommonItemsEquipmenParams,
   Currency,
   CurrencyId,
-  Response_CharacterCurrency_GET_all,
-  Request_CharacterCurrency_GET_all_query,
-  Response_CharacterCurrency_PATCH,
-  Request_CharacterCurrency_PATCH_body,
-  CharacterAttributeListQueryParams,
-  ResponseCharacterAttributeList,
+  ListCharacterCurrenciesResponse,
+  ListCharacterCurrenciesQuery,
+  UpdateCharacterCurrencyResponse,
+  UpdateCharacterCurrencyRequestBody,
+  ListCharacterAttributesRequestQuery,
+  ListCharacterAttributesResponse,
   ResultState
 } from '../../../shared/src';
 import { Combat } from '../engine/combat';
@@ -31,7 +32,6 @@ import { EnemyModel } from '../models/enemy.model';
 import { ResultModel, ResultSchema } from '../models/result.model';
 import { ApiService, PUBLIC_ROUTES } from '../services/apiService';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
-import { AnyBulkWriteOperation, Types } from 'mongoose';
 
 export class ResultController {
   private apiService: ApiService;
@@ -40,9 +40,10 @@ export class ResultController {
     this.apiService = new ApiService();
   }
 
-  async getAll(
-    req: Request<{}, {}, {}, Request_Result_GET_all_query>,
-    res: Response<Response_Result_GET_all>
+  async list(
+    req: Request<{}, {}, {}, ListResultsRequestQuery>,
+    res: Response<ListResultsResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterId, limit, state } = req.query;
@@ -51,24 +52,23 @@ export class ResultController {
 
       if (characterId) query.where({ characterId });
       if (state) query.where({ state });
-      if (limit) query.limit(limit);
+      if (limit) query.limit(+limit);
 
       const results = await query.exec();
       const transformedResults = this.transformResponseArray(results);
 
       console.log(`Results found with state ${state}`, transformedResults);
 
-      return res
-        .status(200)
-        .json({ success: true, results: transformedResults });
+      res.status(200).json({ success: true, results: transformedResults });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   async getOneById(
-    req: Request<Request_Result_GET_one_params>,
-    res: Response<Response_Result_GET_one>
+    req: Request<GetResultRequestParams>,
+    res: Response<GetResultResponse>,
+    _next: NextFunction
   ) {
     try {
       const { resultId } = req.params;
@@ -80,14 +80,14 @@ export class ResultController {
 
       const transformedResult = this.transformResponseObject(result);
 
-      return res.status(200).json({ success: true, result: transformedResult });
+      res.status(200).json({ success: true, result: transformedResult });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   //TODO: add interfaces
-  async checkInProgress(req: Request, res: Response) {
+  async checkInProgress(req: Request, res: Response, _next: NextFunction) {
     try {
       const { characterId } = req.body;
       const currentDate = new Date();
@@ -99,7 +99,8 @@ export class ResultController {
 
       if (resultsInProgress.length === 0) {
         console.log('No results in progress');
-        return res.status(200).json({ success: true });
+        res.status(200).json({ success: true });
+        return;
       }
 
       const bulkOperations:
@@ -127,14 +128,14 @@ export class ResultController {
 
       await ResultModel.bulkWrite(bulkOperations);
 
-      return res.status(200).json({ success: true });
+      res.status(200).json({ success: true });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   //TODO: add interfaces
-  async cancelAdventure(req: Request, res: Response) {
+  async cancelAdventure(req: Request, res: Response, _next: NextFunction) {
     try {
       const { resultId } = req.params;
 
@@ -148,14 +149,14 @@ export class ResultController {
         $set: { state: ResultState.CANCELED }
       });
 
-      return res.status(200).json({ success: true });
+      res.status(200).json({ success: true });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   //TODO: add interfaces
-  async skipAdventure(req: Request, res: Response) {
+  async skipAdventure(req: Request, res: Response, _next: NextFunction) {
     try {
       const currentDate = new Date().toISOString();
       const { resultId } = req.params;
@@ -170,13 +171,13 @@ export class ResultController {
         $set: { state: ResultState.SKIPPED, timeFinish: currentDate }
       });
 
-      return res.status(200).json({ success: true });
+      res.status(200).json({ success: true });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
-  async finishResult(req: Request, res: Response) {
+  async finishResult(req: Request, res: Response, _next: NextFunction) {
     try {
       const currentDate = Date.now();
       const { resultId } = req.params;
@@ -197,14 +198,14 @@ export class ResultController {
         $set: { state: ResultState.FINISHED }
       });
 
-      return res.status(200).json({ success: true });
+      res.status(200).json({ success: true });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
   //TODO: add interfaces
-  async collectReward(req: Request, res: Response) {
+  async collectReward(req: Request, res: Response, _next: NextFunction) {
     try {
       const { resultId } = req.params;
 
@@ -288,15 +289,16 @@ export class ResultController {
         { $set: { state: ResultState.REWARD_COLLECTED } }
       );
 
-      return res.status(200).json({ success: true });
+      res.status(200).json({ success: true });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
-  async post(
-    req: Request<{}, {}, Request_Result_POST_body>,
-    res: Response<Response_Result_POST>
+  async create(
+    req: Request<{}, {}, CreateResultRequestBody>,
+    res: Response<CreateResultResponse>,
+    _next: NextFunction
   ) {
     try {
       const { characterId, adventureId } = req.body;
@@ -329,26 +331,24 @@ export class ResultController {
 
       const currentDateMs = Date.now();
 
-      const characterResponse =
-        await this.apiService.get<Response_Character_GET_one>(
-          `${PUBLIC_ROUTES.Characters}/${characterId}`
-        );
+      const characterResponse = await this.apiService.get<GetCharacterResponse>(
+        `${PUBLIC_ROUTES.Characters}/${characterId}`
+      );
 
       if (!characterResponse.success) {
         throw new CustomError(`'${characterResponse.error}'`, 500);
       }
       const { character } = characterResponse;
 
-      const adventureResponse =
-        await this.apiService.get<Response_Adventure_GET_one>(
-          `${PUBLIC_ROUTES.Adventures}/${adventureId}?populateReward=true`
-          // Doesnt work for some reason, need to set it manually
-          // {
-          //   params: {
-          //     populateReward: true,
-          //   },
-          // }
-        );
+      const adventureResponse = await this.apiService.get<GetAdventureResponse>(
+        `${PUBLIC_ROUTES.Adventures}/${adventureId}?populateReward=true`
+        // Doesnt work for some reason, need to set it manually
+        // {
+        //   params: {
+        //     populateReward: true,
+        //   },
+        // }
+      );
 
       if (!adventureResponse.success) {
         throw new CustomError(`'${adventureResponse.error}'`, 500);
@@ -413,12 +413,12 @@ export class ResultController {
       const createdResult = new ResultModel(result);
 
       if (adventure.enemyIds?.length) {
-        const charAttQueryString: CharacterAttributeListQueryParams = {
-          populateAttribute: true,
+        const charAttQueryString: ListCharacterAttributesRequestQuery = {
+          populateAttribute: 'true',
           characterId
         };
         const characterAttributesRes =
-          await this.apiService.get<ResponseCharacterAttributeList>(
+          await this.apiService.get<ListCharacterAttributesResponse>(
             `${PUBLIC_ROUTES.CharacterAttributes}`,
             { params: charAttQueryString }
           );
@@ -451,12 +451,12 @@ export class ResultController {
       const resultdbRes = await createdResult.save();
       //console.log('resultdbRes: ', resultdbRes);
 
-      return res.status(201).json({
+      res.status(201).json({
         success: true,
         result: { resultId: createdResult.id, timeStart, timeFinish, reward }
       });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 
@@ -485,13 +485,13 @@ export class ResultController {
     characterId: string;
     currencyId: CurrencyId;
   }) {
-    const queryParams: Request_CharacterCurrency_GET_all_query = {
+    const queryParams: ListCharacterCurrenciesQuery = {
       characterId: data.characterId,
       currencyId: data.currencyId
     };
 
     const findCharCurrResponse =
-      await this.apiService.get<Response_CharacterCurrency_GET_all>(
+      await this.apiService.get<ListCharacterCurrenciesResponse>(
         `${PUBLIC_ROUTES.CharacterCurrencies}`,
         {
           params: queryParams
@@ -511,8 +511,8 @@ export class ResultController {
     amount: number;
   }) {
     const updateCharCurrResponse = await this.apiService.patch<
-      Response_CharacterCurrency_PATCH,
-      Request_CharacterCurrency_PATCH_body
+      UpdateCharacterCurrencyResponse,
+      UpdateCharacterCurrencyRequestBody
     >(`${PUBLIC_ROUTES.CharacterCurrencies}/${data.characterCurrencyId}`, {
       amount: data.amount
     });

@@ -1,4 +1,4 @@
-import express, { Application, NextFunction, Request, Response } from 'express';
+import express, { Application, Request, Response } from 'express';
 import { Server } from 'http';
 
 import { accountsRouter } from './routes/account.routes';
@@ -10,8 +10,8 @@ import { characterEquipmentRouter } from './routes/characterEquipmentRoutes';
 import { inventoryRouter } from './routes/inventory.routes';
 import { itemsRouter } from './routes/item.routes';
 import { MongoDBHandler } from './mongoDB.handler';
-import { rewardsRouter } from './routes/reward.routes';
-import { enemiesRouter } from './routes/enemy.routes';
+import { rewardsRouter } from './routes/rewardRoutes';
+import { enemiesRouter } from './routes/enemyRoutes';
 import { resultsRouter } from './routes/result.routes';
 import { readConfigFile } from './utils/setupConfig';
 import { corsMiddleware } from './middleware/corsMiddleware';
@@ -58,7 +58,7 @@ export class AppServer {
     try {
       await Promise.all([
         this.server.close(),
-        this.mongoDbHandler.disconnect(),
+        this.mongoDbHandler.disconnect()
       ]);
     } catch (error) {
       console.error('Error while shutting down server: ', error);
@@ -81,7 +81,7 @@ export class AppServer {
     this.app.all('*', (req: Request, res: Response) => {
       res.status(404).json({
         success: false,
-        error: `Route ${req.url} does not exist.`,
+        error: `Route ${req.url} does not exist.`
       });
     });
     this.app.use(errorHandler);

@@ -5,6 +5,6 @@ import { AttributeController } from '../controllers/attribute.controller';
 export const attributesRouter = Router();
 const attributeController = new AttributeController();
 
-attributesRouter.get('', attributeController.getAll);
+attributesRouter.get('', attributeController.list);
 
 attributesRouter.get('/:attributeId', attributeController.getOneById);

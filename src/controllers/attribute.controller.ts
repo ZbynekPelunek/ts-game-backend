@@ -1,18 +1,22 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
   BasicAttribute,
   BasicAttributeFrontend,
-  Request_Attribute_GET_Params,
-  Response_Attribute_GET_all,
-  Response_Attribute_GET_one,
+  GetAttributeRequestParams,
+  ListAttributesResponse,
+  GetAttributeResponse
 } from '../../../shared/src';
 
 import { AttributeDetailModel } from '../models/attribute.model';
 import { CustomError, errorHandler } from '../middleware/errorHandler';
 
 export class AttributeController {
-  async getAll(_req: Request, res: Response<Response_Attribute_GET_all>) {
+  async list(
+    _req: Request,
+    res: Response<ListAttributesResponse>,
+    _next: NextFunction
+  ) {
     try {
       const attributes = await AttributeDetailModel.find().lean();
 
@@ -23,22 +27,21 @@ export class AttributeController {
             attributeName: a.attributeName,
             isPercent: a.isPercent,
             label: a.label,
-            desc: a.desc,
+            desc: a.desc
           };
         }
       );
 
-      return res
-        .status(200)
-        .json({ success: true, attributes: responseAttributes });
+      res.status(200).json({ success: true, attributes: responseAttributes });
     } catch (error) {
-      errorHandler(error, _req, res);
+      errorHandler(error, _req, res, _next);
     }
   }
 
   async getOneById(
-    req: Request<Request_Attribute_GET_Params>,
-    res: Response<Response_Attribute_GET_one>
+    req: Request<GetAttributeRequestParams>,
+    res: Response<GetAttributeResponse>,
+    _next: NextFunction
   ) {
     try {
       const { attributeId } = req.params;
@@ -52,9 +55,9 @@ export class AttributeController {
         );
       }
 
-      return res.status(200).json({ success: true, attribute });
+      res.status(200).json({ success: true, attribute });
     } catch (error) {
-      errorHandler(error, req, res);
+      errorHandler(error, req, res, _next);
     }
   }
 }

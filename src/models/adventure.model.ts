@@ -3,19 +3,19 @@ import {
   getModelForClass,
   modelOptions,
   prop,
-  Severity,
+  Severity
 } from '@typegoose/typegoose';
 import {
   Adventure,
   AdventureReward,
-  AdventureTypes,
+  AdventureTypes
 } from '../../../shared/src';
-import { RewardSchema } from './reward.model';
+import { RewardSchema } from './rewardModel';
 import { EnemySchema } from './enemy.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'adventures', allowMixed: Severity.ALLOW },
+  options: { customName: 'adventures', allowMixed: Severity.ALLOW }
 })
 export class AdventureSchema implements Adventure {
   @prop({ required: true })

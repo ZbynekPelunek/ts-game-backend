@@ -1,8 +1,8 @@
 import {
   CharacterAttributeDTO,
-  Enemy,
   EnemyAttribute,
-  MainAttributeNames,
+  EnemyDTO,
+  MainAttributeNames
 } from '../../../shared/src';
 
 export interface AttackerTarget {
@@ -19,7 +19,7 @@ export class Combat {
   start = (
     characterName: string,
     characterAttributes: CharacterAttributeDTO[],
-    enemy: Enemy
+    enemy: EnemyDTO
   ) => {
     const attacker = this.transformCharacterToAttacker(
       characterName,
@@ -62,7 +62,7 @@ export class Combat {
       )[0].totalValue,
       health: characterAttributes.filter(
         (ca) => ca.attributeName === MainAttributeNames.HEALTH
-      )[0].totalValue,
+      )[0].totalValue
     };
   };
 
@@ -73,7 +73,7 @@ export class Combat {
     const transformedAttributes = enemyAttributes.reduce(
       (obj: { [key: string]: number }, item) => ({
         ...obj,
-        [item.attributeName]: item.value,
+        [item.attributeName]: item.value
       }),
       {}
     );
@@ -81,7 +81,7 @@ export class Combat {
     return {
       name: enemyName,
       damage: transformedAttributes[MainAttributeNames.MAX_DAMAGE],
-      health: transformedAttributes[MainAttributeNames.HEALTH],
+      health: transformedAttributes[MainAttributeNames.HEALTH]
     };
   }
 }

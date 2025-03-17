@@ -3,14 +3,16 @@ import {
   CharacterAttributeCreateDTO,
   CharacterAttributeDocument,
   CharacterAttributeDTO,
-  CharacterAttributeListQueryParams,
   ItemAttribute,
+  ListCharacterAttributesRequestQuery
 } from '../../../shared/src';
 import { CustomError } from '../middleware/errorHandler';
 import { CharacterAttributeModel } from '../models/characterAttribute';
 
 export class CharacterAttributeService {
-  async listCharacterAttribute(queryParams: CharacterAttributeListQueryParams) {
+  async listCharacterAttribute(
+    queryParams: ListCharacterAttributesRequestQuery
+  ) {
     const { characterId, populateAttribute } = queryParams;
     const charAttributeQuery = CharacterAttributeModel.find();
 
@@ -43,10 +45,10 @@ export class CharacterAttributeService {
           update: {
             $inc: {
               'addedValue.equipment': attributeValue,
-              totalValue: attributeValue,
-            },
-          },
-        },
+              totalValue: attributeValue
+            }
+          }
+        }
       })
     );
 
@@ -66,10 +68,10 @@ export class CharacterAttributeService {
           update: {
             $inc: {
               'addedValue.equipment': -attributeValue,
-              totalValue: -attributeValue,
-            },
-          },
-        },
+              totalValue: -attributeValue
+            }
+          }
+        }
       })
     );
 
@@ -91,8 +93,8 @@ export class CharacterAttributeService {
           {
             $inc: {
               'addedValue.equipment': body.addedValue,
-              totalValue: body.addedValue,
-            },
+              totalValue: body.addedValue
+            }
           }
         );
       case 'other':
@@ -101,8 +103,8 @@ export class CharacterAttributeService {
           {
             $inc: {
               'addedValue.otherAttributes': body.addedValue,
-              totalValue: body.addedValue,
-            },
+              totalValue: body.addedValue
+            }
           }
         );
       default:
@@ -136,7 +138,7 @@ export class CharacterAttributeService {
       totalValue,
       characterId,
       attributeName,
-      attribute,
+      attribute
     } = databaseResponse;
 
     return {
@@ -144,12 +146,12 @@ export class CharacterAttributeService {
       baseValue: baseValue ?? 0,
       addedValue: {
         equipment: addedValue?.equipment ?? 0,
-        otherAttributes: addedValue?.otherAttributes ?? 0,
+        otherAttributes: addedValue?.otherAttributes ?? 0
       },
       totalValue: totalValue ?? 0,
       characterId: characterId.toString(),
       attributeName,
-      attribute,
+      attribute
     };
   }
 

@@ -2,31 +2,31 @@ import {
   ArraySubDocumentType,
   getModelForClass,
   modelOptions,
-  prop,
+  prop
 } from '@typegoose/typegoose';
 
 import {
   CommonItemsEquipmenParams,
   Currency,
-  IRewardSchema,
+  RewardMongooseSchema,
   RewardCurrency,
-  RewardItem,
+  RewardItem
 } from '../../../shared/src';
 import { CurrencySchema } from './currency';
 import { EquipmentSchema } from './item.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'rewards' },
+  options: { customName: 'rewards' }
 })
-export class RewardSchema implements IRewardSchema {
+export class RewardSchema implements RewardMongooseSchema {
   @prop({ required: true })
   public _id!: number;
 
   @prop({ default: [], type: () => RewardCurrencySchema, _id: false })
   public currencies?: [
     ArraySubDocumentType<RewardCurrencySchema>,
-    ...ArraySubDocumentType<RewardCurrencySchema>[],
+    ...ArraySubDocumentType<RewardCurrencySchema>[]
   ];
 
   @prop({ default: 0 })
@@ -35,13 +35,13 @@ export class RewardSchema implements IRewardSchema {
   @prop({ default: [], type: () => RewardItemSchema, _id: false })
   public items?: [
     ArraySubDocumentType<RewardItemSchema>,
-    ...ArraySubDocumentType<RewardItemSchema>[],
+    ...ArraySubDocumentType<RewardItemSchema>[]
   ];
 }
 
 export class RewardCurrencySchema implements RewardCurrency {
-  @prop({ required: true, ref: () => CurrencySchema, type: () => Number })
-  public currencyId!: number | Currency;
+  @prop({ required: true, ref: () => CurrencySchema, type: () => String })
+  public currencyId!: string | Currency;
 
   @prop({ required: true })
   public amount!: number;
