@@ -1,5 +1,4 @@
 import {
-  ArraySubDocumentType,
   getModelForClass,
   modelOptions,
   prop,

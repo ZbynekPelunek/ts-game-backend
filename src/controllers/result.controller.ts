@@ -499,7 +499,7 @@ export class ResultController {
       );
 
     if (!findCharCurrResponse.success) {
-      throw new CustomError(<string>findCharCurrResponse.error, 400);
+      throw new CustomError(findCharCurrResponse.error.message, 400);
     }
 
     return findCharCurrResponse.characterCurrencies[0]._id;
@@ -518,7 +518,7 @@ export class ResultController {
     });
 
     if (!updateCharCurrResponse.success) {
-      throw new CustomError(<string>updateCharCurrResponse.error, 400);
+      throw new CustomError(updateCharCurrResponse.error.message, 400);
     }
   }
 

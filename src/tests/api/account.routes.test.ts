@@ -1,12 +1,8 @@
 import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
-import {
-  Request_Account_POST_body,
-  Account_POST,
-  IAccountSchema,
-} from '../../../../shared/src';
-import { AccountModel } from '../../models/account.model';
+import {} from '../../../../shared/src';
+import { AccountModel } from '../../models/accountModel';
 import { APP_SERVER } from '../setupFile';
 import { PUBLIC_ROUTES } from '../../services/apiService';
 
@@ -26,14 +22,14 @@ describe('Account routes', () => {
       await addAccountToDb({
         email: 'acc@test.test',
         username: 'testAccount',
-        password: '12345',
+        password: '12345'
       });
       const currentLength = await AccountModel.countDocuments();
 
-      const requestNewAccountBody: Request_Account_POST_body = {
+      const requestNewAccountBody = {
         email: newAccEmail,
         username: newAccUsername,
-        password: newAccPassword,
+        password: newAccPassword
       };
 
       const res = await request(APP_SERVER)
@@ -44,7 +40,7 @@ describe('Account routes', () => {
 
       expect(newLength).toBe(currentLength + 1);
       expect(res.statusCode).toEqual(201);
-      const accountResponse: Account_POST = res.body;
+      const accountResponse = res.body;
       expect(accountResponse.success).toBe(true);
       expect(accountResponse.account.id).toBeDefined();
       expect(accountResponse.account.email).toBe(newAccEmail);
@@ -101,6 +97,6 @@ describe('Account routes', () => {
   }); */
 });
 
-async function addAccountToDb(input: IAccountSchema | IAccountSchema[]) {
+async function addAccountToDb(input: unknown) {
   return AccountModel.create(input);
 }

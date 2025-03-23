@@ -1,37 +1,45 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
+import { CommonErrorResponse } from '../../../shared/src/interface/API/commonResponse';
+import { MongooseError } from 'mongoose';
 
 export const errorHandler: ErrorRequestHandler = (
-  error: any,
-  _req: Request<any, any, any, any>,
-  res: Response,
+  error: unknown,
+  _req: Request,
+  res: Response<CommonErrorResponse>,
   _next: NextFunction
 ) => {
   if (error instanceof CustomError) {
     res.status(error.statusCode).json({
       success: false,
-      error: error.message
+      error: {
+        type: error.type,
+        message: error.message,
+        details: error.details
+      }
     });
   } else if (error instanceof SyntaxError) {
     res.status(400).json({
       success: false,
-      error: 'Bad request: Malformed JSON'
+      error: {
+        type: 'Syntax Error',
+        message: 'Bad Request.'
+      }
     });
-  } else if (error.name === 'ValidationError') {
-    const messages = Object.values(error.errors).map((val: any) => val.message);
-    res.status(400).json({
-      success: false,
-      error: messages.join(', ')
-    });
-  } else if (error.name === 'UnauthorizedError') {
-    res.status(401).json({
-      success: false,
-      error: 'Unauthorized: Invalid token'
-    });
-  } else {
-    console.error('Unhandled error:', error);
+  } else if (error instanceof MongooseError) {
+    console.error({ name: error.name, message: error.message });
     res.status(500).json({
       success: false,
-      error: 'Internal server error'
+      error: {
+        message: 'Internal database server error.'
+      }
+    });
+  } else {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: {
+        message: 'Internal server error.'
+      }
     });
   }
 };
@@ -39,7 +47,9 @@ export const errorHandler: ErrorRequestHandler = (
 export class CustomError extends Error {
   constructor(
     public message: string,
-    public statusCode: number
+    public statusCode: number,
+    public type?: string,
+    public details?: string | string[]
   ) {
     super(message);
   }

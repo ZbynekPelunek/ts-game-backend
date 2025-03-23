@@ -1,85 +1,111 @@
 import { NextFunction, Request, Response } from 'express-serve-static-core';
 
 import {
-  CreateAccountRequestBody,
-  CreateAccountResponse
+  CreateAccountRequestDTO,
+  CreateAccountResponseDTO,
+  DeleteAccountRequestParams,
+  DeleteAccountResponseDTO,
+  GetAccountRequestParams,
+  GetAccountResponseDTO,
+  ListAccountsResponseDTO,
+  UpdateAccountRequestDTO,
+  UpdateAccountRequestParams,
+  UpdateAccountResponseDTO
 } from '../../../shared/src';
-import { AccountModel } from '../models/account.model';
+import { CreateAccountCommand } from '../commands/account/create';
 import { errorHandler } from '../middleware/errorHandler';
+import { ListAccountsQuery } from '../queries/account/list';
+import { GetAccountQuery } from '../queries/account/get';
+import { UpdateAccountCommand } from '../commands/account/update';
+import { DeleteAccountCommand } from '../commands/account/delete';
 
 export class AccountController {
-  async create(
-    req: Request<{}, {}, CreateAccountRequestBody>,
-    res: Response<CreateAccountResponse>,
+  private createAccountCommand: CreateAccountCommand;
+  private listAccountsQuery: ListAccountsQuery;
+  private getAccountQuery: GetAccountQuery;
+  private updateAccountCommand: UpdateAccountCommand;
+  private deleteAccountCommand: DeleteAccountCommand;
+
+  constructor() {
+    this.createAccountCommand = new CreateAccountCommand();
+    this.listAccountsQuery = new ListAccountsQuery();
+    this.getAccountQuery = new GetAccountQuery();
+    this.updateAccountCommand = new UpdateAccountCommand();
+    this.deleteAccountCommand = new DeleteAccountCommand();
+  }
+
+  async list(
+    req: Request,
+    res: Response<ListAccountsResponseDTO>,
     _next: NextFunction
   ) {
     try {
-      const { email, password, username } = req.body;
+      const response = await this.listAccountsQuery.execute();
 
-      const account = await AccountModel.create({
-        email,
-        password,
-        username
-      });
-
-      res.status(201).json({
-        success: true,
-        account: {
-          id: account.id,
-          email: account.email,
-          username: account.username,
-          level: account.level!
-        }
-      });
+      res.status(200).json(response);
     } catch (error) {
       errorHandler(error, req, res, _next);
     }
   }
 
-  async patch() {
-    // TODO: refactor to update account information
-    /* accountsRouter.patch(
-  '/:accountId',
-  async (
-    req: Request<
-      UpdateAccountRequestParams,
-      object,
-      UpdateAccountRequestBody
-    >,
-    res: Response<UpdateAccountResponse>
-  ) => {
-    const { accountId } = req.params;
-    const { characterId } = req.body;
+  async get(
+    req: Request<GetAccountRequestParams>,
+    res: Response<GetAccountResponseDTO>,
+    _next: NextFunction
+  ) {
+    const { params } = req;
+    try {
+      const response = await this.getAccountQuery.execute(params);
 
-    const account = await AccountModel.findById(accountId);
-
-    if (!account) {
-      console.log('no account found');
-
-      // TODO: fix NotFoundError to return 404
-      //throw new NotFoundError(`Account with id '${accountId}' not found`);
-      return res.status(404).json({
-        success: false,
-        error: `Account with id '${accountId}' not found`,
-      });
+      res.status(200).json(response);
+    } catch (error) {
+      errorHandler(error, req, res, _next);
     }
-    const convertCharacterId = new Types.ObjectId(characterId);
-
-    account.characters!.push(convertCharacterId);
-
-    await account.save();
-
-    return res.status(200).json({
-      success: true,
-      account: {
-        id: account.id,
-        email: account.email,
-        username: account.username,
-        level: account.level!,
-        characters: account.characters!.map((c) => c.toString()),
-      },
-    });
   }
-); */
+
+  async create(
+    req: Request<{}, {}, CreateAccountRequestDTO>,
+    res: Response<CreateAccountResponseDTO>,
+    _next: NextFunction
+  ) {
+    const { body } = req;
+    try {
+      const response = await this.createAccountCommand.execute(body);
+
+      res.status(201).json(response);
+    } catch (error) {
+      errorHandler(error, req, res, _next);
+    }
+  }
+
+  async update(
+    req: Request<UpdateAccountRequestParams, {}, UpdateAccountRequestDTO>,
+    res: Response<UpdateAccountResponseDTO>,
+    _next: NextFunction
+  ) {
+    const { params } = req;
+    const { body } = req;
+    try {
+      const response = await this.updateAccountCommand.execute(params, body);
+
+      res.status(200).json(response);
+    } catch (error) {
+      errorHandler(error, req, res, _next);
+    }
+  }
+
+  async delete(
+    req: Request<DeleteAccountRequestParams>,
+    res: Response<DeleteAccountResponseDTO>,
+    _next: NextFunction
+  ) {
+    const { params } = req;
+    try {
+      const response = await this.deleteAccountCommand.execute(params);
+
+      res.status(200).json(response);
+    } catch (error) {
+      errorHandler(error, req, res, _next);
+    }
   }
 }

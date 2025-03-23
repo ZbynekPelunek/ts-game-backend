@@ -1,7 +1,8 @@
 import express, { Application, Request, Response } from 'express';
 import { Server } from 'http';
+import helmet from 'helmet';
 
-import { accountsRouter } from './routes/account.routes';
+import { accountsRouter } from './routes/accountRoutes';
 import { adventuresRouter } from './routes/adventure.routes';
 import { attributesRouter } from './routes/attribute.routes';
 import { characterAttributesRouter } from './routes/characterAttribute.routes';
@@ -74,8 +75,10 @@ export class AppServer {
   }
 
   private async initServer(): Promise<void> {
-    this.app.use(express.json());
+    this.app.use(helmet());
     this.app.use(corsMiddleware);
+    this.app.use(express.json());
+    this.app.use(express.urlencoded());
 
     this.initPublicRouters();
     this.app.all('*', (req: Request, res: Response) => {
