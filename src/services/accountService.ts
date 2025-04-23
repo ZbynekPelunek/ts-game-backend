@@ -1,20 +1,18 @@
-import { hash } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
 import {
   CreateAccountRequestDTO,
+  CreateAccountResponseDTO,
+  LoginAccountRequestDTO,
+  LoginAccountResponseDTO,
   UpdateAccountRequestDTO
 } from '../../../shared/src';
 import { AccountModel } from '../models/accountModel';
 import { CustomError } from '../middleware/errorHandler';
+import { sign } from 'jsonwebtoken';
 
 export class AccountService {
   async getById(accountId: string) {
-    const account = await AccountModel.findById(accountId, undefined, {
-      select: '_id'
-    }).lean();
-
-    if (!account) {
-      throw new CustomError(`Account with id ${accountId} not found.`, 404);
-    }
+    const account = await this.accountIdExists(accountId);
 
     return account;
   }
@@ -23,14 +21,12 @@ export class AccountService {
     return AccountModel.find({}, {}, { select: '_id' }).lean();
   }
 
-  async create(createDto: CreateAccountRequestDTO) {
+  async create(
+    createDto: CreateAccountRequestDTO
+  ): Promise<{ token: string; createdAccount: CreateAccountResponseDTO }> {
     const { email, password, username } = createDto;
 
-    const isEmailUnique = await this.isEmailUnique(email);
-
-    if (!isEmailUnique) {
-      throw new CustomError('Account with this email already exists.', 400);
-    }
+    await this.isEmailUnique(email);
 
     const hashedPassword = await this.doHash(password, 12);
 
@@ -40,18 +36,29 @@ export class AccountService {
       password: hashedPassword
     });
 
-    return newAcount.save();
+    const createdAccount = await newAcount.save();
+
+    const accountId = createdAccount.id;
+    // TODO: update secret, make it more secure, save secret value in different place
+    const token = sign({ accountId }, 'secret');
+
+    return {
+      token,
+      createdAccount: {
+        _id: accountId,
+        email: createdAccount.email,
+        username: createdAccount.username
+      }
+    };
   }
 
   async update(accountId: string, data: UpdateAccountRequestDTO) {
+    await this.accountIdExists(accountId);
+
     const { username, accountLevel, email, password } = data;
 
     if (email) {
-      const isEmailUnique = await this.isEmailUnique(email);
-
-      if (!isEmailUnique) {
-        throw new CustomError('Account with this email already exists.', 400);
-      }
+      await this.isEmailUnique(email);
     }
 
     let hashedPassword;
@@ -78,17 +85,64 @@ export class AccountService {
   }
 
   async delete(accountId: string): Promise<void> {
+    await this.accountIdExists(accountId);
     await AccountModel.findByIdAndDelete(accountId);
   }
 
-  private async isEmailUnique(email: string): Promise<boolean> {
-    return (await AccountModel.findOne(
+  async login(
+    loginDto: LoginAccountRequestDTO
+  ): Promise<{ token: string; loggedInAccount: LoginAccountResponseDTO }> {
+    const { email, password } = loginDto;
+
+    const account = await AccountModel.findOne({ email })
+      .select('password email username')
+      .lean();
+
+    if (!account) {
+      throw new CustomError(`Wrong account credentials.`, 401);
+    }
+
+    const isPasswordCorrect = await compare(password, account.password);
+
+    if (!isPasswordCorrect) {
+      throw new CustomError(`Wrong account credentials.`, 401);
+    }
+
+    const accountId = account._id.toString();
+    // TODO: update secret, make it more secure, save secret value in different place
+    const token = sign({ accountId }, 'secret');
+
+    return {
+      token,
+      loggedInAccount: {
+        _id: accountId,
+        email: account.email,
+        username: account.username
+      }
+    };
+  }
+
+  private async accountIdExists(accountId: string, select = '_id') {
+    const account = await AccountModel.findById(accountId, undefined, {
+      select
+    }).lean();
+
+    if (!account) {
+      throw new CustomError(`Account with id ${accountId} not found.`, 404);
+    }
+    return account;
+  }
+
+  private async isEmailUnique(email: string): Promise<void> {
+    const account = await AccountModel.findOne(
       { email },
       {},
       { select: 'email' }
-    ).lean())
-      ? false
-      : true;
+    ).lean();
+
+    if (account) {
+      throw new CustomError('Account with this email already exists.', 400);
+    }
   }
 
   private doHash(value: string, saltValue: number): Promise<string> {

@@ -27,15 +27,17 @@ export class CharacterCurrencyController {
 
       const query = CharacterCurrencyModel.find().lean();
 
-      if (populateCurrency)
+      if (populateCurrency) {
         query.populate<{ currencyId: Currency }>({
           path: 'currencyId',
           select: '-createdAt -updatedAt -__v'
         });
+      }
       if (characterId) query.where({ characterId });
       if (currencyId) query.where({ currencyId });
 
       const characterCurrencies = await query.exec();
+
       const transformedResponse =
         this.transformResponseArray(characterCurrencies);
 

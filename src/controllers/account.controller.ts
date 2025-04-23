@@ -1,111 +1,153 @@
-import { NextFunction, Request, Response } from 'express-serve-static-core';
+import { Request, Response } from 'express-serve-static-core';
 
 import {
   CreateAccountRequestDTO,
-  CreateAccountResponseDTO,
+  CreateAccountResponse,
   DeleteAccountRequestParams,
-  DeleteAccountResponseDTO,
+  DeleteAccountResponse,
   GetAccountRequestParams,
-  GetAccountResponseDTO,
-  ListAccountsResponseDTO,
+  GetAccountResponse,
+  ListAccountsResponse,
+  LoginAccountRequestDTO,
+  LoginAccountResponse,
   UpdateAccountRequestDTO,
   UpdateAccountRequestParams,
-  UpdateAccountResponseDTO
+  UpdateAccountResponse
 } from '../../../shared/src';
-import { CreateAccountCommand } from '../commands/account/create';
-import { errorHandler } from '../middleware/errorHandler';
-import { ListAccountsQuery } from '../queries/account/list';
-import { GetAccountQuery } from '../queries/account/get';
-import { UpdateAccountCommand } from '../commands/account/update';
-import { DeleteAccountCommand } from '../commands/account/delete';
+import { AccountService } from '../services/accountService';
 
 export class AccountController {
-  private createAccountCommand: CreateAccountCommand;
-  private listAccountsQuery: ListAccountsQuery;
-  private getAccountQuery: GetAccountQuery;
-  private updateAccountCommand: UpdateAccountCommand;
-  private deleteAccountCommand: DeleteAccountCommand;
+  private accountService: AccountService;
 
   constructor() {
-    this.createAccountCommand = new CreateAccountCommand();
-    this.listAccountsQuery = new ListAccountsQuery();
-    this.getAccountQuery = new GetAccountQuery();
-    this.updateAccountCommand = new UpdateAccountCommand();
-    this.deleteAccountCommand = new DeleteAccountCommand();
+    this.accountService = new AccountService();
   }
 
-  async list(
-    req: Request,
-    res: Response<ListAccountsResponseDTO>,
-    _next: NextFunction
-  ) {
-    try {
-      const response = await this.listAccountsQuery.execute();
+  async list(_req: Request, res: Response<ListAccountsResponse>) {
+    const accounts = await this.accountService.list();
 
-      res.status(200).json(response);
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    res.status(200).json({
+      success: true,
+      accounts: accounts.map((acc) => {
+        return {
+          _id: acc._id.toString()
+        };
+      })
+    });
   }
 
   async get(
     req: Request<GetAccountRequestParams>,
-    res: Response<GetAccountResponseDTO>,
-    _next: NextFunction
+    res: Response<GetAccountResponse>
   ) {
-    const { params } = req;
-    try {
-      const response = await this.getAccountQuery.execute(params);
+    const { accountId } = req.params;
 
-      res.status(200).json(response);
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    const account = await this.accountService.getById(accountId);
+
+    res.status(200).json({
+      success: true,
+      account: {
+        _id: account._id.toString()
+      }
+    });
   }
 
   async create(
     req: Request<{}, {}, CreateAccountRequestDTO>,
-    res: Response<CreateAccountResponseDTO>,
-    _next: NextFunction
+    res: Response<CreateAccountResponse>
   ) {
-    const { body } = req;
-    try {
-      const response = await this.createAccountCommand.execute(body);
+    const { email, password, username } = req.body;
 
-      res.status(201).json(response);
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    const { createdAccount, token } = await this.accountService.create({
+      email,
+      password,
+      username
+    });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
+    res.status(201).json({
+      success: true,
+      account: {
+        _id: createdAccount._id,
+        email: createdAccount.email,
+        username: createdAccount.username
+      }
+    });
   }
 
   async update(
     req: Request<UpdateAccountRequestParams, {}, UpdateAccountRequestDTO>,
-    res: Response<UpdateAccountResponseDTO>,
-    _next: NextFunction
+    res: Response<UpdateAccountResponse>
   ) {
-    const { params } = req;
-    const { body } = req;
-    try {
-      const response = await this.updateAccountCommand.execute(params, body);
+    const { accountId } = req.params;
+    const { username, email, password, accountLevel } = req.body;
 
-      res.status(200).json(response);
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    const updatedAccount = await this.accountService.update(accountId, {
+      username,
+      email,
+      accountLevel,
+      password
+    });
+
+    res.status(200).json({
+      success: true,
+      account: {
+        _id: updatedAccount._id.toString(),
+        email: updatedAccount.email,
+        username: updatedAccount.username,
+        accountLevel: updatedAccount.accountLevel
+      }
+    });
   }
 
   async delete(
     req: Request<DeleteAccountRequestParams>,
-    res: Response<DeleteAccountResponseDTO>,
-    _next: NextFunction
+    res: Response<DeleteAccountResponse>
   ) {
-    const { params } = req;
-    try {
-      const response = await this.deleteAccountCommand.execute(params);
+    const { accountId } = req.params;
 
-      res.status(200).json(response);
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    await this.accountService.delete(accountId);
+
+    res.status(200).json({
+      success: true
+    });
+  }
+
+  async login(
+    req: Request<{}, {}, LoginAccountRequestDTO>,
+    res: Response<LoginAccountResponse>
+  ) {
+    const { email, password } = req.body;
+
+    const { token, loggedInAccount } = await this.accountService.login({
+      email,
+      password
+    });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
+    res.status(200).json({
+      success: true,
+      account: {
+        _id: loggedInAccount._id,
+        email: loggedInAccount.email,
+        username: loggedInAccount.username
+      }
+    });
+  }
+
+  async logout(_req: Request, res: Response) {
+    res.clearCookie('token');
+
+    res.status(200).json({ success: true });
   }
 }

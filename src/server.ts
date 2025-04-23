@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import { Server } from 'http';
 import helmet from 'helmet';
+import cors from 'cors';
 
 import { accountsRouter } from './routes/accountRoutes';
 import { adventuresRouter } from './routes/adventure.routes';
@@ -76,12 +77,18 @@ export class AppServer {
 
   private async initServer(): Promise<void> {
     this.app.use(helmet());
-    this.app.use(corsMiddleware);
+    //this.app.use(corsMiddleware);
     this.app.use(express.json());
+    this.app.use(
+      cors({
+        origin: process.env.FRONTEND_URL || 'http://127.0.0.1:4200',
+        credentials: true
+      })
+    );
     this.app.use(express.urlencoded());
 
     this.initPublicRouters();
-    this.app.all('*', (req: Request, res: Response) => {
+    this.app.all(/(.*)/, (req: Request, res: Response) => {
       res.status(404).json({
         success: false,
         error: `Route ${req.url} does not exist.`

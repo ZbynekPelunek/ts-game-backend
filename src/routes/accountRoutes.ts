@@ -6,7 +6,8 @@ import {
   getAccountParamsSchema,
   updateAccountParamsSchema,
   updateAccountBodySchema,
-  deleteAccountParamsSchema
+  deleteAccountParamsSchema,
+  loginAccountBodySchema
 } from '../joiSchemas/accountSchema';
 
 export const accountsRouter = Router();
@@ -23,6 +24,15 @@ accountsRouter.post(
   '',
   validateRequest(createAccountBodySchema, 'body'),
   accountController.create.bind(accountController)
+);
+accountsRouter.post(
+  '/login',
+  validateRequest(loginAccountBodySchema, 'body'),
+  accountController.login.bind(accountController)
+);
+accountsRouter.post(
+  '/logout',
+  accountController.logout.bind(accountController)
 );
 
 accountsRouter.patch(

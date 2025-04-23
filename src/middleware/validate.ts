@@ -18,7 +18,6 @@ export const validateRequest = (
         error.details.map((err) => err.message)
       );
     } else {
-      req[property] = value;
       next();
     }
   };

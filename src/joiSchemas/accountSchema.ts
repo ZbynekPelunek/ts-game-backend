@@ -3,6 +3,7 @@ import {
   CreateAccountRequestDTO,
   DeleteAccountRequestParams,
   GetAccountRequestParams,
+  LoginAccountRequestDTO,
   UpdateAccountRequestDTO,
   UpdateAccountRequestParams
 } from '../../../shared/src';
@@ -30,9 +31,15 @@ export const createAccountBodySchema = Joi.object<CreateAccountRequestDTO>({
     .min(PASSWORD_MIN_LENGTH)
     .max(PASSWORD_MAX_LENGTH)
     .required()
-})
-  .min(1)
-  .messages({ 'object.min': 'The request body cannot be empty.' });
+}).required();
+
+export const loginAccountBodySchema = Joi.object<LoginAccountRequestDTO>({
+  email: Joi.string().email().min(EMAIL_MIN_LENGTH).required(),
+  password: Joi.string()
+    .min(PASSWORD_MIN_LENGTH)
+    .max(PASSWORD_MAX_LENGTH)
+    .required()
+}).required();
 
 export const updateAccountParamsSchema = Joi.object<UpdateAccountRequestParams>(
   {
@@ -48,9 +55,7 @@ export const updateAccountBodySchema = Joi.object<UpdateAccountRequestDTO>({
   email: Joi.string().email().min(EMAIL_MIN_LENGTH),
   password: Joi.string().min(PASSWORD_MIN_LENGTH).max(PASSWORD_MAX_LENGTH),
   accountLevel: Joi.number()
-})
-  .min(1)
-  .messages({ 'object.min': 'The request body cannot be empty.' });
+}).required();
 
 export const deleteAccountParamsSchema = Joi.object<DeleteAccountRequestParams>(
   {
