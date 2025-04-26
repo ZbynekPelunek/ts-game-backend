@@ -2,7 +2,7 @@ import {
   getDiscriminatorModelForClass,
   getModelForClass,
   modelOptions,
-  prop,
+  prop
 } from '@typegoose/typegoose';
 
 import {
@@ -14,12 +14,12 @@ import {
   WeaponType,
   CommonItemsEquipmenParams,
   CommonItemParams,
-  CurrencyId,
   AttributeName,
+  CurrencyId
 } from '../../../shared/src';
 
 @modelOptions({
-  schemaOptions: { timestamps: true, discriminatorKey: 'itemType' },
+  schemaOptions: { timestamps: true, discriminatorKey: 'itemType' }
 })
 export class ItemSchema implements CommonItemParams {
   @prop()
@@ -89,7 +89,7 @@ class ItemAttributeSchema implements ItemAttribute {
 
 // to make customName work with discriminator, it needs to be set here
 export const ItemModel = getModelForClass(ItemSchema, {
-  options: { customName: 'items' },
+  options: { customName: 'items' }
 });
 export const EquipmentModel = getDiscriminatorModelForClass(
   ItemModel,

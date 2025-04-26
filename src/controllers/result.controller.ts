@@ -57,8 +57,6 @@ export class ResultController {
       const results = await query.exec();
       const transformedResults = this.transformResponseArray(results);
 
-      console.log(`Results found with state ${state}`, transformedResults);
-
       res.status(200).json({ success: true, results: transformedResults });
     } catch (error) {
       errorHandler(error, req, res, _next);
@@ -98,7 +96,6 @@ export class ResultController {
       }).lean();
 
       if (resultsInProgress.length === 0) {
-        console.log('No results in progress');
         res.status(200).json({ success: true });
         return;
       }
@@ -341,13 +338,12 @@ export class ResultController {
       const { character } = characterResponse;
 
       const adventureResponse = await this.apiService.get<GetAdventureResponse>(
-        `${PUBLIC_ROUTES.Adventures}/${adventureId}?populateReward=true`
-        // Doesnt work for some reason, need to set it manually
-        // {
-        //   params: {
-        //     populateReward: true,
-        //   },
-        // }
+        `${PUBLIC_ROUTES.Adventures}/${adventureId}`,
+        {
+          params: {
+            populateReward: true
+          }
+        }
       );
 
       if (!adventureResponse.success) {

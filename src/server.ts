@@ -3,7 +3,7 @@ import { Server } from 'http';
 import helmet from 'helmet';
 import cors from 'cors';
 
-import { accountsRouter } from './routes/accountRoutes';
+import { accountsRouter } from './routes/account.routes';
 import { adventuresRouter } from './routes/adventure.routes';
 import { attributesRouter } from './routes/attribute.routes';
 import { characterAttributesRouter } from './routes/characterAttribute.routes';
@@ -20,7 +20,7 @@ import { corsMiddleware } from './middleware/corsMiddleware';
 import { PUBLIC_ROUTES } from './services/apiService';
 import { errorHandler } from './middleware/errorHandler';
 import { CharacterRoutes } from './routes/character.routes';
-import { currenciesRouter } from './routes/currencyRoutes';
+import { currenciesRouter } from './routes/currency.routes';
 
 export class AppServer {
   private mongoDbHandler: MongoDBHandler;

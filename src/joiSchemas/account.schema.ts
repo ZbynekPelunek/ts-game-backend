@@ -1,4 +1,5 @@
 import Joi from 'joi';
+
 import {
   CreateAccountRequestDTO,
   DeleteAccountRequestParams,
@@ -13,7 +14,7 @@ import {
   PASSWORD_MIN_LENGTH,
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH
-} from '../models/accountModel';
+} from '../models/account.model';
 import { validObjectIdCheck } from '../utils/joiCustomMethods';
 
 export const getAccountParamsSchema = Joi.object<GetAccountRequestParams>({

@@ -6,7 +6,7 @@ import {
   ListAdventuresResponse,
   GetAdventureResponse
 } from '../../../shared/src';
-import { AdventureService } from '../services/adventureService';
+import { AdventureService } from '../services/adventure.service';
 
 export class AdventureController {
   private adventureService: AdventureService;
@@ -39,8 +39,12 @@ export class AdventureController {
     res: Response<GetAdventureResponse>
   ) {
     const { adventureId } = req.params;
+    const { populateReward } = req.query;
 
-    const adventure = await this.adventureService.getOneById(+adventureId);
+    const adventure = await this.adventureService.getOneById({
+      adventureId: +adventureId,
+      query: { populateReward: Boolean(populateReward) }
+    });
     //console.log('Adventure One lean response: ', adventure);
 
     res.status(200).json({ success: true, adventure });

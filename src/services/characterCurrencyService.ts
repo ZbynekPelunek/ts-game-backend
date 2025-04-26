@@ -1,7 +1,7 @@
 import {
   CharacterCurrencyBackend,
   CharacterCurrencyFrontend,
-  CurrencyId,
+  CurrencyId
 } from '../../../shared/src';
 import { CustomError } from '../middleware/errorHandler';
 import { CharacterCurrencyModel } from '../models/characterCurrency.model';
@@ -39,7 +39,7 @@ export class CharacterCurrencyService {
       amount: databaseResponse.amount,
       _id: databaseResponse._id!.toString(),
       characterId: databaseResponse.characterId.toString(),
-      currencyId: databaseResponse.currencyId,
+      currencyId: databaseResponse.currencyId
     };
   }
 

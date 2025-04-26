@@ -2,7 +2,7 @@ import request from 'supertest';
 import { describe, afterEach, it, expect } from '@jest/globals';
 
 import {} from '../../../../shared/src';
-import { AccountModel } from '../../models/accountModel';
+import { AccountModel } from '../../models/account.model';
 import { APP_SERVER } from '../setupFile';
 import { PUBLIC_ROUTES } from '../../services/apiService';
 

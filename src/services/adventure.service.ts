@@ -32,17 +32,32 @@ export class AdventureService {
     return await dbQuery.exec();
   }
 
-  async getOneById(adventureId: number) {
-    const adventure = this.adventureIdExists(adventureId);
-
-    return adventure;
-  }
-
-  private async adventureIdExists(adventureId: number, select?: string) {
+  async getOneById(data: {
+    adventureId: number;
+    query: { populateReward: boolean };
+  }) {
+    const {
+      adventureId,
+      query: { populateReward }
+    } = data;
     const dbQuery = AdventureModel.findById(adventureId).lean();
-    if (select) {
-      dbQuery.select(select);
-    }
+
+    if (populateReward)
+      dbQuery.populate<Reward>({
+        path: 'rewards.rewardId',
+        select: '-createdAt -updatedAt -__v',
+        populate: [
+          {
+            path: 'currencies.currencyId'
+          },
+          {
+            path: 'items.itemId',
+            localField: 'items.itemId',
+            foreignField: 'itemId'
+          }
+        ]
+      });
+
     const adventure = await dbQuery.exec();
 
     if (!adventure) {

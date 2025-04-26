@@ -14,7 +14,7 @@ import {
   UpdateAccountRequestParams,
   UpdateAccountResponse
 } from '../../../shared/src';
-import { AccountService } from '../services/accountService';
+import { AccountService } from '../services/account.service';
 
 export class AccountController {
   private accountService: AccountService;

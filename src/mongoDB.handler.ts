@@ -1,6 +1,6 @@
 import { connect, Mongoose, startSession } from 'mongoose';
 
-import { AccountModel } from './models/accountModel';
+import { AccountModel } from './models/account.model';
 import { CharacterModel } from './models/character.model';
 import { CharacterAttributeModel } from './models/characterAttribute';
 import { CharacterCurrencyModel } from './models/characterCurrency.model';

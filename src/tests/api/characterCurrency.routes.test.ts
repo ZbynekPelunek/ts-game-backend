@@ -10,11 +10,11 @@ import {
   CharacterCurrencyFrontend,
   Request_CharacterCurrency_POST_body,
   Request_CharacterCurrency_PATCH_body,
-  CharacterCurrency_PATCH,
+  CharacterCurrency_PATCH
 } from '../../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { CharacterCurrencyModel } from '../../models/characterCurrency.model';
-import { CurrencyModel } from '../../models/currency';
+import { CurrencyModel } from '../../models/currency.model';
 import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Character Currency routes', () => {
@@ -71,7 +71,7 @@ describe('Character Currency routes', () => {
       const currency = new CurrencyModel<Currency>({
         _id: currencyId,
         label: currencyLabel,
-        name: currencyName,
+        name: currencyName
       });
 
       await currency.save();
@@ -106,14 +106,14 @@ describe('Character Currency routes', () => {
           {
             characterId: UNKNOWN_OBJECT_ID.toString(),
             currencyId: CurrencyId.CHEATING_CURRENCY,
-            amount: 0,
+            amount: 0
           },
           {
             characterId: UNKNOWN_OBJECT_ID.toString(),
             currencyId: CurrencyId.GOLD,
-            amount: 10,
-          },
-        ],
+            amount: 10
+          }
+        ]
       };
       const charCurrLength = (
         charCurrBody.characterCurrencies as Omit<
@@ -139,8 +139,8 @@ describe('Character Currency routes', () => {
         characterCurrencies: {
           characterId: UNKNOWN_OBJECT_ID.toString(),
           currencyId: CurrencyId.CHEATING_CURRENCY,
-          amount: 0,
-        },
+          amount: 0
+        }
       };
 
       const res = await request(APP_SERVER)
@@ -165,7 +165,7 @@ describe('Character Currency routes', () => {
       const characterCurrencyId = characterCurrency.id;
 
       const requestBody: Request_CharacterCurrency_PATCH_body = {
-        amount: amountToIncrease,
+        amount: amountToIncrease
       };
       const res = await request(APP_SERVER)
         .patch(`${apiAddress}/${characterCurrencyId}`)
@@ -192,7 +192,7 @@ async function addCharCurrencyToDb(
   const currency = new CharacterCurrencyModel<CharacterCurrencyBackend>({
     amount,
     characterId,
-    currencyId,
+    currencyId
   });
 
   return currency.save();

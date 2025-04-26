@@ -10,9 +10,6 @@ export class CurrencySchema implements Currency {
   @prop({ required: true, enum: () => CurrencyId })
   public _id!: CurrencyId;
 
-  @prop({ required: true, default: 'MISSING-NAME' })
-  public name!: string;
-
   @prop({ required: true, default: 'MISSING-LABEL' })
   public label!: string;
 

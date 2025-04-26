@@ -5,7 +5,7 @@ import { validateRequest } from '../middleware/validate';
 import {
   getAdventureParamsSchema,
   listAdventuresQuerySchema
-} from '../joiSchemas/adventureSchema';
+} from '../joiSchemas/adventure.schema';
 
 export const adventuresRouter = Router();
 const adventureController = new AdventureController();

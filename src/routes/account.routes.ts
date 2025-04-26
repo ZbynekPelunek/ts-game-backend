@@ -8,7 +8,7 @@ import {
   updateAccountBodySchema,
   deleteAccountParamsSchema,
   loginAccountBodySchema
-} from '../joiSchemas/accountSchema';
+} from '../joiSchemas/account.schema';
 
 export const accountsRouter = Router();
 const accountController = new AccountController();

@@ -7,12 +7,13 @@ import {
 
 import {
   CommonItemsEquipmenParams,
-  Currency,
   RewardMongooseSchema,
   RewardCurrency,
-  RewardItem
+  RewardItem,
+  CurrencyId,
+  CurrencyDTO
 } from '../../../shared/src';
-import { CurrencySchema } from './currency';
+import { CurrencySchema } from './currency.model';
 import { EquipmentSchema } from './item.model';
 
 @modelOptions({
@@ -41,7 +42,7 @@ export class RewardSchema implements RewardMongooseSchema {
 
 export class RewardCurrencySchema implements RewardCurrency {
   @prop({ required: true, ref: () => CurrencySchema, type: () => String })
-  public currencyId!: string | Currency;
+  public currencyId!: CurrencyId | CurrencyDTO;
 
   @prop({ required: true })
   public amount!: number;

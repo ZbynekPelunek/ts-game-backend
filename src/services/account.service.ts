@@ -6,7 +6,7 @@ import {
   LoginAccountResponseDTO,
   UpdateAccountRequestDTO
 } from '../../../shared/src';
-import { AccountModel } from '../models/accountModel';
+import { AccountModel } from '../models/account.model';
 import { CustomError } from '../middleware/errorHandler';
 import { sign } from 'jsonwebtoken';
 
