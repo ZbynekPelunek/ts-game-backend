@@ -1,5 +1,5 @@
 import { GetRewardRequestParams } from '../../../../shared/src';
-import { RewardService } from '../../services/rewardService';
+import { RewardService } from '../../services/reward.service';
 
 export class GetRewardQuery {
   constructor(private rewardService: RewardService) {}

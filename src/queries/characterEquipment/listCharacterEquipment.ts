@@ -1,5 +1,5 @@
 import { ListCharacterEquipmentsRequestQuery } from '../../../../shared/src';
-import { CharacterEquipmentService } from '../../services/characterEquipmentService';
+import { CharacterEquipmentService } from '../../services/characterEquipment.service';
 
 export class ListCharacterEquipmentQuery {
   constructor(private characterEquipmentService: CharacterEquipmentService) {}

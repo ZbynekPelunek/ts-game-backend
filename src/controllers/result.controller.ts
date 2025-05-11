@@ -8,7 +8,6 @@ import {
   ListResultsRequestQuery,
   ListResultsResponse,
   ResultBackend,
-  ResultFrontend,
   GetResultResponse,
   GetResultRequestParams,
   GetCharacterResponse,
@@ -22,66 +21,82 @@ import {
   ListCharacterCurrenciesResponse,
   ListCharacterCurrenciesQuery,
   UpdateCharacterCurrencyResponse,
-  UpdateCharacterCurrencyRequestBody,
   ListCharacterAttributesRequestQuery,
   ListCharacterAttributesResponse,
-  ResultState
+  ResultState,
+  UpdateCharacterCurrencyRequestDTO
 } from '../../../shared/src';
 import { Combat } from '../engine/combat';
 import { EnemyModel } from '../models/enemy.model';
 import { ResultModel, ResultSchema } from '../models/result.model';
-import { ApiService, PUBLIC_ROUTES } from '../services/apiService';
-import { CustomError, errorHandler } from '../middleware/errorHandler';
+import { ApiService, V1_ROUTES } from '../services/apiService';
+import {
+  CustomError,
+  errorHandler
+} from '../middleware/errorHandler.middleware';
+import { ResultService } from '../services/result.service';
 
 export class ResultController {
   private apiService: ApiService;
+  private resultService: ResultService;
 
   constructor() {
     this.apiService = new ApiService();
+    this.resultService = new ResultService();
   }
 
   async list(
     req: Request<{}, {}, {}, ListResultsRequestQuery>,
-    res: Response<ListResultsResponse>,
-    _next: NextFunction
+    res: Response<ListResultsResponse>
   ) {
-    try {
-      const { characterId, limit, state } = req.query;
+    const { characterId, limit, state } = req.query;
 
-      const query = ResultModel.find().lean();
+    const results = await this.resultService.list({
+      characterId,
+      limit,
+      state
+    });
 
-      if (characterId) query.where({ characterId });
-      if (state) query.where({ state });
-      if (limit) query.limit(+limit);
-
-      const results = await query.exec();
-      const transformedResults = this.transformResponseArray(results);
-
-      res.status(200).json({ success: true, results: transformedResults });
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    res.status(200).json({
+      success: true,
+      results: results.map((result) => {
+        return {
+          _id: result._id.toString(),
+          adventureId: result.adventureId,
+          adventureName: result.adventureName,
+          characterId: result.characterId.toString(),
+          reward: result.reward,
+          state: result.state,
+          timeFinish: result.timeFinish,
+          timeStart: result.timeStart,
+          combat: result.combat
+        };
+      })
+    });
   }
 
   async getOneById(
     req: Request<GetResultRequestParams>,
-    res: Response<GetResultResponse>,
-    _next: NextFunction
+    res: Response<GetResultResponse>
   ) {
-    try {
-      const { resultId } = req.params;
+    const { resultId } = req.params;
 
-      const result = await ResultModel.findById(resultId).lean();
-      if (!result) {
-        throw new CustomError(`Result with id '${resultId}' not found`, 404);
+    const result = await this.resultService.getOneById(resultId);
+
+    res.status(200).json({
+      success: true,
+      result: {
+        _id: result._id.toString(),
+        adventureId: result.adventureId,
+        adventureName: result.adventureName,
+        characterId: result.characterId.toString(),
+        reward: result.reward,
+        state: result.state,
+        timeFinish: result.timeFinish,
+        timeStart: result.timeStart,
+        combat: result.combat
       }
-
-      const transformedResult = this.transformResponseObject(result);
-
-      res.status(200).json({ success: true, result: transformedResult });
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    });
   }
 
   //TODO: add interfaces
@@ -329,7 +344,10 @@ export class ResultController {
       const currentDateMs = Date.now();
 
       const characterResponse = await this.apiService.get<GetCharacterResponse>(
-        `${PUBLIC_ROUTES.Characters}/${characterId}`
+        `${V1_ROUTES.Characters}/${characterId}`,
+        {
+          withCredentials: true
+        }
       );
 
       if (!characterResponse.success) {
@@ -338,7 +356,7 @@ export class ResultController {
       const { character } = characterResponse;
 
       const adventureResponse = await this.apiService.get<GetAdventureResponse>(
-        `${PUBLIC_ROUTES.Adventures}/${adventureId}`,
+        `${V1_ROUTES.Adventures}/${adventureId}`,
         {
           params: {
             populateReward: true
@@ -415,7 +433,7 @@ export class ResultController {
         };
         const characterAttributesRes =
           await this.apiService.get<ListCharacterAttributesResponse>(
-            `${PUBLIC_ROUTES.CharacterAttributes}`,
+            `${V1_ROUTES.CharacterAttributes}`,
             { params: charAttQueryString }
           );
 
@@ -469,7 +487,7 @@ export class ResultController {
         error?: any;
       },
       { characterId: string; itemId: number; amount: number }
-    >(`${PUBLIC_ROUTES.Inventory}/${InventoryPostActions.ADD_ITEM}`, data);
+    >(`${V1_ROUTES.Inventory}/${InventoryPostActions.ADD_ITEM}`, data);
 
     if (!addItemResponse.success) {
       throw new CustomError(addItemResponse.error, 400);
@@ -488,7 +506,7 @@ export class ResultController {
 
     const findCharCurrResponse =
       await this.apiService.get<ListCharacterCurrenciesResponse>(
-        `${PUBLIC_ROUTES.CharacterCurrencies}`,
+        `${V1_ROUTES.CharacterCurrencies}`,
         {
           params: queryParams
         }
@@ -508,8 +526,8 @@ export class ResultController {
   }) {
     const updateCharCurrResponse = await this.apiService.patch<
       UpdateCharacterCurrencyResponse,
-      UpdateCharacterCurrencyRequestBody
-    >(`${PUBLIC_ROUTES.CharacterCurrencies}/${data.characterCurrencyId}`, {
+      UpdateCharacterCurrencyRequestDTO
+    >(`${V1_ROUTES.CharacterCurrencies}/${data.characterCurrencyId}`, {
       amount: data.amount
     });
 
@@ -530,30 +548,13 @@ export class ResultController {
         error?: any;
       },
       { experience: number }
-    >(`${PUBLIC_ROUTES.Characters}/${data.characterId}/increase-experience`, {
+    >(`${V1_ROUTES.Characters}/${data.characterId}/increase-experience`, {
       experience: data.experience
     });
 
     if (!updateCharacterResponse.success) {
       throw new CustomError(<string>updateCharacterResponse.error, 400);
     }
-  }
-
-  private transformResponseObject(
-    databaseResponse: ResultBackend
-  ): ResultFrontend {
-    const { characterId, ...rest } = databaseResponse;
-    return {
-      ...rest,
-      _id: databaseResponse._id!.toString(),
-      characterId: databaseResponse.characterId.toString()
-    };
-  }
-
-  private transformResponseArray(
-    databaseResponse: ResultBackend[]
-  ): ResultFrontend[] {
-    return databaseResponse.map((res) => this.transformResponseObject(res));
   }
 
   private mergeDuplicates<T>(

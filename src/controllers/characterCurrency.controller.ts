@@ -1,145 +1,105 @@
-import { NextFunction, Request, Response } from 'express-serve-static-core';
+import { Request, Response } from 'express-serve-static-core';
 
 import {
   ListCharacterCurrenciesQuery,
   ListCharacterCurrenciesResponse,
-  CharacterCurrencyFrontend,
-  Currency,
-  CreateCharacterCurrencyRequestBody,
-  CreateCharacterCurrenciesResponse,
-  CharacterCurrencyBackend,
-  UpdateCharacterCurrencyRequestBody,
+  CreateCharacterCurrencyRequestDTO,
+  CreateCharacterCurrencyResponse,
+  UpdateCharacterCurrencyRequestDTO,
+  UpdateCharacterCurrencyRequestParams,
   UpdateCharacterCurrencyResponse,
-  UpdateCharacterCurrencyRequestParams
+  CharacterCurrencyDTO
 } from '../../../shared/src';
-import { CharacterCurrencyModel } from '../models/characterCurrency.model';
-import { CustomError, errorHandler } from '../middleware/errorHandler';
-import { Document } from 'mongoose';
+import { CharacterCurrencyService } from '../services/characterCurrency.service';
 
 export class CharacterCurrencyController {
+  private characterCurrencyService: CharacterCurrencyService;
+
+  constructor() {
+    this.characterCurrencyService = new CharacterCurrencyService();
+  }
+
   async list(
     req: Request<{}, {}, {}, ListCharacterCurrenciesQuery>,
-    res: Response<ListCharacterCurrenciesResponse>,
-    _next: NextFunction
+    res: Response<ListCharacterCurrenciesResponse>
   ) {
-    try {
-      const { characterId, populateCurrency, currencyId } = req.query;
+    const { characterId, populateCurrency, currencyId } = req.query;
 
-      const query = CharacterCurrencyModel.find().lean();
+    const characterCurrencies = await this.characterCurrencyService.list({
+      characterId,
+      populateCurrency,
+      currencyId
+    });
 
-      if (populateCurrency) {
-        query.populate<{ currencyId: Currency }>({
-          path: 'currencyId',
-          select: '-createdAt -updatedAt -__v'
-        });
-      }
-      if (characterId) query.where({ characterId });
-      if (currencyId) query.where({ currencyId });
+    res.status(200).json({
+      success: true,
+      characterCurrencies: characterCurrencies.map((charCurr) => {
+        const characterCurrency: CharacterCurrencyDTO = {
+          _id: charCurr._id,
+          amount: charCurr.amount,
+          currencyId: charCurr.currencyId
+        };
 
-      const characterCurrencies = await query.exec();
+        if (!populateCurrency) {
+          return characterCurrency;
+        }
 
-      const transformedResponse =
-        this.transformResponseArray(characterCurrencies);
-
-      res.status(200).json({
-        success: true,
-        characterCurrencies: transformedResponse
-      });
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+        return {
+          ...characterCurrency,
+          currency: {
+            _id: charCurr.currency?._id!,
+            label: charCurr.currency?.label!,
+            cap: charCurr.currency?.cap,
+            desc: charCurr.currency?.desc
+          }
+        };
+      })
+    });
   }
 
   async create(
-    req: Request<{}, {}, CreateCharacterCurrencyRequestBody>,
-    res: Response<CreateCharacterCurrenciesResponse>,
-    _next: NextFunction
+    req: Request<{}, {}, CreateCharacterCurrencyRequestDTO>,
+    res: Response<CreateCharacterCurrencyResponse>
   ) {
-    try {
-      const { characterCurrencies } = req.body;
+    const { amount, characterId, currencyId } = req.body;
 
-      const characterCurrenciesDbRes =
-        await CharacterCurrencyModel.create(characterCurrencies);
+    const newCharacterCurrency = await this.characterCurrencyService.create({
+      amount,
+      characterId,
+      currencyId
+    });
 
-      let responseArr: CharacterCurrencyFrontend[] = [];
-      if (Array.isArray(characterCurrenciesDbRes)) {
-        responseArr = this.transformResponseArray(characterCurrenciesDbRes);
-      } else {
-        const charAttributeResponse: CharacterCurrencyFrontend =
-          this.transformResponseObject(characterCurrenciesDbRes);
-        responseArr.push(charAttributeResponse);
+    res.status(201).json({
+      success: true,
+      characterCurrency: {
+        amount: newCharacterCurrency.amount,
+        currencyId: newCharacterCurrency.currencyId
       }
-
-      res.status(201).json({ success: true, characterCurrencies: responseArr });
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    });
   }
 
   async update(
     req: Request<
       UpdateCharacterCurrencyRequestParams,
       {},
-      UpdateCharacterCurrencyRequestBody
+      UpdateCharacterCurrencyRequestDTO
     >,
-    res: Response<UpdateCharacterCurrencyResponse>,
-    _next: NextFunction
+    res: Response<UpdateCharacterCurrencyResponse>
   ) {
-    try {
-      const { characterCurrencyId } = req.params;
-      const { amount } = req.body;
+    const { characterCurrencyId } = req.params;
+    const { amount } = req.body;
 
-      const characterCurrencyData =
-        await CharacterCurrencyModel.findById(characterCurrencyId).lean();
-      if (!characterCurrencyData) {
-        throw new CustomError(
-          `Character currency with id '${characterCurrencyId}' does not exist`,
-          404
-        );
+    const updatedCharacterCurrency = await this.characterCurrencyService.update(
+      characterCurrencyId,
+      { amount }
+    );
+
+    res.status(200).json({
+      success: true,
+      characterCurrency: {
+        amount: updatedCharacterCurrency.amount,
+        currencyId: updatedCharacterCurrency.currencyId
       }
-
-      const updatedCharacterCurrency =
-        await CharacterCurrencyModel.findByIdAndUpdate(
-          characterCurrencyId,
-          { $inc: { amount } },
-          { returnDocument: 'after' }
-        );
-
-      const transformedResponse = this.transformResponseObject(
-        this.checkUpdateResponse(updatedCharacterCurrency)
-      );
-
-      res
-        .status(200)
-        .json({ success: true, characterCurrency: transformedResponse });
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
-  }
-
-  private checkUpdateResponse(
-    updateRes: (Document & CharacterCurrencyBackend) | null
-  ) {
-    if (!updateRes) {
-      throw new CustomError('Something went wrong while updating', 500);
-    }
-    return updateRes;
-  }
-
-  private transformResponseObject(
-    databaseResponse: CharacterCurrencyBackend
-  ): CharacterCurrencyFrontend {
-    return {
-      amount: databaseResponse.amount,
-      _id: databaseResponse._id!.toString(),
-      characterId: databaseResponse.characterId.toString(),
-      currencyId: databaseResponse.currencyId
-    };
-  }
-
-  private transformResponseArray(
-    databaseResponse: CharacterCurrencyBackend[]
-  ): CharacterCurrencyFrontend[] {
-    return databaseResponse.map((res) => this.transformResponseObject(res));
+    });
   }
 }

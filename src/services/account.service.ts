@@ -1,14 +1,12 @@
 import { compare, hash } from 'bcryptjs';
+
 import {
   CreateAccountRequestDTO,
   CreateAccountResponseDTO,
-  LoginAccountRequestDTO,
-  LoginAccountResponseDTO,
   UpdateAccountRequestDTO
 } from '../../../shared/src';
 import { AccountModel } from '../models/account.model';
-import { CustomError } from '../middleware/errorHandler';
-import { sign } from 'jsonwebtoken';
+import { CustomError } from '../middleware/errorHandler.middleware';
 
 export class AccountService {
   async getById(accountId: string) {
@@ -23,7 +21,7 @@ export class AccountService {
 
   async create(
     createDto: CreateAccountRequestDTO
-  ): Promise<{ token: string; createdAccount: CreateAccountResponseDTO }> {
+  ): Promise<{ createdAccount: CreateAccountResponseDTO }> {
     const { email, password, username } = createDto;
 
     await this.isEmailUnique(email);
@@ -39,11 +37,8 @@ export class AccountService {
     const createdAccount = await newAcount.save();
 
     const accountId = createdAccount.id;
-    // TODO: update secret, make it more secure, save secret value in different place
-    const token = sign({ accountId }, 'secret');
 
     return {
-      token,
       createdAccount: {
         _id: accountId,
         email: createdAccount.email,
@@ -89,11 +84,7 @@ export class AccountService {
     await AccountModel.findByIdAndDelete(accountId);
   }
 
-  async login(
-    loginDto: LoginAccountRequestDTO
-  ): Promise<{ token: string; loggedInAccount: LoginAccountResponseDTO }> {
-    const { email, password } = loginDto;
-
+  async validateCredentials(email: string, password: string) {
     const account = await AccountModel.findOne({ email })
       .select('password email username')
       .lean();
@@ -108,21 +99,10 @@ export class AccountService {
       throw new CustomError(`Wrong account credentials.`, 401);
     }
 
-    const accountId = account._id.toString();
-    // TODO: update secret, make it more secure, save secret value in different place
-    const token = sign({ accountId }, 'secret');
-
-    return {
-      token,
-      loggedInAccount: {
-        _id: accountId,
-        email: account.email,
-        username: account.username
-      }
-    };
+    return account;
   }
 
-  private async accountIdExists(accountId: string, select = '_id') {
+  async accountIdExists(accountId: string, select = '_id') {
     const account = await AccountModel.findById(accountId, undefined, {
       select
     }).lean();

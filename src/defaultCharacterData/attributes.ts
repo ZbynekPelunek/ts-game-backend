@@ -1,23 +1,23 @@
 import {
-  BasicAttributeFrontend,
-  CharacterAttributeCreateDTO,
+  Attribute,
+  CreateCharacterAttributeRequestDTO,
   MainAttributeNames,
   PrimaryAttributeNames,
-  SecondaryAttributeNames,
+  SecondaryAttributeNames
 } from '../../../shared/src';
 //import { calculateAttributes } from '../engine/attributes';
 
 export function generateDefaultCharacterAttributes(
-  allAttributes: BasicAttributeFrontend[],
+  allAttributes: Attribute[],
   characterId: string
-): CharacterAttributeCreateDTO[] {
-  const defaultAttributes: CharacterAttributeCreateDTO[] = [];
+): CreateCharacterAttributeRequestDTO[] {
+  const defaultAttributes: CreateCharacterAttributeRequestDTO[] = [];
 
   allAttributes.forEach((a) => {
-    const attribute: CharacterAttributeCreateDTO = {
+    const attribute: CreateCharacterAttributeRequestDTO = {
       baseValue: 0,
       characterId,
-      attributeName: a.attributeName,
+      attributeName: a.attributeName
     };
     switch (a.attributeName) {
       case MainAttributeNames.HEALTH:

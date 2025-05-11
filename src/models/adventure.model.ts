@@ -7,9 +7,10 @@ import {
 import {
   Adventure,
   AdventureReward,
-  AdventureTypes
+  AdventureTypes,
+  Reward
 } from '../../../shared/src';
-import { RewardSchema } from './rewardModel';
+import { RewardSchema } from './reward.model';
 import { EnemySchema } from './enemy.model';
 
 @modelOptions({

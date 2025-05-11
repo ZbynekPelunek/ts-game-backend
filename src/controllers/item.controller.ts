@@ -6,7 +6,10 @@ import {
   GetItemResponse
 } from '../../../shared/src';
 import { ItemModel } from '../models/item.model';
-import { CustomError, errorHandler } from '../middleware/errorHandler';
+import {
+  CustomError,
+  errorHandler
+} from '../middleware/errorHandler.middleware';
 
 export class ItemController {
   async list(

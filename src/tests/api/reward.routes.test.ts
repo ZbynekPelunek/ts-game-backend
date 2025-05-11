@@ -5,7 +5,7 @@ import { Reward, Reward_GET_one, Reward_GET_all } from '../../../../shared/src';
 import { APP_SERVER } from '../setupFile';
 import { REWARDS_MOCK } from '../../mockData/rewards';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
-import { RewardModel } from '../../models/rewardModel';
+import { RewardModel } from '../../models/reward.model';
 import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Reward routes', () => {

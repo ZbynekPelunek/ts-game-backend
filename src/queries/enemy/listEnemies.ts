@@ -1,4 +1,4 @@
-import { EnemyService } from '../../services/enemyService';
+import { EnemyService } from '../../services/enemy.service';
 
 export class ListEnemiesQuery {
   constructor(private enemyService: EnemyService) {}

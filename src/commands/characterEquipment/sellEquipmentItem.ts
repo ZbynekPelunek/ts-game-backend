@@ -1,14 +1,13 @@
-import { CustomError } from '../../middleware/errorHandler';
+import { CustomError } from '../../middleware/errorHandler.middleware';
+import { CharacterCurrencyModel } from '../../models/characterCurrency.model';
 import { startTransaction } from '../../mongoDB.handler';
-import { CharacterAttributeService } from '../../services/characterAttributeService';
-import { CharacterCurrencyService } from '../../services/characterCurrencyService';
-import { CharacterEquipmentService } from '../../services/characterEquipmentService';
-import { ItemService } from '../../services/itemService';
+import { CharacterAttributeService } from '../../services/characterAttribute.service';
+import { CharacterEquipmentService } from '../../services/characterEquipment.service';
+import { ItemService } from '../../services/item.service';
 
 export class SellEquipmentItemCommand {
   constructor(
     private characterEquipmentService: CharacterEquipmentService,
-    private characterCurrencyService: CharacterCurrencyService,
     private characterAttributeService: CharacterAttributeService,
     private itemService: ItemService
   ) {}
@@ -25,7 +24,7 @@ export class SellEquipmentItemCommand {
     }
 
     const equippedItem = await this.itemService.getById({
-      itemId: itemToSell,
+      itemId: itemToSell
     });
 
     const { currencyId, value } = equippedItem.sell;
@@ -38,16 +37,18 @@ export class SellEquipmentItemCommand {
         null
       );
 
-      await this.characterCurrencyService.updateCharacterCurrency({
-        characterId,
-        currencyId,
-        totalAmountIncrease: value,
-      });
+      await CharacterCurrencyModel.updateOne(
+        {
+          characterId,
+          currencyId
+        },
+        { $inc: { amount: value } }
+      );
 
       await this.characterAttributeService.decreaseMultipleAttributeEquipmentValues(
         {
           characterId,
-          attributes: equippedItem.attributes,
+          attributes: equippedItem.attributes
         }
       );
 

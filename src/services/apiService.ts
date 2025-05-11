@@ -1,39 +1,67 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { BasePaths, ApiRoutes } from '../../../shared/src';
-import { CustomError } from '../middleware/errorHandler';
+import { CustomError } from '../middleware/errorHandler.middleware';
+import { AccountService } from './account.service';
+import { CharacterService } from './character.service';
+import { AdventureService } from './adventure.service';
+import { ResultService } from './result.service';
+import { CharacterAttributeService } from './characterAttribute.service';
 
-export const PUBLIC_ROUTES = {
-  Accounts: `/${BasePaths.PUBLIC}/${ApiRoutes.ACCOUNTS}`,
-  Characters: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTERS}`,
-  Adventures: `/${BasePaths.PUBLIC}/${ApiRoutes.ADVENTURES}`,
-  Results: `/${BasePaths.PUBLIC}/${ApiRoutes.RESULTS}`,
-  Inventory: `/${BasePaths.PUBLIC}/${ApiRoutes.INVENTORY}`,
-  Attributes: `/${BasePaths.PUBLIC}/${ApiRoutes.ATTRIBUTES}`,
-  CharacterAttributes: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_ATTRIBUTES}`,
-  CharacterCurrencies: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_CURRENCIES}`,
-  CharacterEquipment: `/${BasePaths.PUBLIC}/${ApiRoutes.CHARACTER_EQUIPMENT}`,
-  Items: `/${BasePaths.PUBLIC}/${ApiRoutes.ITEMS}`,
-  Rewards: `/${BasePaths.PUBLIC}/${ApiRoutes.REWARDS}`,
-  Enemies: `/${BasePaths.PUBLIC}/${ApiRoutes.ENEMIES}`,
-  Currencies: `/${BasePaths.PUBLIC}/${ApiRoutes.CURRENCIES}`,
+export const V1_ROUTES = {
+  Accounts: `/${BasePaths.V1}/${ApiRoutes.ACCOUNTS}`,
+  Characters: `/${BasePaths.V1}/${ApiRoutes.CHARACTERS}`,
+  Adventures: `/${BasePaths.V1}/${ApiRoutes.ADVENTURES}`,
+  Results: `/${BasePaths.V1}/${ApiRoutes.RESULTS}`,
+  Inventory: `/${BasePaths.V1}/${ApiRoutes.INVENTORY}`,
+  CharacterAttributes: `/${BasePaths.V1}/${ApiRoutes.CHARACTER_ATTRIBUTES}`,
+  CharacterCurrencies: `/${BasePaths.V1}/${ApiRoutes.CHARACTER_CURRENCIES}`,
+  CharacterEquipment: `/${BasePaths.V1}/${ApiRoutes.CHARACTER_EQUIPMENT}`,
+  Auth: `/${BasePaths.V1}/${ApiRoutes.AUTH}`
 };
 
-/* export const FULL_PUBLIC_ROUTES = {
-  Accounts: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Accounts}`,
-  Characters: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Characters}`,
-  Adventures: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Adventures}`,
-  Results: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Results}`,
-  Inventory: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Inventory}`,
-  Attributes: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Attributes}`,
-  CharacterAttributes: `${process.env.SERVER_URL}${PUBLIC_ROUTES.CharacterAttributes}`,
-  CharacterCurrencies: `${process.env.SERVER_URL}${PUBLIC_ROUTES.CharacterCurrencies}`,
-  CharacterEquipment: `${process.env.SERVER_URL}${PUBLIC_ROUTES.CharacterEquipment}`,
-  Items: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Items}`,
-  Rewards: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Rewards}`,
-  Enemies: `${process.env.SERVER_URL}${PUBLIC_ROUTES.Enemies}`,
+export const INTERNAL_ROUTES = {
+  Accounts: `/${BasePaths.INTERNAL}/${ApiRoutes.ACCOUNTS}`,
+  Attributes: `/${BasePaths.INTERNAL}/${ApiRoutes.ATTRIBUTES}`,
+  CharacterAttributes: `/${BasePaths.INTERNAL}/${ApiRoutes.CHARACTER_ATTRIBUTES}`,
+  CharacterCurrencies: `/${BasePaths.INTERNAL}/${ApiRoutes.CHARACTER_CURRENCIES}`,
+  CharacterEquipment: `/${BasePaths.INTERNAL}/${ApiRoutes.CHARACTER_EQUIPMENT}`,
+  Currencies: `/${BasePaths.INTERNAL}/${ApiRoutes.CURRENCIES}`,
+  Enemies: `/${BasePaths.INTERNAL}/${ApiRoutes.ENEMIES}`,
+  Inventory: `/${BasePaths.INTERNAL}/${ApiRoutes.INVENTORY}`,
+  Items: `/${BasePaths.INTERNAL}/${ApiRoutes.ITEMS}`,
+  Rewards: `/${BasePaths.INTERNAL}/${ApiRoutes.REWARDS}`
+};
+
+/* export const FULL_V1_ROUTES = {
+  Accounts: `${process.env.SERVER_URL}${V1_ROUTES.Accounts}`,
+  Characters: `${process.env.SERVER_URL}${V1_ROUTES.Characters}`,
+  Adventures: `${process.env.SERVER_URL}${V1_ROUTES.Adventures}`,
+  Results: `${process.env.SERVER_URL}${V1_ROUTES.Results}`,
+  Inventory: `${process.env.SERVER_URL}${V1_ROUTES.Inventory}`,
+  Attributes: `${process.env.SERVER_URL}${V1_ROUTES.Attributes}`,
+  CharacterAttributes: `${process.env.SERVER_URL}${V1_ROUTES.CharacterAttributes}`,
+  CharacterCurrencies: `${process.env.SERVER_URL}${V1_ROUTES.CharacterCurrencies}`,
+  CharacterEquipment: `${process.env.SERVER_URL}${V1_ROUTES.CharacterEquipment}`,
+  Items: `${process.env.SERVER_URL}${V1_ROUTES.Items}`,
+  Rewards: `${process.env.SERVER_URL}${V1_ROUTES.Rewards}`,
+  Enemies: `${process.env.SERVER_URL}${V1_ROUTES.Enemies}`,
 }; */
 
 export class ApiService {
+  public accountService: AccountService;
+  public characterService: CharacterService;
+  public adventureService: AdventureService;
+  public resultService: ResultService;
+  public characterAttributeService: CharacterAttributeService;
+
+  constructor() {
+    this.accountService = new AccountService();
+    this.characterService = new CharacterService();
+    this.adventureService = new AdventureService();
+    this.resultService = new ResultService();
+    this.characterAttributeService = new CharacterAttributeService();
+  }
+
   private async makeRequest<T>(
     method: 'get' | 'post' | 'patch' | 'delete',
     path: string,

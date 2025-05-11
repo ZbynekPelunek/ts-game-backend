@@ -8,8 +8,6 @@ import {
   GetAccountRequestParams,
   GetAccountResponse,
   ListAccountsResponse,
-  LoginAccountRequestDTO,
-  LoginAccountResponse,
   UpdateAccountRequestDTO,
   UpdateAccountRequestParams,
   UpdateAccountResponse
@@ -58,16 +56,10 @@ export class AccountController {
   ) {
     const { email, password, username } = req.body;
 
-    const { createdAccount, token } = await this.accountService.create({
+    const { createdAccount } = await this.accountService.create({
       email,
       password,
       username
-    });
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 30 * 24 * 60 * 60 * 1000
     });
 
     res.status(201).json({
@@ -116,38 +108,5 @@ export class AccountController {
     res.status(200).json({
       success: true
     });
-  }
-
-  async login(
-    req: Request<{}, {}, LoginAccountRequestDTO>,
-    res: Response<LoginAccountResponse>
-  ) {
-    const { email, password } = req.body;
-
-    const { token, loggedInAccount } = await this.accountService.login({
-      email,
-      password
-    });
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 30 * 24 * 60 * 60 * 1000
-    });
-
-    res.status(200).json({
-      success: true,
-      account: {
-        _id: loggedInAccount._id,
-        email: loggedInAccount.email,
-        username: loggedInAccount.username
-      }
-    });
-  }
-
-  async logout(_req: Request, res: Response) {
-    res.clearCookie('token');
-
-    res.status(200).json({ success: true });
   }
 }

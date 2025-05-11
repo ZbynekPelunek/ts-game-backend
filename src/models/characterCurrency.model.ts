@@ -1,15 +1,19 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Types } from 'mongoose';
 
-import { CharacterCurrencyBackend, CurrencyId } from '../../../shared/src';
-import { CurrencySchema } from './currency.model';
+import { CharacterCurrency, CurrencyId } from '../../../shared/src';
+import { CurrencyModel } from './currency.model';
 
 @modelOptions({
-  schemaOptions: { timestamps: true },
+  schemaOptions: {
+    timestamps: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
+  },
   options: { customName: 'character-currencies' }
 })
-export class CharacterCurrencySchema implements CharacterCurrencyBackend {
-  @prop({ required: true, ref: () => CurrencySchema })
+export class CharacterCurrencySchema implements CharacterCurrency {
+  @prop({ required: true })
   public currencyId!: CurrencyId;
 
   @prop({ required: true, default: 0 })
@@ -20,3 +24,10 @@ export class CharacterCurrencySchema implements CharacterCurrencyBackend {
 }
 
 export const CharacterCurrencyModel = getModelForClass(CharacterCurrencySchema);
+
+CharacterCurrencyModel.schema.virtual('currency', {
+  ref: CurrencyModel.modelName,
+  localField: 'currencyId',
+  foreignField: '_id',
+  justOne: true
+});

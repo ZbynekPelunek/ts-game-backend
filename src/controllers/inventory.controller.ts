@@ -21,12 +21,14 @@ import {
 } from '../../../shared/src';
 import { generateCharacterInventory } from '../defaultCharacterData/inventory';
 import { InventoryModel } from '../models/inventory.model';
-import { ApiService, PUBLIC_ROUTES } from '../services/apiService';
-import { CustomError, errorHandler } from '../middleware/errorHandler';
+import { ApiService, INTERNAL_ROUTES, V1_ROUTES } from '../services/apiService';
+import {
+  CustomError,
+  errorHandler
+} from '../middleware/errorHandler.middleware';
 import { SellItemCommand } from '../commands/inventory/sellItem';
-import { CharacterCurrencyService } from '../services/characterCurrencyService';
-import { InventoryService } from '../services/inventoryService';
-import { ItemService } from '../services/itemService';
+import { InventoryService } from '../services/inventory.service';
+import { ItemService } from '../services/item.service';
 
 export class InventoryController {
   private sellItemCommand: SellItemCommand;
@@ -35,12 +37,7 @@ export class InventoryController {
   constructor() {
     const inventoryService = new InventoryService();
     const itemService = new ItemService();
-    const characterCurrencyService = new CharacterCurrencyService();
-    this.sellItemCommand = new SellItemCommand(
-      inventoryService,
-      itemService,
-      characterCurrencyService
-    );
+    this.sellItemCommand = new SellItemCommand(inventoryService, itemService);
     this.apiService = new ApiService();
   }
 
@@ -255,7 +252,7 @@ export class InventoryController {
     itemId: number
   ): Promise<CommonItemParams | CommonItemsEquipmenParams> {
     const response = await this.apiService.get<GetItemResponse>(
-      `${PUBLIC_ROUTES.Items}/${itemId}`
+      `${INTERNAL_ROUTES.Items}/${itemId}`
     );
 
     if (!response.success || !response.item) {

@@ -1,5 +1,7 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-import { Account } from '../interfaces/account';
+import { Account } from '../../../shared/src';
+
+export const MAX_CHARACTERS_PER_ACCOUNT = 20;
 
 export const EMAIL_MIN_LENGTH = 5;
 export const USERNAME_MIN_LENGTH = 3;
@@ -14,6 +16,7 @@ export const PASSWORD_MAX_LENGTH = 50;
 export class AccountSchema implements Account {
   @prop({
     required: [true, 'Username is required!'],
+    unique: [true, 'Username must be unique!'],
     trim: true,
     minlength: [
       USERNAME_MIN_LENGTH,

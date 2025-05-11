@@ -2,25 +2,27 @@ import express, { Application, Request, Response } from 'express';
 import { Server } from 'http';
 import helmet from 'helmet';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
-import { accountsRouter } from './routes/account.routes';
-import { adventuresRouter } from './routes/adventure.routes';
-import { attributesRouter } from './routes/attribute.routes';
-import { characterAttributesRouter } from './routes/characterAttribute.routes';
-import { characterCurrenciesRouter } from './routes/characterCurrency.routes';
-import { characterEquipmentRouter } from './routes/characterEquipmentRoutes';
-import { inventoryRouter } from './routes/inventory.routes';
-import { itemsRouter } from './routes/item.routes';
+import { adventuresV1Router } from './routes/v1/adventure.v1.routes';
+import { attributesInternalRouter } from './routes/internal/attribute.internal.routes';
+import { characterAttributesV1Router } from './routes/v1/characterAttribute.v1.routes';
+import { characterCurrenciesV1Router } from './routes/v1/characterCurrency.v1.routes';
+import { characterEquipmentV1Router } from './routes/v1/characterEquipment.v1.routes';
+import { inventoryV1Router } from './routes/v1/inventory.v1.routes';
+import { itemsInternalRouter } from './routes/internal/item.internal.routes';
 import { MongoDBHandler } from './mongoDB.handler';
-import { rewardsRouter } from './routes/rewardRoutes';
-import { enemiesRouter } from './routes/enemyRoutes';
-import { resultsRouter } from './routes/result.routes';
+import { rewardsInternalRouter } from './routes/internal/reward.internal.routes';
+import { enemiesInternalRouter } from './routes/internal/enemy.internal.routes';
+import { resultsV1Router } from './routes/v1/result.v1.routes';
 import { readConfigFile } from './utils/setupConfig';
-import { corsMiddleware } from './middleware/corsMiddleware';
-import { PUBLIC_ROUTES } from './services/apiService';
-import { errorHandler } from './middleware/errorHandler';
-import { CharacterRoutes } from './routes/character.routes';
-import { currenciesRouter } from './routes/currency.routes';
+import { errorHandler } from './middleware/errorHandler.middleware';
+import { currenciesInternalRouter } from './routes/internal/currency.internal.routes';
+import { accountsV1Router } from './routes/v1/account.v1.routes';
+import { INTERNAL_ROUTES, V1_ROUTES } from './services/apiService';
+import { accountsInternalRouter } from './routes/internal/account.internal.routes';
+import { authV1Router } from './routes/v1/auth.v1.routes';
+import { characterV1Router } from './routes/v1/character.v1.routes';
 
 export class AppServer {
   private mongoDbHandler: MongoDBHandler;
@@ -77,7 +79,7 @@ export class AppServer {
 
   private async initServer(): Promise<void> {
     this.app.use(helmet());
-    //this.app.use(corsMiddleware);
+    this.app.use(cookieParser());
     this.app.use(express.json());
     this.app.use(
       cors({
@@ -88,6 +90,7 @@ export class AppServer {
     this.app.use(express.urlencoded());
 
     this.initPublicRouters();
+    this.initInternalRouters();
     this.app.all(/(.*)/, (req: Request, res: Response) => {
       res.status(404).json({
         success: false,
@@ -107,21 +110,37 @@ export class AppServer {
   }
 
   private initPublicRouters(): void {
-    const characterRouter = new CharacterRoutes();
-    const charactersRouter = characterRouter.getRouter();
-    this.app.use(PUBLIC_ROUTES.Accounts, accountsRouter);
-    this.app.use(PUBLIC_ROUTES.Characters, charactersRouter);
-    this.app.use(PUBLIC_ROUTES.Adventures, adventuresRouter);
-    this.app.use(PUBLIC_ROUTES.Inventory, inventoryRouter);
-    this.app.use(PUBLIC_ROUTES.Attributes, attributesRouter);
-    this.app.use(PUBLIC_ROUTES.CharacterAttributes, characterAttributesRouter);
-    this.app.use(PUBLIC_ROUTES.CharacterCurrencies, characterCurrenciesRouter);
-    this.app.use(PUBLIC_ROUTES.CharacterEquipment, characterEquipmentRouter);
-    this.app.use(PUBLIC_ROUTES.Items, itemsRouter);
-    this.app.use(PUBLIC_ROUTES.Rewards, rewardsRouter);
-    this.app.use(PUBLIC_ROUTES.Enemies, enemiesRouter);
-    this.app.use(PUBLIC_ROUTES.Results, resultsRouter);
-    this.app.use(PUBLIC_ROUTES.Currencies, currenciesRouter);
+    this.app.use(V1_ROUTES.Auth, authV1Router);
+    this.app.use(V1_ROUTES.Accounts, accountsV1Router);
+    this.app.use(V1_ROUTES.Characters, characterV1Router);
+    this.app.use(V1_ROUTES.Adventures, adventuresV1Router);
+    this.app.use(V1_ROUTES.Inventory, inventoryV1Router);
+    this.app.use(V1_ROUTES.CharacterAttributes, characterAttributesV1Router);
+    this.app.use(V1_ROUTES.CharacterCurrencies, characterCurrenciesV1Router);
+    this.app.use(V1_ROUTES.CharacterEquipment, characterEquipmentV1Router);
+    this.app.use(V1_ROUTES.Results, resultsV1Router);
+  }
+
+  private initInternalRouters(): void {
+    this.app.use(INTERNAL_ROUTES.Accounts, accountsInternalRouter);
+    this.app.use(INTERNAL_ROUTES.Attributes, attributesInternalRouter);
+    this.app.use(
+      INTERNAL_ROUTES.CharacterAttributes,
+      characterAttributesV1Router
+    );
+    this.app.use(
+      INTERNAL_ROUTES.CharacterCurrencies,
+      characterCurrenciesV1Router
+    );
+    this.app.use(
+      INTERNAL_ROUTES.CharacterEquipment,
+      characterEquipmentV1Router
+    );
+    this.app.use(INTERNAL_ROUTES.Currencies, currenciesInternalRouter);
+    this.app.use(INTERNAL_ROUTES.Enemies, enemiesInternalRouter);
+    this.app.use(INTERNAL_ROUTES.Inventory, inventoryV1Router);
+    this.app.use(INTERNAL_ROUTES.Items, itemsInternalRouter);
+    this.app.use(INTERNAL_ROUTES.Rewards, rewardsInternalRouter);
   }
 
   private handleSIGINT(): void {

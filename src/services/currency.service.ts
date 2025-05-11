@@ -1,5 +1,5 @@
 import { CurrencyId } from '../../../shared/src/interface/currency/currency';
-import { CustomError } from '../middleware/errorHandler';
+import { CustomError } from '../middleware/errorHandler.middleware';
 import { CurrencyModel } from '../models/currency.model';
 
 export class CurrencyService {

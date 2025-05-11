@@ -22,6 +22,7 @@
     "@typegoose/typegoose": "^12.14.0",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/bcryptjs": "^3.0.0",
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",

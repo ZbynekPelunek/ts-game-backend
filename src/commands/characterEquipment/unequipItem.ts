@@ -1,9 +1,9 @@
-import { CustomError } from '../../middleware/errorHandler';
+import { CustomError } from '../../middleware/errorHandler.middleware';
 import { startTransaction } from '../../mongoDB.handler';
-import { CharacterAttributeService } from '../../services/characterAttributeService';
-import { CharacterEquipmentService } from '../../services/characterEquipmentService';
-import { InventoryService } from '../../services/inventoryService';
-import { ItemService } from '../../services/itemService';
+import { CharacterAttributeService } from '../../services/characterAttribute.service';
+import { CharacterEquipmentService } from '../../services/characterEquipment.service';
+import { InventoryService } from '../../services/inventory.service';
+import { ItemService } from '../../services/item.service';
 
 export class UnequipItemCommand {
   constructor(
@@ -25,7 +25,7 @@ export class UnequipItemCommand {
     }
 
     const equippedItem = await this.itemService.getById({
-      itemId: itemToUnequip,
+      itemId: itemToUnequip
     });
 
     try {
@@ -46,7 +46,7 @@ export class UnequipItemCommand {
       await this.characterAttributeService.decreaseMultipleAttributeEquipmentValues(
         {
           characterId,
-          attributes: equippedItem.attributes,
+          attributes: equippedItem.attributes
         }
       );
       console.log('...updating attributes done.');

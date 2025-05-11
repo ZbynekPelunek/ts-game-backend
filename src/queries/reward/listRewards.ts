@@ -1,4 +1,4 @@
-import { RewardService } from '../../services/rewardService';
+import { RewardService } from '../../services/reward.service';
 
 export class ListRewardsQuery {
   constructor(private rewardService: RewardService) {}

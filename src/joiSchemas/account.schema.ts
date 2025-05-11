@@ -4,7 +4,6 @@ import {
   CreateAccountRequestDTO,
   DeleteAccountRequestParams,
   GetAccountRequestParams,
-  LoginAccountRequestDTO,
   UpdateAccountRequestDTO,
   UpdateAccountRequestParams
 } from '../../../shared/src';
@@ -27,14 +26,6 @@ export const createAccountBodySchema = Joi.object<CreateAccountRequestDTO>({
     .max(USERNAME_MAX_LENGTH)
     .alphanum()
     .required(),
-  email: Joi.string().email().min(EMAIL_MIN_LENGTH).required(),
-  password: Joi.string()
-    .min(PASSWORD_MIN_LENGTH)
-    .max(PASSWORD_MAX_LENGTH)
-    .required()
-}).required();
-
-export const loginAccountBodySchema = Joi.object<LoginAccountRequestDTO>({
   email: Joi.string().email().min(EMAIL_MIN_LENGTH).required(),
   password: Joi.string()
     .min(PASSWORD_MIN_LENGTH)

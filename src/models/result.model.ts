@@ -12,7 +12,7 @@ import {
   ResultReward,
   ResultState
 } from '../../../shared/src';
-import { RewardCurrencySchema, RewardItemSchema } from './rewardModel';
+import { RewardCurrencySchema, RewardItemSchema } from './reward.model';
 
 @modelOptions({
   schemaOptions: { timestamps: true },

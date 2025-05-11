@@ -16,7 +16,6 @@ Backend part for a typescript game. The other parts are Frontend and Shared (int
 ## Overview
 
 A game inspired by Shakes & Fidget. You have a hero, that you send to adventures to get better items to do harder adventures...
-This project also contains a lot of commented code for now because at first, I tried to make the game without using database to see if it is even possible using only REST API. It did work as I imaginated so now I am in middle of adding MongoDB database.
 
 ## Technologies
 
@@ -31,12 +30,15 @@ This project also contains a lot of commented code for now because at first, I t
 - Adventure API
 - Attribute API
 - Character API
-  - Attribute API
-  - Currency API
-  - Inventory API
+  - CharacterAttribute API
+  - CharacterCurrency API
+  - CharacterEquipment API
+- Currency API
+- Inventory API
 - Item API
-  - Equipment API
+- Result API
 - Reward API
+- Enemy API
 
 ## Installation
 

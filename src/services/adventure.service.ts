@@ -1,5 +1,5 @@
 import { ListAdventuresRequestQuery, Reward } from '../../../shared/src';
-import { CustomError } from '../middleware/errorHandler';
+import { CustomError } from '../middleware/errorHandler.middleware';
 import { AdventureModel } from '../models/adventure.model';
 
 export class AdventureService {
@@ -34,15 +34,13 @@ export class AdventureService {
 
   async getOneById(data: {
     adventureId: number;
-    query: { populateReward: boolean };
+    query?: { populateReward?: boolean };
   }) {
-    const {
-      adventureId,
-      query: { populateReward }
-    } = data;
+    const { adventureId, query } = data;
+
     const dbQuery = AdventureModel.findById(adventureId).lean();
 
-    if (populateReward)
+    if (query?.populateReward)
       dbQuery.populate<Reward>({
         path: 'rewards.rewardId',
         select: '-createdAt -updatedAt -__v',

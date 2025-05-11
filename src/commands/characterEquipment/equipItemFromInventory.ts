@@ -1,9 +1,9 @@
-import { CustomError } from '../../middleware/errorHandler';
+import { CustomError } from '../../middleware/errorHandler.middleware';
 import { startTransaction } from '../../mongoDB.handler';
-import { CharacterAttributeService } from '../../services/characterAttributeService';
-import { CharacterEquipmentService } from '../../services/characterEquipmentService';
-import { InventoryService } from '../../services/inventoryService';
-import { ItemService } from '../../services/itemService';
+import { CharacterAttributeService } from '../../services/characterAttribute.service';
+import { CharacterEquipmentService } from '../../services/characterEquipment.service';
+import { InventoryService } from '../../services/inventory.service';
+import { ItemService } from '../../services/item.service';
 
 export class EquipItemFromInventoryCommand {
   constructor(
@@ -18,7 +18,7 @@ export class EquipItemFromInventoryCommand {
     const session = await startTransaction();
 
     const inventorySlot = await this.inventoryService.getInventorySlotById({
-      inventorySlotId: inventoryId,
+      inventorySlotId: inventoryId
     });
     const inventoryItem = inventorySlot.item;
 
@@ -33,7 +33,7 @@ export class EquipItemFromInventoryCommand {
     const characterEquipmentSlot =
       await this.characterEquipmentService.listCharacterEquipment({
         characterId,
-        itemSlot: inventoryItemDetails.slot,
+        itemSlot: inventoryItemDetails.slot
       });
 
     if (characterEquipmentSlot.length < 1) {
@@ -73,7 +73,7 @@ export class EquipItemFromInventoryCommand {
         await this.characterAttributeService.decreaseMultipleAttributeEquipmentValues(
           {
             characterId,
-            attributes: equippedItem.attributes,
+            attributes: equippedItem.attributes
           }
         );
         console.log('...updating attributes done.');
@@ -82,7 +82,7 @@ export class EquipItemFromInventoryCommand {
         await this.characterAttributeService.increaseMultipleAttributeEquipmentValues(
           {
             characterId,
-            attributes: inventoryItemDetails.attributes,
+            attributes: inventoryItemDetails.attributes
           }
         );
         console.log('...updating attributes done.');
@@ -113,7 +113,7 @@ export class EquipItemFromInventoryCommand {
         await this.characterAttributeService.increaseMultipleAttributeEquipmentValues(
           {
             characterId,
-            attributes: inventoryItemDetails.attributes,
+            attributes: inventoryItemDetails.attributes
           }
         );
         console.log('...updating attributes done.');

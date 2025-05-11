@@ -1,11 +1,11 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-import { BasicAttribute, AttributeName } from '../../../shared/src';
+import { Attribute, AttributeName } from '../../../shared/src';
 
 @modelOptions({
   schemaOptions: { timestamps: true },
-  options: { customName: 'attribute-details' },
+  options: { customName: 'attribute-details' }
 })
-export class AttributeDetailSchema implements BasicAttribute {
+export class AttributeSchema implements Attribute {
   @prop({ required: true })
   public attributeName!: AttributeName;
 
@@ -19,4 +19,4 @@ export class AttributeDetailSchema implements BasicAttribute {
   public desc?: string;
 }
 
-export const AttributeDetailModel = getModelForClass(AttributeDetailSchema);
+export const AttributeModel = getModelForClass(AttributeSchema);

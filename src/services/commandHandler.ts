@@ -1,5 +1,5 @@
 import { CreateCharacterEquipment } from '../commands/characterEquipment/create';
-import { CharacterEquipmentModel } from '../models/characterEquipment';
+import { CharacterEquipmentModel } from '../models/characterEquipment.model';
 
 export class CommandHandler {
   async handle(command: any) {

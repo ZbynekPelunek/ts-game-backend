@@ -1,63 +1,51 @@
-import { NextFunction, Request, Response } from 'express-serve-static-core';
+import { Request, Response } from 'express-serve-static-core';
 
 import {
-  BasicAttribute,
-  BasicAttributeFrontend,
   GetAttributeRequestParams,
-  ListAttributesResponse,
-  GetAttributeResponse
+  GetAttributeResponse,
+  ListAttributesResponse
 } from '../../../shared/src';
-
-import { AttributeDetailModel } from '../models/attribute.model';
-import { CustomError, errorHandler } from '../middleware/errorHandler';
+import { AttributeService } from '../services/attribute.service';
 
 export class AttributeController {
-  async list(
-    _req: Request,
-    res: Response<ListAttributesResponse>,
-    _next: NextFunction
-  ) {
-    try {
-      const attributes = await AttributeDetailModel.find().lean();
+  private attributeService: AttributeService;
 
-      const responseAttributes: BasicAttributeFrontend[] = attributes.map(
-        (a) => {
-          return {
-            attributeId: a._id.toString(),
-            attributeName: a.attributeName,
-            isPercent: a.isPercent,
-            label: a.label,
-            desc: a.desc
-          };
-        }
-      );
+  constructor() {
+    this.attributeService = new AttributeService();
+  }
 
-      res.status(200).json({ success: true, attributes: responseAttributes });
-    } catch (error) {
-      errorHandler(error, _req, res, _next);
-    }
+  async list(_req: Request, res: Response<ListAttributesResponse>) {
+    const attributes = await this.attributeService.list();
+
+    res.status(200).json({
+      success: true,
+      attributes: attributes.map((a) => {
+        return {
+          attributeName: a.attributeName,
+          isPercent: a.isPercent,
+          label: a.label,
+          desc: a.desc
+        };
+      })
+    });
   }
 
   async getOneById(
     req: Request<GetAttributeRequestParams>,
-    res: Response<GetAttributeResponse>,
-    _next: NextFunction
+    res: Response<GetAttributeResponse>
   ) {
-    try {
-      const { attributeId } = req.params;
+    const { attributeId } = req.params;
 
-      const attribute: BasicAttribute | null =
-        await AttributeDetailModel.findById(attributeId).lean();
-      if (!attribute) {
-        throw new CustomError(
-          `Attribute with id '${attributeId}' not found`,
-          404
-        );
+    const attribute = await this.attributeService.getOneById({ attributeId });
+
+    res.status(200).json({
+      success: true,
+      attribute: {
+        attributeName: attribute.attributeName,
+        isPercent: attribute.isPercent,
+        label: attribute.label,
+        desc: attribute.desc
       }
-
-      res.status(200).json({ success: true, attribute });
-    } catch (error) {
-      errorHandler(error, req, res, _next);
-    }
+    });
   }
 }

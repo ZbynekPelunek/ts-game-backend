@@ -2,7 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 
 import { generateAttributes } from '../data/attributes';
-import { AttributeDetailModel } from '../models/attribute.model';
+import { AttributeModel } from '../models/attribute.model';
 
 const uri = process.env.MONGOOSE_URI_DEV;
 
@@ -13,8 +13,8 @@ async function connect() {
     await mongoose.connect(uri!);
     console.log('Connected to MongoDB');
 
-    await AttributeDetailModel.deleteMany({});
-    await AttributeDetailModel.insertMany(attributesData);
+    await AttributeModel.deleteMany({});
+    await AttributeModel.insertMany(attributesData);
     console.log('seeding done');
 
     await mongoose.connection.close();

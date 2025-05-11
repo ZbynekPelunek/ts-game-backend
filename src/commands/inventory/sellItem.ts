@@ -1,21 +1,20 @@
-import { CustomError } from '../../middleware/errorHandler';
+import { CustomError } from '../../middleware/errorHandler.middleware';
+import { CharacterCurrencyModel } from '../../models/characterCurrency.model';
 import { startTransaction } from '../../mongoDB.handler';
-import { CharacterCurrencyService } from '../../services/characterCurrencyService';
-import { InventoryService } from '../../services/inventoryService';
-import { ItemService } from '../../services/itemService';
+import { InventoryService } from '../../services/inventory.service';
+import { ItemService } from '../../services/item.service';
 
 export class SellItemCommand {
   constructor(
     private inventoryService: InventoryService,
-    private itemService: ItemService,
-    private characterCurrencyService: CharacterCurrencyService
+    private itemService: ItemService
   ) {}
 
   async execute(params: { inventorySlotId: string }) {
     const { inventorySlotId } = params;
 
     const inventorySlotData = await this.inventoryService.getInventorySlotById({
-      inventorySlotId,
+      inventorySlotId
     });
     const characterId = inventorySlotData.characterId.toString();
     const itemId = inventorySlotData.item?.itemId as number;
@@ -32,11 +31,13 @@ export class SellItemCommand {
 
       await this.inventoryService.updateInventoryItem(inventorySlotId, null);
 
-      await this.characterCurrencyService.updateCharacterCurrency({
-        characterId,
-        currencyId,
-        totalAmountIncrease,
-      });
+      await CharacterCurrencyModel.updateOne(
+        {
+          characterId,
+          currencyId
+        },
+        { $inc: { amount: totalAmountIncrease } }
+      );
 
       await session.commitTransaction();
     } catch (error) {

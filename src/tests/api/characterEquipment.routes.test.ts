@@ -18,10 +18,10 @@ import {
   Request_CharacterEquipment_PATCH_body,
   Request_CharacterEquipment_POST_body,
   Response_Item_GET_one,
-  UiPosition,
+  UiPosition
 } from '../../../../shared/src';
 import { APP_SERVER, mockedAxios, UNKNOWN_OBJECT_ID } from '../setupFile';
-import { CharacterEquipmentModel } from '../../models/characterEquipment';
+import { CharacterEquipmentModel } from '../../models/characterEquipment.model';
 import { PUBLIC_ROUTES } from '../../services/apiService';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
 
@@ -120,19 +120,19 @@ describe('Character Equipment routes', () => {
             {
               characterId: UNKNOWN_OBJECT_ID.toString(),
               slot: EquipmentSlot.CHEST,
-              uiPosition: UiPosition.RIGHT,
+              uiPosition: UiPosition.RIGHT
             },
             {
               characterId: UNKNOWN_OBJECT_ID.toString(),
               slot: EquipmentSlot.ONE_HAND,
-              uiPosition: UiPosition.LEFT,
+              uiPosition: UiPosition.LEFT
             },
             {
               characterId: UNKNOWN_OBJECT_ID.toString(),
               slot: EquipmentSlot.SHOULDER,
-              uiPosition: UiPosition.BOTTOM,
-            },
-          ],
+              uiPosition: UiPosition.BOTTOM
+            }
+          ]
         };
 
       const res = await request(APP_SERVER)
@@ -157,8 +157,8 @@ describe('Character Equipment routes', () => {
           characterEquipment: {
             characterId: UNKNOWN_OBJECT_ID.toString(),
             slot: EquipmentSlot.ONE_HAND,
-            uiPosition: UiPosition.LEFT,
-          },
+            uiPosition: UiPosition.LEFT
+          }
         };
 
       const res = await request(APP_SERVER)
@@ -190,8 +190,8 @@ describe('Character Equipment routes', () => {
                     attributeName: MainAttributeNames.ARMOR,
                     attributeMaxValue: 10,
                     attributeMinValue: 1,
-                    requiredQuality: ItemQuality.COMMON,
-                  },
+                    requiredQuality: ItemQuality.COMMON
+                  }
                 ],
                 equipmentType: ArmorType.LEATHER,
                 itemLevel: 15,
@@ -199,10 +199,10 @@ describe('Character Equipment routes', () => {
                 maxAmount: 1,
                 sell: {
                   currencyId: CurrencyId.GOLD,
-                  value: 10,
-                },
-              },
-            },
+                  value: 10
+                }
+              }
+            }
           });
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -219,8 +219,8 @@ describe('Character Equipment routes', () => {
 
       const requestBody: Request_CharacterEquipment_PATCH_body = {
         item: {
-          itemId: itemIdToEquip,
-        },
+          itemId: itemIdToEquip
+        }
       };
 
       const res = await request(APP_SERVER)
@@ -251,8 +251,8 @@ describe('Character Equipment routes', () => {
 
       const requestBody: Request_CharacterEquipment_PATCH_body = {
         item: {
-          itemId: itemIdToEquip,
-        },
+          itemId: itemIdToEquip
+        }
       };
 
       const res = await request(APP_SERVER)
@@ -283,7 +283,7 @@ async function addCharacterEquipmentToDb(
       characterId,
       slot,
       uiPosition,
-      item,
+      item
     });
 
   return characterEquipment.save();

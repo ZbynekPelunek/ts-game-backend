@@ -2,9 +2,9 @@ import { connect, Mongoose, startSession } from 'mongoose';
 
 import { AccountModel } from './models/account.model';
 import { CharacterModel } from './models/character.model';
-import { CharacterAttributeModel } from './models/characterAttribute';
+import { CharacterAttributeModel } from './models/characterAttribute.model';
 import { CharacterCurrencyModel } from './models/characterCurrency.model';
-import { CharacterEquipmentModel } from './models/characterEquipment';
+import { CharacterEquipmentModel } from './models/characterEquipment.model';
 import { ResultModel } from './models/result.model';
 
 export const startTransaction = () => {

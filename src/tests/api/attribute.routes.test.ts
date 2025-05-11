@@ -6,18 +6,18 @@ import {
   Attribute_GET_all,
   Attribute_GET_one,
   BasicAttribute,
-  MainAttributeNames,
+  MainAttributeNames
 } from '../../../../shared/src';
 import { APP_SERVER, UNKNOWN_OBJECT_ID } from '../setupFile';
 import { Common_Response_Error } from '../../../../shared/src/interface/API/commonResponse';
-import { AttributeDetailModel } from '../../models/attribute.model';
+import { AttributeModel } from '../../models/attribute.model';
 import { PUBLIC_ROUTES } from '../../services/apiService';
 
 describe('Attribute routes', () => {
   const apiAddress = PUBLIC_ROUTES.Attributes;
 
   afterEach(async () => {
-    await AttributeDetailModel.deleteMany();
+    await AttributeModel.deleteMany();
   });
 
   describe(`GET ${apiAddress}`, () => {
@@ -25,7 +25,7 @@ describe('Attribute routes', () => {
       for (const att in MainAttributeNames) {
         await addAttributeToDb(att as AttributeName, att.toLowerCase());
       }
-      const attributesLength = await AttributeDetailModel.countDocuments();
+      const attributesLength = await AttributeModel.countDocuments();
 
       const res = await request(APP_SERVER).get(apiAddress);
 
@@ -90,11 +90,11 @@ async function addAttributeToDb(
   isPercent = false,
   desc = ''
 ) {
-  const attribute = new AttributeDetailModel<BasicAttribute>({
+  const attribute = new AttributeModel<BasicAttribute>({
     attributeName,
     isPercent,
     label,
-    desc,
+    desc
   });
 
   return attribute.save();
